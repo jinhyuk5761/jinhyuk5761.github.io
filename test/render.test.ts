@@ -542,7 +542,8 @@ describe('대미지 계산기', () => {
     expect(labels.some((l) => l.includes('대담'))).toBe(true);
     expect(labels.some((l) => l.includes('조심'))).toBe(true);
     // 보정 내용을 함께 적어 무엇이 오르내리는지 바로 보이게 한다.
-    expect(labels.some((l) => l.includes('명랑 (+스피드 / −특수공격)'))).toBe(true);
+    // 계산기는 축약형(특공·특방)을 쓴다 — 좁은 열에서 줄이 쪼개지지 않게.
+    expect(labels.some((l) => l.includes('명랑 (+스피드 / −특공)'))).toBe(true);
     // 무보정 성격은 뒤로 밀린다.
     expect(labels[labels.length - 1]).toContain('무보정');
 

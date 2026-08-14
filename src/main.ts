@@ -66,10 +66,12 @@ function shellHeader(route: Route): HTMLElement {
   return el(
     'header',
     { class: 'shell__header' },
+    // 제목과 테마 버튼을 한 줄에 둔다 — 버튼은 그 줄의 오른쪽 끝.
     el(
       'div',
-      { class: 'shell__brand' },
+      { class: 'shell__top' },
       el('a', { class: 'brand', href: href('/') }, 'Pokémon Champions 메타'),
+      themeToggle(),
     ),
     el(
       'nav',
@@ -83,7 +85,7 @@ function shellHeader(route: Route): HTMLElement {
       state.config.ranking.enabled ? navLink('/ranking', '랭킹', route) : null,
       navLink('/sources', '출처', route),
     ),
-    el('div', { class: 'shell__controls' }, formatToggle(), themeToggle()),
+    el('div', { class: 'shell__controls' }, formatToggle()),
   );
 }
 

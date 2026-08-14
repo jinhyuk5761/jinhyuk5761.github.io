@@ -1073,9 +1073,10 @@ describe('테마', () => {
   it('오른쪽 맨 위 버튼으로 다크 모드를 켜고 끈다', async () => {
     await mountApp('#/');
     const button = document.querySelector<HTMLButtonElement>('.themebtn')!;
-    // 포맷 토글보다 뒤, 즉 오른쪽 끝에 있다.
-    const controls = [...document.querySelector('.shell__controls')!.children];
-    expect(controls[controls.length - 1]).toBe(button);
+    // 제목과 같은 줄, 그 줄의 오른쪽 끝에 있다.
+    const top = [...document.querySelector('.shell__top')!.children];
+    expect(top[0]!.classList.contains('brand')).toBe(true);
+    expect(top[top.length - 1]).toBe(button);
 
     button.click();
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
@@ -1130,5 +1131,38 @@ describe('변환자재 자속 토글', () => {
     });
     // 자속이 붙으면 대미지가 커진다.
     expect(document.querySelector('.calc__damage')!.textContent).not.toBe(before);
+  });
+});
+
+describe('화이트 모드는 끝까지 화이트여야 한다', () => {
+  it('시스템 바 색(theme-color)도 테마를 따라간다', async () => {
+    // 화면만 희게 하고 이 값을 두면 위아래 바만 검게 남아 '여전히 어둡다' 로 보인다.
+    // jsdom 에는 index.html 이 없으므로 그 meta 를 직접 만들어 준다.
+    document.head.querySelector('meta[name=	heme-color]')?.remove();
+    const seed = document.createElement('meta');
+    seed.setAttribute('name', 'theme-color');
+    seed.setAttribute('content', '#f6f7fb');
+    document.head.appendChild(seed);
+
+    await mountApp('#/');
+    const meta = document.querySelector('meta[name="theme-color"]');
+    expect(meta?.getAttribute('content')).toBe('#f6f7fb');
+
+    document.querySelector<HTMLButtonElement>('.themebtn')!.click();
+    expect(meta?.getAttribute('content')).toBe('#181c23');
+  });
+
+  it('매니페스트의 스플래시·바 색이 밝다', () => {
+    const manifest = JSON.parse(
+      readFileSync(path.join(import.meta.dirname, '..', 'public', 'manifest.webmanifest'), 'utf8'),
+    ) as { background_color: string; theme_color: string };
+    // 설치된 앱의 스플래시와 시스템 바가 여기서 온다.
+    expect(manifest.background_color.toLowerCase()).toBe('#ffffff');
+    expect(manifest.theme_color.toLowerCase()).toBe('#f6f7fb');
+  });
+
+  it('기기 설정을 따라가는 theme-color 가 남아 있지 않다', () => {
+    const html = readFileSync(path.join(import.meta.dirname, '..', 'index.html'), 'utf8');
+    expect(html).not.toContain('prefers-color-scheme');
   });
 });

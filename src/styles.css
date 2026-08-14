@@ -839,3 +839,12 @@ h4 { font-size: 15px; margin: 0; }
   cursor: pointer;
 }
 .calc__stabtoggle--on { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* 제목 줄 — 테마 버튼을 오른쪽 끝에 붙인다. 항상 한 줄을 통째로 쓴다. */
+.shell__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}

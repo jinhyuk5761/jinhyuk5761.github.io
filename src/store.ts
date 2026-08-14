@@ -59,6 +59,11 @@ export function applyTheme(theme: Theme): void {
   if (typeof document === 'undefined') return;
   if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   else document.documentElement.removeAttribute('data-theme');
+
+  // 브라우저·앱의 시스템 바 색도 같이 바꾼다.
+  // 이걸 안 하면 화면은 흰데 위아래 바만 검게 남아 '여전히 어둡다' 로 보인다.
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'dark' ? '#181c23' : '#f6f7fb');
 }
 
 export function setTheme(theme: Theme): void {

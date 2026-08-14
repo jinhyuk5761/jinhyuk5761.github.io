@@ -1172,3 +1172,47 @@ describe('출처 화면', () => {
     expect(document.body.textContent).toContain('상표');
   });
 });
+
+describe('장을 바꿔도 화면이 세로로 움직이지 않는다', () => {
+  it('탭을 눌러도 scrollIntoView 를 쓰지 않는다', async () => {
+    // scrollIntoView 는 가로뿐 아니라 세로도 움직여서, 장을 바꿀 때마다
+    // 화면이 아래로 끌려 내려갔다. 가로 스크롤만 직접 지정해야 한다.
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__pagertab')).not.toBeNull();
+    });
+
+    const called: string[] = [];
+    const original = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function scrollIntoViewSpy(this: Element) {
+      called.push(this.className);
+    };
+    try {
+      const tabs = [...document.querySelectorAll<HTMLButtonElement>('.calc__pagertab')];
+      tabs[1]!.click();
+      tabs[2]!.click();
+      tabs[0]!.click();
+    } finally {
+      Element.prototype.scrollIntoView = original;
+    }
+
+    expect(called, `scrollIntoView 가 불렸습니다: ${called.join(', ')}`).toEqual([]);
+  });
+
+  it('탭을 누르면 가로 스크롤 위치만 바뀐다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__pager')).not.toBeNull();
+    });
+
+    const track = document.querySelector<HTMLElement>('.calc__pager')!;
+    const moves: number[] = [];
+    // jsdom 은 레이아웃이 없어 scrollTo 가 없다. 호출 인자만 확인한다.
+    (track as unknown as { scrollTo: (o: { left: number }) => void }).scrollTo = (o) => {
+      moves.push(o.left);
+    };
+
+    document.querySelectorAll<HTMLButtonElement>('.calc__pagertab')[1]!.click();
+    expect(moves).toHaveLength(1);
+  });
+});

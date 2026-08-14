@@ -396,7 +396,11 @@ function pager(pages: { label: string; nodes: HTMLElement[] }[]): HTMLElement {
       page.label,
     );
     tab.addEventListener('click', () => {
-      section.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      // scrollIntoView 는 가로뿐 아니라 **세로도** 움직인다. 장을 바꿀 때마다
+      // 화면이 아래로 끌려 내려가므로, 가로 스크롤만 직접 지정한다.
+      const left = section.offsetLeft - track.offsetLeft;
+      if (typeof track.scrollTo === 'function') track.scrollTo({ left, behavior: 'smooth' });
+      else track.scrollLeft = left;
     });
     tabs.appendChild(tab);
   });

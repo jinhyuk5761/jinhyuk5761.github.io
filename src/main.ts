@@ -128,6 +128,8 @@ function renderRoute(route: Route): void {
       renderAbilityDexView(main, route);
       break;
     case '/calc':
+    // 팝업 전용 화면. 계산 로직은 같고 화면 껍데기만 벗긴다.
+    case '/mini':
       renderCalculator(main, route);
       break;
     case '/ranking':
@@ -145,9 +147,17 @@ function renderRoute(route: Route): void {
 function renderShell(): void {
   const route = currentRoute();
   clear(app!);
-  app!.appendChild(shellHeader(route));
+
+  /*
+   * 팝업 화면(다른 앱 위에 띄우는 작은 창)에서는 계산기만 쓴다.
+   * 헤더·탭·푸터가 좁은 창의 절반을 먹으므로 통째로 뺀다.
+   * 라우트만 다를 뿐 계산기 자체는 같은 코드다.
+   */
+  const mini = route.path === '/mini';
+  document.body.classList.toggle('mini', mini);
+  if (!mini) app!.appendChild(shellHeader(route));
   app!.appendChild(main);
-  app!.appendChild(shellFooter());
+  if (!mini) app!.appendChild(shellFooter());
   renderRoute(route);
 }
 

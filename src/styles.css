@@ -859,3 +859,57 @@ h4 { font-size: 15px; margin: 0; }
   .calc__stat { grid-template-columns: 42px 34px 1fr 28px 48px; gap: 4px; font-size: 11px; }
   .calc__stat--head { font-size: 10px; }
 }
+
+/* ---------- 팝업 전용 계산기 (#/mini) ---------- */
+
+/*
+ * 팝업 화면은 CSS 폭이 300~400px 밖에 안 된다.
+ * 헤더·푸터는 이미 셸에서 빠졌고, 여기서는 남은 여백과 글자를 더 줄여
+ * 입력과 결과가 한 번에 들어오게 한다.
+ */
+.mini #app { padding: 0 8px 12px; max-width: none; }
+
+.mini .calc__pagertabs { margin: 6px 0 6px; padding: 4px 0; gap: 3px; }
+.mini .calc__pagertab { padding: 6px 4px; font-size: 13px; }
+
+.mini .section { padding: 8px; margin: 6px 0; border-radius: 8px; }
+.mini .section__title { margin-bottom: 6px; font-size: 14px; }
+.mini .calc__side { padding: 8px; }
+.mini .calc__side-title { margin-bottom: 4px; font-size: 12px; }
+
+/* 입력 높이를 줄인다. 팝업에서는 세로가 가장 아쉽다. */
+.mini .calc__field { gap: 1px; font-size: 11px; }
+.mini .calc__ability,
+.mini .calc__modifier,
+.mini .calc__select,
+.mini .calc__nature-select,
+.mini .calc__move,
+.mini .form-select,
+.mini .picker__input { padding: 4px 6px; font-size: 12px; }
+
+.mini .calc__stat { grid-template-columns: 36px 34px 1fr 20px 42px; gap: 3px; font-size: 11px; }
+/* 머리글이 '실수/치' 로 쪼개지지 않을 만큼만 줄인다. */
+.mini .calc__stat--head { font-size: 9px; white-space: nowrap; }
+.mini .calc__points { padding: 2px 4px; font-size: 11px; }
+.mini .calc__stage { padding: 2px; font-size: 11px; }
+
+.mini .calc__hp { margin: 6px 0; gap: 2px 6px; }
+.mini .calc__hp-label, .mini .calc__hp-value { font-size: 11px; }
+
+.mini .sprite { width: 40px; height: 40px; }
+.mini .calc__mon { gap: 6px; margin-bottom: 4px; }
+.mini .calc__mon-name { font-size: 13px; }
+
+.mini .calc__moves { gap: 4px; }
+.mini .calc__traits { margin: 2px 0 4px; }
+
+/* 결과는 크게 — 팝업에서 실제로 보려는 건 이 숫자다. */
+.mini .calc__damage { font-size: 17px; }
+.mini .calc__percent { font-size: 12px; }
+.mini .calc__ko { font-size: 13px; }
+.mini .calc__move-result { padding: 6px 0; }
+.mini .calc__field-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+.mini .calc__note { font-size: 10px; margin-top: 6px; }
+
+/* 팝업 전용 화면으로 건너가는 링크. 작게 둔다. */
+.calc__minilink { margin: 0 0 8px; font-size: 12px; }

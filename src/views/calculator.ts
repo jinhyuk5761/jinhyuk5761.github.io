@@ -56,7 +56,7 @@ import {
   sumPositiveBoosts,
   type PowerContext,
 } from '../core/variablePower';
-import type { Route } from '../router';
+import { href, type Route } from '../router';
 import { findPokemon, state } from '../store';
 import type { Pokemon, PokemonForm, UsageReport } from '../types';
 import { sectionTitle, sprite, typeBadge } from './components';
@@ -340,6 +340,18 @@ export function renderCalculator(container: HTMLElement, route: Route): void {
     { class: 'calc' },
   );
   container.appendChild(page);
+
+  // 팝업 화면(작은 창)에서는 껍데기를 벗은 전용 경로를 쓴다.
+  // 이미 그 화면이면 링크를 또 보여줄 필요가 없다.
+  if (route.path !== '/mini') {
+    page.appendChild(
+      el(
+        'p',
+        { class: 'calc__minilink' },
+        el('a', { class: 'link', href: href('/mini') }, '팝업 화면용 계산기 →'),
+      ),
+    );
+  }
 
   const host = el('div');
   page.appendChild(host);

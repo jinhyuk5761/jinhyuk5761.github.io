@@ -1242,3 +1242,59 @@ describe('폰이 다크 모드여도 화이트를 유지한다', () => {
     expect(seed.getAttribute('content')).toBe('dark');
   });
 });
+
+describe('팝업 전용 계산기 (#/mini)', () => {
+  it('헤더·탭·푸터 없이 계산기만 나온다', async () => {
+    // 팝업 창은 CSS 폭이 300~400px 밖에 안 된다. 껍데기가 절반을 먹으면 안 된다.
+    await mountApp('#/mini?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    expect(document.querySelector('.shell__header')).toBeNull();
+    expect(document.querySelector('.shell__footer')).toBeNull();
+    expect(document.querySelector('.nav')).toBeNull();
+    expect(document.body.classList.contains('mini')).toBe(true);
+  });
+
+  it('계산 결과는 일반 화면과 같다', async () => {
+    // 껍데기만 다르고 계산은 같은 코드여야 한다.
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    const normal = document.querySelector('.calc__damage')!.textContent;
+
+    await mountApp('#/mini?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    expect(document.querySelector('.calc__damage')!.textContent).toBe(normal);
+  });
+
+  it('일반 화면을 벗어나면 mini 표시가 풀린다', async () => {
+    await mountApp('#/mini');
+    expect(document.body.classList.contains('mini')).toBe(true);
+    await mountApp('#/');
+    expect(document.body.classList.contains('mini')).toBe(false);
+    expect(document.querySelector('.shell__header')).not.toBeNull();
+  });
+
+  it('일반 계산기에서 팝업 화면으로 건너갈 수 있다', async () => {
+    await mountApp('#/calc');
+    const link = document.querySelector('.calc__minilink a');
+    expect(link?.getAttribute('href')).toContain('/mini');
+
+    // 팝업 화면에서는 그 링크를 또 보여주지 않는다.
+    await mountApp('#/mini');
+    expect(document.querySelector('.calc__minilink')).toBeNull();
+  });
+
+  it('앱 바로가기가 팝업 화면을 가리킨다', () => {
+    const manifest = JSON.parse(
+      readFileSync(path.join(import.meta.dirname, '..', 'public', 'manifest.webmanifest'), 'utf8'),
+    ) as { shortcuts: { short_name: string; url: string }[] };
+    const calc = manifest.shortcuts.find((s) => s.short_name === '계산기');
+    expect(calc?.url).toContain('/mini');
+  });
+});

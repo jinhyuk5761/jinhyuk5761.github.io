@@ -20,15 +20,15 @@
   "splashScreenFadeOutDuration": 300,
   "shortcuts": [
     {
-      "name": "포켓몬 검색",
-      "shortName": "검색",
-      "url": "/#/",
+      "name": "대미지 계산기",
+      "shortName": "계산기",
+      "url": "/#/mini",
       "chosenIconUrl": "https://jinhyuk5761.github.io/icon-192.png"
     },
     {
-      "name": "대미지 계산기",
-      "shortName": "계산기",
-      "url": "/#/calc",
+      "name": "포켓몬 검색",
+      "shortName": "검색",
+      "url": "/#/",
       "chosenIconUrl": "https://jinhyuk5761.github.io/icon-192.png"
     }
   ],

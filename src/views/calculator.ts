@@ -1409,18 +1409,34 @@ function moveResult(
   }
 
   const defenseKey: BattleStat = category === 'physical' ? 'def' : 'spd';
-  let defenseStat = effectiveStat(
-    defenderForm.stats[defenseKey],
-    defender.points[defenseKey],
-    natureFor(defender, defenseKey),
-    defenderStageIgnored ? 0 : defender.stages[defenseKey],
-  );
-  defenseStat = Math.floor(defenseStat * resolved.defender.defenseMultiplier);
-  if (defenderItem?.defenseMultiplier && (!defenderItem.specialDefenseOnly || category === 'special')) {
-    defenseStat = Math.floor(defenseStat * defenderItem.defenseMultiplier);
-  }
-  const weatherDef = weatherDefenseMultiplier(effectiveWeather, defenderForm.types, category);
-  if (weatherDef !== 1) defenseStat = Math.floor(defenseStat * weatherDef);
+  /** 방어 실수치 전 과정. 랭크만 바꿔가며 다시 부를 수 있어야 한다(지구력). */
+  const defenseAtStage = (stage: number): number => {
+    let value = effectiveStat(
+      defenderForm.stats[defenseKey],
+      defender.points[defenseKey],
+      natureFor(defender, defenseKey),
+      defenderStageIgnored ? 0 : stage,
+    );
+    value = Math.floor(value * resolved.defender.defenseMultiplier);
+    if (defenderItem?.defenseMultiplier && (!defenderItem.specialDefenseOnly || category === 'special')) {
+      value = Math.floor(value * defenderItem.defenseMultiplier);
+    }
+    const weatherDef = weatherDefenseMultiplier(effectiveWeather, defenderForm.types, category);
+    if (weatherDef !== 1) value = Math.floor(value * weatherDef);
+    return value;
+  };
+  const baseDefenseStage = defender.stages[defenseKey];
+  const defenseStat = defenseAtStage(baseDefenseStage);
+
+  /**
+   * 지구력 — 맞을 때마다 방어가 1랭크 오른다.
+   * 연속기에서는 2타·3타가 더 단단한 방어를 상대하므로 타격마다 다시 계산해야 한다.
+   * 방어가 오르는 것이라 특수기에는 영향이 없다.
+   */
+  const stamina = defender.ability === 'Stamina' && category === 'physical' && !defenderStageIgnored;
+  const perHitDefenses = stamina
+    ? Array.from({ length: hits }, (_, i) => defenseAtStage(baseDefenseStage + i))
+    : undefined;
 
   const stab = resolved.attacker.stabOverride ?? stabMultiplier(moveType, attackerForm.types);
 
@@ -1445,6 +1461,7 @@ function moveResult(
     hits,
     // 타격마다 위력이 커지는 기술은 타격별 위력을 넘긴다 (트리플악셀 20/40/60).
     perHitPowers: isEscalating(move) ? escalatingPowers(move, hits) : undefined,
+    perHitDefenses,
     moveType,
     category,
     attack: attackStat,
@@ -1493,8 +1510,13 @@ function moveResult(
     el(
       'p',
       { class: 'calc__breakdown' },
-      `${category === 'physical' ? '물리' : '특수'} 위력 ${effectivePower} · ` +
-        `공격 ${attackStat} / 방어 ${defenseStat} · ` +
+      `${category === 'physical' ? '물리' : '특수'} 위력 ${
+        // 타격마다 커지는 기술은 첫 타 위력이 아니라 합계를 보여야 한다.
+        isEscalating(move) ? escalatingPowers(move, hits).reduce((a, b) => a + b, 0) : effectivePower
+      } · ` +
+        `공격 ${attackStat} / 방어 ${
+          perHitDefenses ? perHitDefenses.join('→') : defenseStat
+        } · ` +
         `상성 ×${result.typeEffectiveness}${stab !== 1 ? ` · 자속 ×${stab}` : ''}`,
     ),
   );

@@ -441,3 +441,50 @@ describe('타격마다 위력이 커지는 연속기 (트리플악셀)', () => {
     expect(result.max).toBe(sumOfMaxes);
   });
 });
+
+describe('지구력 — 맞을 때마다 방어가 오른다', () => {
+  const base = {
+    power: 20,
+    moveType: 'Ice' as const,
+    category: 'physical' as const,
+    attack: 150,
+    defenderHp: 300,
+    attackerTypes: ['Ice' as const],
+    defenderTypes: ['Normal' as const],
+  };
+
+  it('타격마다 방어가 커지면 뒤 타격이 덜 아프다', () => {
+    // 방어 100 → +1랭크 150 → +2랭크 200 (랭크 보정 (2+n)/2)
+    const result = calculateDamage({
+      ...base,
+      defense: 100,
+      perHitPowers: [20, 40, 60],
+      perHitDefenses: [100, 150, 200],
+    });
+    const [one, two, three] = result.perHitRanges;
+    // 위력은 1→2→3배로 커지지만 방어도 1→1.5→2배라 증가폭이 눌린다.
+    expect(two![0] / one![0]).toBeLessThan(2);
+    expect(three![0] / one![0]).toBeLessThan(3);
+  });
+
+  it('지구력이 없을 때보다 총 대미지가 적다', () => {
+    const withStamina = calculateDamage({
+      ...base,
+      defense: 100,
+      perHitPowers: [20, 40, 60],
+      perHitDefenses: [100, 150, 200],
+    });
+    const without = calculateDamage({ ...base, defense: 100, perHitPowers: [20, 40, 60] });
+    expect(withStamina.max).toBeLessThan(without.max);
+  });
+
+  it('방어 배열이 타격 수보다 짧으면 마지막 값을 이어 쓴다', () => {
+    const result = calculateDamage({
+      ...base,
+      defense: 100,
+      perHitPowers: [20, 40, 60],
+      perHitDefenses: [100, 150],
+    });
+    expect(result.perHitRanges).toHaveLength(3);
+  });
+});

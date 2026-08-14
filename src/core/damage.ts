@@ -169,6 +169,11 @@ export interface DamageInput {
    * 같은 위력을 n번 곱하면 안 된다 — 난수도 타격마다 따로 뽑히므로 분포가 달라진다.
    */
   perHitPowers?: number[];
+  /**
+   * 타격별 방어 실수치. 지구력처럼 **맞을 때마다 방어가 오르는** 경우에 쓴다.
+   * 주어지면 각 타격을 해당 방어로 계산한다.
+   */
+  perHitDefenses?: number[];
 }
 
 export interface DamageResult {
@@ -241,6 +246,7 @@ export function calculateDamage(input: DamageInput): DamageResult {
     typeEffectivenessOverride,
     defenderCurrentHp,
     perHitPowers,
+    perHitDefenses,
   } = input;
   const hits = Math.max(1, Math.round(rawHits));
 
@@ -266,11 +272,11 @@ export function calculateDamage(input: DamageInput): DamageResult {
   }
 
   /** 위력 하나에 대한 16개 난수. 타격마다 위력이 다르면 타격마다 부른다. */
-  const rollsForPower = (hitPower: number): number[] => {
+  const rollsForPower = (hitPower: number, hitDefense: number): number[] => {
   // 1. 기본 대미지
   const base =
     Math.floor(
-      Math.floor((Math.floor((2 * LEVEL) / 5) + 2) * hitPower * attack / defense) / 50,
+      Math.floor((Math.floor((2 * LEVEL) / 5) + 2) * hitPower * attack / hitDefense) / 50,
     ) + 2;
 
   return ROLLS.map((roll) => {
@@ -317,7 +323,12 @@ export function calculateDamage(input: DamageInput): DamageResult {
     perHitPowers && perHitPowers.length > 0
       ? perHitPowers.map((p) => Math.max(1, pokeRound(p * powerModifier)))
       : new Array(hits).fill(power);
-  const perHitRolls = powers.map(rollsForPower);
+  // 지구력처럼 타격마다 방어가 달라지면 그 값을, 아니면 같은 방어를 쓴다.
+  const defenses =
+    perHitDefenses && perHitDefenses.length > 0
+      ? powers.map((_, i) => Math.max(1, perHitDefenses[Math.min(i, perHitDefenses.length - 1)]!))
+      : powers.map(() => defense);
+  const perHitRolls = powers.map((p, i) => rollsForPower(p, defenses[i]!));
   const rolls = perHitRolls[0] ?? new Array(16).fill(0);
 
   // 기술 1회 사용의 대미지 분포. 연속기는 타격마다 난수를 따로 뽑으므로 분포를 합성한다.

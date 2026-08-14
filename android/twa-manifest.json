@@ -15,8 +15,8 @@
   "startUrl": "/",
   "iconUrl": "https://jinhyuk5761.github.io/icon-512.png",
   "maskableIconUrl": "https://jinhyuk5761.github.io/icon-maskable-512.png",
-  "appVersion": "1.0.1",
-  "appVersionCode": 2,
+  "appVersion": "1.0.2",
+  "appVersionCode": 3,
   "splashScreenFadeOutDuration": 300,
   "shortcuts": [
     {
@@ -36,7 +36,7 @@
     "path": "C:\\Users\\User\\.android-keys\\champions-meta.keystore",
     "alias": "champions-meta"
   },
-  "appVersionName": "1.0.1",
+  "appVersionName": "1.0.2",
   "webManifestUrl": "https://jinhyuk5761.github.io/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {},

@@ -951,12 +951,15 @@ select optgroup {
 .sselect__hint { font-size: 11px; color: var(--text-dim); white-space: nowrap; }
 .sselect__caret { color: var(--text-dim); font-size: 10px; }
 
+/*
+ * 패널은 화면 최상단에 고정한다.
+ *
+ * 버튼 아래에 붙이면 검색창 포커스로 올라온 키보드가 덮는다. 자리·크기는
+ * 스크립트가 visualViewport 로 재서 top/left/width/max-height 를 직접 넣는다.
+ */
 .sselect__panel {
-  position: absolute;
-  z-index: 20;
-  top: calc(100% + 2px);
-  left: 0;
-  right: 0;
+  position: fixed;
+  z-index: 60;
   background: var(--surface);
   border: 1px solid var(--accent);
   border-radius: var(--radius);
@@ -973,19 +976,6 @@ select optgroup {
  * 명시적으로 다시 숨긴다.
  */
 .sselect__panel[hidden] { display: none; }
-/*
- * 위로 펼치기.
- *
- * 검색창에 포커스가 가면 키보드가 화면 아래를 덮어 아래로 편 패널을 가린다.
- * 자리가 있으면 위로 펴고, 검색창은 버튼 쪽(아래)에 붙여 손가락 이동을 줄인다.
- * 높이는 스크립트가 남은 공간에 맞춰 max-height 로 덮어쓴다.
- */
-.sselect--up .sselect__panel {
-  top: auto;
-  bottom: calc(100% + 2px);
-  flex-direction: column-reverse;
-}
-.sselect--up .sselect__search { margin-bottom: 0; margin-top: 4px; }
 .sselect__search {
   width: 100%;
   padding: 6px 8px;
@@ -1025,7 +1015,6 @@ select optgroup {
 /* 랭크는 좁은 칸에 들어가므로 버튼을 조인다. 패널은 내용에 맞춰 넓힌다. */
 .calc__stage .sselect__button { padding: 2px 4px; font-size: 11px; gap: 2px; justify-content: center; }
 .calc__stage .sselect__value { flex: none; }
-.calc__stage .sselect__panel { left: auto; right: 0; min-width: 72px; }
 .calc__stage--up .sselect__value { color: var(--stat-up); font-weight: 700; }
 .calc__stage--down .sselect__value { color: var(--stat-down); font-weight: 700; }
 

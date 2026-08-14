@@ -112,39 +112,53 @@ export function searchSelect(config: SearchSelectOptions): HTMLElement {
     }
   };
 
-  /** 패널이 화면 밖으로 나가지 않게 남는 자리를 재는 최소 높이. */
-  const MIN_PANEL = 180;
+  /** 화면 가장자리에서 띄우는 여백. */
+  const GAP = 8;
+  /** 좁은 칸(랭크)에 붙어도 목록이 읽히도록 하는 최소 너비. */
+  const MIN_WIDTH = 220;
 
   /**
-   * 위로 펼지 아래로 펼지 정한다.
+   * 패널을 화면 맨 위에 붙인다.
    *
-   * 검색창에 포커스가 가면 키보드가 올라와 화면 아래쪽을 덮는다. 아래로 편 패널은
-   * 그대로 가려지므로 자리만 있으면 위로 편다. 키보드가 뜨면 visualViewport 높이가
-   * 줄어드니, 그때 다시 불러 방향을 고쳐 잡는다.
+   * 버튼 아래에 펴면 검색창 포커스로 올라온 키보드가 그대로 덮는다. 위로 펴는 것도
+   * 버튼이 화면 위쪽에 있으면 자리가 안 나온다. 아예 화면 최상단에 고정하면
+   * 버튼이 어디 있든 키보드와 겹치지 않는다.
+   *
+   * 높이는 `visualViewport` 로 잰다 — 키보드가 뜨면 이 값이 줄어들므로
+   * 목록이 키보드 밑으로 흘러 들어가지 않는다.
    */
   function place(): void {
     const rect = button.getBoundingClientRect();
     const view = window.visualViewport;
     const viewTop = view?.offsetTop ?? 0;
+    const viewLeft = view?.offsetLeft ?? 0;
+    const viewWidth = view?.width ?? window.innerWidth;
     const viewHeight = view?.height ?? window.innerHeight;
-    const above = rect.top - viewTop - 8;
-    const below = viewTop + viewHeight - rect.bottom - 8;
 
-    const up = above >= MIN_PANEL || above > below;
-    root.classList.toggle('sselect--up', up);
+    // 좁은 버튼에는 버튼보다 넓게, 화면보다는 좁게.
+    const width = Math.max(0, Math.min(viewWidth - GAP * 2, Math.max(MIN_WIDTH, rect.width)));
+    // 버튼과 가로로 맞추되 화면 밖으로 나가지 않게 민다.
+    const left = Math.min(
+      Math.max(viewLeft + GAP, rect.left),
+      Math.max(viewLeft + GAP, viewLeft + viewWidth - width - GAP),
+    );
 
-    const room = up ? above : below;
-    // jsdom 이나 측정 전에는 0 이 나온다. 그때는 CSS 기본값을 그대로 둔다.
-    panel.style.maxHeight = room > 0 ? `${Math.min(320, Math.max(MIN_PANEL, room))}px` : '';
+    panel.style.top = `${viewTop + GAP}px`;
+    panel.style.left = `${left}px`;
+    panel.style.right = 'auto';
+    panel.style.width = `${width}px`;
+    panel.style.maxHeight = `${Math.max(160, viewHeight - GAP * 2)}px`;
   }
 
   function close(): void {
     panel.hidden = true;
-    root.classList.remove('sselect--open', 'sselect--up');
-    panel.style.maxHeight = '';
+    root.classList.remove('sselect--open');
+    panel.removeAttribute('style');
     if (openPanel === close) openPanel = null;
     document.removeEventListener('click', onOutside, true);
+    window.removeEventListener('scroll', place, true);
     window.visualViewport?.removeEventListener('resize', place);
+    window.visualViewport?.removeEventListener('scroll', place);
   }
 
   function onOutside(event: Event): void {
@@ -167,8 +181,10 @@ export function searchSelect(config: SearchSelectOptions): HTMLElement {
     place();
     if (!search.hidden) search.focus();
     document.addEventListener('click', onOutside, true);
-    // 키보드가 올라오면 남는 자리가 바뀐다.
+    // 키보드가 오르내리거나 화면이 움직이면 버튼 위치와 남는 높이가 바뀐다.
+    window.addEventListener('scroll', place, true);
     window.visualViewport?.addEventListener('resize', place);
+    window.visualViewport?.addEventListener('scroll', place);
   });
 
   search.addEventListener('input', draw);

@@ -738,3 +738,59 @@ h4 { font-size: 15px; margin: 0; }
 @media (max-width: 720px) {
   .dexrow--ability { grid-template-columns: 1fr; }
 }
+
+/* ---------- 계산기 장 넘기기 ---------- */
+
+.calc__pagertabs {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  margin: 12px 0 8px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg);
+  padding: 6px 0;
+}
+.calc__pagertab {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+.calc__pagertab--active { background: var(--accent-soft); color: var(--accent); font-weight: 600; border-color: var(--accent); }
+
+.calc__pager {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  gap: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  /* 스냅으로 넘기므로 스크롤바는 지운다. */
+  scrollbar-width: none;
+}
+.calc__pager::-webkit-scrollbar { display: none; }
+.calc__page { scroll-snap-align: start; min-width: 0; }
+
+/*
+ * 넓은 화면에서는 넘길 이유가 없다. 스냅을 끄고 세 장을 그대로 펼친다.
+ * (공격·방어는 나란히, 결과는 아래 한 줄 전체)
+ */
+@media (min-width: 721px) {
+  .calc__pagertabs { display: none; }
+  .calc__pager {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-columns: auto;
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+  .calc__page:last-child { grid-column: 1 / -1; }
+}

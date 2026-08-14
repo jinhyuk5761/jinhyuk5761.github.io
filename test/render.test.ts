@@ -1015,3 +1015,49 @@ describe('특성 목록', () => {
     expect(row.querySelector('.dexrow__count')).toBeNull();
   });
 });
+
+describe('계산기 장 넘기기', () => {
+  it('공격 · 방어 · 결과 세 장으로 나뉜다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    const labels = [...document.querySelectorAll('.calc__pagertab')].map((t) => t.textContent);
+    expect(labels).toEqual(['공격', '방어', '결과']);
+
+    const pages = [...document.querySelectorAll('.calc__page')];
+    expect(pages).toHaveLength(3);
+    // 기술은 공격측의 것이라 공격 장에, 결과는 필드 상황과 함께 마지막 장에 있다.
+    expect(pages[0]!.querySelector('.calc__moves')).not.toBeNull();
+    expect(pages[2]!.querySelector('.calc__damage')).not.toBeNull();
+  });
+
+  it('장을 나눠도 부분 갱신이 그대로 동작한다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    // 공격 장의 입력이 결과 장의 값을 바꿔야 한다 (같은 노드를 계속 붙잡고 있어야 성립).
+    const stage = document.querySelectorAll<HTMLSelectElement>('.calc__stage')[0]!;
+    const before = document.querySelector('.calc__damage')!.textContent!;
+    stage.value = '2';
+    stage.dispatchEvent(new Event('change'));
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')!.textContent).not.toBe(before);
+    });
+  });
+
+  it('계산기의 폼 선택도 한국어다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.form-select')).not.toBeNull();
+    });
+    const options = [...document.querySelectorAll('.calc__side .form-select option')].map(
+      (o) => o.textContent,
+    );
+    expect(options).toContain('메가 한카리아스');
+    expect(options).not.toContain('Mega Garchomp');
+  });
+});

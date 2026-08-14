@@ -43,6 +43,7 @@ import {
   type Terrain,
   type Weather,
 } from '../core/damage';
+import { formDisplayName } from '../core/formNames';
 import { isMegaStoneName, megaStoneFor } from '../core/megaStones';
 import { matchesQuery } from '../core/names';
 import { isSpreadMove, traitsOf } from '../core/moveTraits';
@@ -364,6 +365,56 @@ export function renderCalculator(container: HTMLElement, route: Route): void {
 }
 
 /**
+ * 좌우로 넘겨 보는 장 구성.
+ *
+ * CSS 스크롤 스냅을 쓴다 — 손가락 제스처를 직접 처리하면 관성·되돌아감·
+ * 접근성 스크롤을 전부 다시 만들어야 하는데, 브라우저가 이미 다 갖고 있다.
+ * 넓은 화면에서는 스냅을 끄고 한 줄로 펼친다(아래 CSS).
+ *
+ * **여기서 만든 노드를 다시 만들지 않는다.** 부분 갱신이 이 노드들을 붙잡고 있으므로
+ * 장을 옮겨 담기만 한다.
+ */
+function pager(pages: { label: string; nodes: HTMLElement[] }[]): HTMLElement {
+  const track = el('div', { class: 'calc__pager' });
+  const tabs = el('div', { class: 'calc__pagertabs', role: 'tablist' });
+  const pageEls: HTMLElement[] = [];
+
+  pages.forEach((page, i) => {
+    const section = el('section', { class: 'calc__page', 'aria-label': page.label }, ...page.nodes);
+    pageEls.push(section);
+    track.appendChild(section);
+
+    const tab = el(
+      'button',
+      { class: `calc__pagertab${i === 0 ? ' calc__pagertab--active' : ''}`, type: 'button' },
+      page.label,
+    );
+    tab.addEventListener('click', () => {
+      section.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    });
+    tabs.appendChild(tab);
+  });
+
+  // 손가락으로 넘겼을 때도 탭 표시가 따라가야 한다.
+  track.addEventListener(
+    'scroll',
+    () => {
+      const middle = track.scrollLeft + track.clientWidth / 2;
+      let active = 0;
+      pageEls.forEach((section, i) => {
+        if (section.offsetLeft <= middle) active = i;
+      });
+      [...tabs.children].forEach((tab, i) => {
+        tab.classList.toggle('calc__pagertab--active', i === active);
+      });
+    },
+    { passive: true },
+  );
+
+  return el('div', { class: 'calc__pagerwrap' }, tabs, track);
+}
+
+/**
  * 폼을 한 번만 짓고, 이후에는 필요한 조각만 다시 그린다.
  * 예전에는 입력 하나 건드릴 때마다 전체를 새로 그려서 새로고침처럼 보였다.
  */
@@ -374,14 +425,19 @@ function buildForm(host: HTMLElement, dex: MoveDex | null, initialUsage: UsageRe
 
   const attackerPanel = el('div', { class: 'calc__side' });
   const defenderPanel = el('div', { class: 'calc__side' });
-  host.appendChild(el('div', { class: 'calc__sides' }, attackerPanel, defenderPanel));
-
   const moveHost = el('div');
   const fieldHost = el('div');
   const resultHost = el('div');
-  host.appendChild(moveHost);
-  host.appendChild(fieldHost);
-  host.appendChild(resultHost);
+
+  // 폰에서는 공격 / 방어 / 결과를 한 장씩 넘겨 본다.
+  // 기술은 공격측의 것이라 공격 장에, 필드 상황은 조정하며 결과를 봐야 해서 결과 장에 둔다.
+  host.appendChild(
+    pager([
+      { label: '공격', nodes: [attackerPanel, moveHost] },
+      { label: '방어', nodes: [defenderPanel] },
+      { label: '결과', nodes: [fieldHost, resultHost] },
+    ]),
+  );
 
   /** 결과만 다시 계산한다. 대부분의 입력이 이것만 부른다. */
   const recalc = (): void => {
@@ -512,7 +568,11 @@ function sidePanel(
   if (mon.forms.length > 1) {
     const select = el('select', { class: 'form-select', 'aria-label': `${title} 폼` });
     for (const candidate of mon.forms) {
-      const option = el('option', { value: candidate.slug }, candidate.formName);
+      const option = el(
+        'option',
+        { value: candidate.slug },
+        formDisplayName(mon, candidate, state.index?.pokemon ?? []),
+      );
       if (candidate.slug === form.slug) option.setAttribute('selected', 'selected');
       select.appendChild(option);
     }
@@ -529,8 +589,7 @@ function sidePanel(
       el(
         'p',
         { class: 'calc__form-note' },
-        '실수치·타입·특성은 폼별 값입니다. 성격·노력치·기술 기본값은 사용률에서 오는데, ' +
-          '사용률은 폼 구분 없이 종 단위로만 집계돼 폼을 바꿔도 같습니다.',
+        '성격·노력치·기술 기본값은 종 단위 집계라 폼을 바꿔도 같습니다.',
       ),
     );
   }

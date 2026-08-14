@@ -155,6 +155,8 @@ let terrain: Terrain = 'none';
 let screen = false;
 let critical = false;
 let movesLast = false;
+/** 전기로바꾸기 — 맞은 뒤에 발동하므로 계산기가 알 수 없다. 사람이 켠다. */
+let attackerCharged = false;
 let fallenAllies = 0;
 let genderRelation: 'same' | 'different' | 'unknown' = 'unknown';
 const hitChoices = new Map<string, number>();
@@ -1048,6 +1050,13 @@ function fieldSection(dex: MoveDex | null, onInput: () => void): HTMLElement {
     grid.appendChild(toggle(`공격측이 나중에 행동 (${lastMoverReason})`, movesLast, (v) => (movesLast = v)));
   }
 
+  // 전기로바꾸기는 '맞은 뒤' 상태라 계산기가 스스로 알 수 없다.
+  if (attacker.ability === 'Electromorphosis') {
+    grid.appendChild(
+      toggle('충전됨 (전기로바꾸기)', attackerCharged, (v) => (attackerCharged = v)),
+    );
+  }
+
   if (anySideHasAbility('Supreme Overlord')) {
     const fallen = el('select', { class: 'calc__select', 'aria-label': '쓰러진 아군 수' });
     for (let n = 0; n <= 5; n += 1) {
@@ -1200,6 +1209,7 @@ function moveResult(
     attackerBurned: burned,
     defenderStatused,
     movesLast,
+    attackerCharged,
     fallenAllies,
     genderRelation,
   };

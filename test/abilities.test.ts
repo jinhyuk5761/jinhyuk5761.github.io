@@ -36,6 +36,7 @@ function ctx(overrides: Partial<AbilityContext> = {}): AbilityContext {
     attackerBurned: false,
     defenderStatused: false,
     movesLast: false,
+    attackerCharged: false,
     fallenAllies: 0,
     genderRelation: 'unknown',
     ...overrides,
@@ -456,5 +457,35 @@ describe('사용자가 게임에서 확인해 준 Champions 특성', () => {
     const out = resolveAbilities('Dragonize', null, ctx({ moveType: 'Normal' }));
     expect(out.attacker.moveTypeOverride).toBe('Dragon');
     expect(out.attacker.powerMultiplier).toBeGreaterThan(1);
+  });
+});
+
+describe('전기로바꾸기 — 충전 상태', () => {
+  it('충전되면 전기 기술 위력이 2배', () => {
+    const out = resolveAbilities(
+      'Electromorphosis',
+      null,
+      ctx({ moveType: 'Electric', attackerCharged: true }),
+    );
+    expect(out.attacker.powerMultiplier).toBe(2);
+  });
+
+  it('충전 전에는 아무 일도 없다', () => {
+    // 맞아야 충전되는 특성이라 기본은 꺼짐이어야 한다.
+    const out = resolveAbilities(
+      'Electromorphosis',
+      null,
+      ctx({ moveType: 'Electric', attackerCharged: false }),
+    );
+    expect(out.attacker.powerMultiplier).toBe(1);
+  });
+
+  it('충전돼도 전기 기술이 아니면 그대로다', () => {
+    const out = resolveAbilities(
+      'Electromorphosis',
+      null,
+      ctx({ moveType: 'Water', attackerCharged: true }),
+    );
+    expect(out.attacker.powerMultiplier).toBe(1);
   });
 });

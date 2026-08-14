@@ -40,6 +40,11 @@ export interface AbilityContext {
   defenderStatused: boolean;
   /** 공격측이 나중에 움직이는가 (애널라이즈) */
   movesLast: boolean;
+  /**
+   * 공격측이 충전 상태인가 (전기로바꾸기).
+   * 이 특성은 **맞은 뒤에** 발동하므로 계산기가 스스로 알 수 없다 — 사람이 켠다.
+   */
+  attackerCharged: boolean;
   /** 쓰러진 아군 수 0~5 (총대장) */
   fallenAllies: number;
   /** 공격측과 방어측의 성별 관계 (투쟁심) */
@@ -275,6 +280,14 @@ const ATTACKER_LIST: AbilityDef[] = [
   },
 
   // --- Champions 에서 풀린 CAP 특성 (Showdown 정의 기준) ---
+  {
+    name: 'Electromorphosis',
+    // 맞으면 충전 상태가 되고, 그 다음 전기 기술의 위력이 2배가 된다.
+    note: '충전 시 전기 기술 위력 ×2',
+    effect: (c, o) => {
+      if (c.attackerCharged && c.moveType === 'Electric') o.powerMultiplier *= 2;
+    },
+  },
   {
     name: 'Fire Mane',
     // 게임 내 설명은 "불꽃타입 기술의 **위력**이 1.5배" 다.

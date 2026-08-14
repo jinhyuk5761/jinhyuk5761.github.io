@@ -30,7 +30,6 @@ import {
   moveRow,
   sectionTitle,
   termBar,
-  smogonDisclaimer,
   sprite,
   typeBadge,
   usageBar,
@@ -87,31 +86,43 @@ function draw(page: HTMLElement, mon: Pokemon): void {
   page.appendChild(header(mon, form, () => draw(page, mon)));
 
   const tabBar = el('nav', { class: 'tabs', role: 'tablist' });
+  const panel = el('div', { class: 'tabs__panel', role: 'tabpanel' });
+  const buttons = new Map<Tab, HTMLElement>();
+
+  /**
+   * 탭을 바꿀 때는 패널만 갈아 끼운다.
+   *
+   * 예전에는 draw() 를 다시 불러서 헤더까지 통째로 지웠다. 화면이 한 번 비워지니
+   * 새로고침한 것처럼 깜빡이고, 높이가 0이 되는 순간 스크롤이 맨 위로 튄다.
+   */
+  const showTab = (): void => {
+    for (const [tab, button] of buttons) {
+      button.classList.toggle('tabs__tab--active', tab === activeTab);
+      button.setAttribute('aria-selected', String(tab === activeTab));
+    }
+    clear(panel);
+    if (activeTab === 'usage') renderUsagePanel(panel, mon);
+    else if (activeTab === 'counters') renderCountersPanel(panel, mon, activeForm(mon));
+    else renderMovesPanel(panel, mon);
+  };
+
   for (const tab of ['usage', 'counters', 'moves'] as Tab[]) {
     const button = el(
       'button',
-      {
-        class: `tabs__tab${tab === activeTab ? ' tabs__tab--active' : ''}`,
-        type: 'button',
-        role: 'tab',
-        'aria-selected': String(tab === activeTab),
-      },
+      { class: 'tabs__tab', type: 'button', role: 'tab' },
       TAB_LABEL[tab],
     );
     button.addEventListener('click', () => {
+      if (activeTab === tab) return;
       activeTab = tab;
-      draw(page, mon);
+      showTab();
     });
+    buttons.set(tab, button);
     tabBar.appendChild(button);
   }
   page.appendChild(tabBar);
-
-  const panel = el('div', { class: 'tabs__panel', role: 'tabpanel' });
   page.appendChild(panel);
-
-  if (activeTab === 'usage') renderUsagePanel(panel, mon);
-  else if (activeTab === 'counters') renderCountersPanel(panel, mon, form);
-  else renderMovesPanel(panel, mon);
+  showTab();
 }
 
 function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTMLElement {
@@ -353,7 +364,6 @@ function renderCountersPanel(panel: HTMLElement, mon: Pokemon, form: PokemonForm
     clear(panel);
 
     if (result.status !== 'ok') {
-      panel.appendChild(smogonDisclaimer(null));
       panel.appendChild(
         notice(result.status === 'empty' ? 'empty' : 'error', result.reason),
       );
@@ -366,14 +376,12 @@ function renderCountersPanel(panel: HTMLElement, mon: Pokemon, form: PokemonForm
       mon.forms.map((f) => f.savedName),
     );
     if (blocks.length === 0) {
-      panel.appendChild(smogonDisclaimer(null));
       panel.appendChild(
         notice('empty', 'Smogon 통계에 이 포켓몬의 Checks & Counters 표본이 없습니다.'),
       );
       return;
     }
 
-    panel.appendChild(smogonDisclaimer(blocks[0] ?? null));
 
     // 폼별로 나눠 보여준다 — Smogon 은 메가/지역폼을 별개 개체로 집계하기 때문.
     // 현재 선택된 폼을 맨 앞으로 올려 헤더와 시선이 이어지게 한다.

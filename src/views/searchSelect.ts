@@ -40,20 +40,33 @@ let openPanel: (() => void) | null = null;
 export function searchSelect(config: SearchSelectOptions): HTMLElement {
   const { options, value, placeholder, ariaLabel, onPick, searchThreshold = 8, className } = config;
 
-  const selected = options.find((o) => o.value === value);
+  /**
+   * 지금 고른 값. 컴포넌트가 스스로 들고 있어야 한다.
+   *
+   * 부모가 결과만 다시 그리는 경우(도구·성격·기술)가 많아서, 표시를 부모에게 맡기면
+   * 계산은 바뀌었는데 버튼에는 예전 값이 남아 "안 들어갔다" 로 보인다.
+   */
+  let current = value;
+
   const root = el('div', { class: `sselect${className ? ' ' + className : ''}` });
+  const valueLabel = el('span', { class: 'sselect__value' });
+  const hintLabel = el('span', { class: 'sselect__hint' });
+
+  const paint = (): void => {
+    const selected = options.find((o) => o.value === current);
+    valueLabel.textContent = selected ? selected.label : placeholder;
+    valueLabel.classList.toggle('sselect__value--empty', !selected);
+    hintLabel.textContent = selected?.hint ?? '';
+  };
 
   const button = el(
     'button',
     { class: 'sselect__button', type: 'button', 'aria-label': ariaLabel, 'aria-haspopup': 'listbox' },
-    el(
-      'span',
-      { class: `sselect__value${selected ? '' : ' sselect__value--empty'}` },
-      selected ? selected.label : placeholder,
-    ),
-    selected?.hint ? el('span', { class: 'sselect__hint' }, selected.hint) : null,
+    valueLabel,
+    hintLabel,
     el('span', { class: 'sselect__caret' }, '▾'),
   );
+  paint();
 
   const search = el('input', {
     class: 'sselect__search',
@@ -81,7 +94,7 @@ export function searchSelect(config: SearchSelectOptions): HTMLElement {
       const row = el(
         'button',
         {
-          class: `sselect__option${option.value === value ? ' sselect__option--on' : ''}`,
+          class: `sselect__option${option.value === current ? ' sselect__option--on' : ''}`,
           type: 'button',
           role: 'option',
         },
@@ -89,6 +102,9 @@ export function searchSelect(config: SearchSelectOptions): HTMLElement {
         option.hint ? el('span', { class: 'sselect__hint' }, option.hint) : null,
       );
       row.addEventListener('click', () => {
+        current = option.value;
+        // 부모가 결과만 다시 그려도 버튼에는 고른 값이 남아야 한다.
+        paint();
         close();
         onPick(option.value);
       });

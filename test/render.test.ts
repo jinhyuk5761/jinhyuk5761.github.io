@@ -350,6 +350,21 @@ describe('M2 상세', () => {
     expect(document.querySelector('.type[title="Dragon"]')).not.toBeNull();
   });
 
+  it('탭을 바꿔도 헤더를 다시 그리지 않는다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.detail__header')).not.toBeNull();
+    });
+    const header = document.querySelector('.detail__header')!;
+
+    const tabs = [...document.querySelectorAll<HTMLButtonElement>('.tabs__tab')];
+    tabs.find((t) => t.textContent === '카운터')!.click();
+
+    // 통째로 지우면 화면이 깜빡이고 스크롤이 맨 위로 튄다. 같은 노드가 남아 있어야 한다.
+    expect(document.querySelector('.detail__header')).toBe(header);
+    expect(document.querySelector('.tabs__tab--active')!.textContent).toBe('카운터');
+  });
+
   it('"크게 올린다" 를 랭크 수치로 못박는다', async () => {
     await mountApp('#/p/garchomp');
     await vi.waitFor(() => {
@@ -411,16 +426,16 @@ describe('M2 상세', () => {
 });
 
 describe('M3 카운터', () => {
-  it('경고 문구와 카운터 표를 함께 낸다', async () => {
+  it('카운터 표를 낸다', async () => {
     await mountApp('#/p/garchomp');
     document.querySelectorAll<HTMLButtonElement>('.tabs__tab')[1]!.click();
     await vi.waitFor(() => {
       expect(document.querySelector('.counters tbody tr')).not.toBeNull();
     });
     const text = document.body.textContent ?? '';
-    expect(text).toContain('Nintendo Switch 랭크전과 표본·규칙·메타가 다르므로');
-    expect(text).toContain('gen9championsbssregmb');
     expect(text).toContain('알로라 나인테일'); // Champions 폼으로 매칭된 카운터
+    // 출처 고지는 접근성 탭에만 두고 카운터 위에서는 걷어냈다.
+    expect(text).not.toContain('Nintendo Switch 랭크전과 표본·규칙·메타가 다르므로');
   });
 
   it('매칭 실패한 카운터는 Showdown 표기로 남긴다', async () => {
@@ -1484,5 +1499,26 @@ describe('드롭다운 디자인 통일', () => {
     status.querySelector<HTMLButtonElement>('.sselect__button')!.click();
     expect(status.querySelector<HTMLElement>('.sselect__panel')!.hidden).toBe(false);
     expect(status.querySelector<HTMLInputElement>('.sselect__search')!.hidden).toBe(true);
+  });
+});
+
+describe('도구가 계산에 반영된다', () => {
+  it('생명의구슬을 고르면 대미지가 늘고 표시도 바뀐다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    const before = document.querySelector('.calc__damage')!.textContent!;
+    const item = document.querySelector('.calc__modifier')!;
+    // 픽스처 도감에 한국어명이 없어 영문 그대로 나온다.
+    pickFrom(item, 'Life Orb');
+
+    // 1) 계산에 반영돼야 한다
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')!.textContent).not.toBe(before);
+    });
+    // 2) 고른 값이 화면에도 남아야 한다 — 안 바뀌면 '안 들어갔다' 로 보인다
+    expect(pickerValue(document.querySelector('.calc__modifier'))).toBe('Life Orb');
   });
 });

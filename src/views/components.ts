@@ -9,7 +9,6 @@ import { el } from '../core/dom';
 import { href } from '../router';
 import { state } from '../store';
 import type {
-  CounterBlock,
   CounterEntry,
   Format,
   Pokemon,
@@ -117,26 +116,6 @@ export function usageBar(name: string, percentage: string, value: number | null)
   row.appendChild(track);
   row.appendChild(el('span', { class: 'bar__value' }, percentage || `${value}%`));
   return row;
-}
-
-/**
- * M3 필수 고지 — 설계 문서 6절.
- * Smogon 데이터를 보여주는 모든 자리에 상시 노출한다.
- */
-export function smogonDisclaimer(block: CounterBlock | null): HTMLElement {
-  const detail = block
-    ? `${block.metagame} · cutoff ${block.cutoff} · ${block.months.join(', ')} · ${block.battles.toLocaleString('ko-KR')}배틀`
-    : '';
-  return el(
-    'div',
-    { class: 'disclaimer' },
-    el(
-      'p',
-      {},
-      'Pokémon Showdown 래더 통계 기반입니다. Nintendo Switch 랭크전과 표본·규칙·메타가 다르므로 그대로 대입할 수 없습니다.',
-    ),
-    detail ? el('p', { class: 'disclaimer__meta' }, detail) : null,
-  );
 }
 
 /**

@@ -21,3 +21,12 @@ Thumbs.db
 # 테스트가 쓰는 건 test/fixtures/ 쪽이다.
 /fixtures/
 *.log
+
+# Android(TWA) 빌드 산출물. 서명 키는 저장소 밖(~/.android-keys)에 있다.
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/*.apk
+android/*.aab
+android/*.idsig

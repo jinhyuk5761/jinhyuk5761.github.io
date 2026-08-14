@@ -1,0 +1,55 @@
+{
+  "packageId": "io.github.jinhyuk5761.championsmeta",
+  "host": "jinhyuk5761.github.io",
+  "name": "Pokémon Champions 메타",
+  "launcherName": "챔피언스 메타",
+  "display": "standalone",
+  "themeColor": "#181c23",
+  "themeColorDark": "#181c23",
+  "navigationColor": "#181c23",
+  "navigationColorDark": "#181c23",
+  "navigationDividerColor": "#181c23",
+  "navigationDividerColorDark": "#181c23",
+  "backgroundColor": "#101318",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://jinhyuk5761.github.io/icon-512.png",
+  "maskableIconUrl": "https://jinhyuk5761.github.io/icon-maskable-512.png",
+  "appVersion": "1.0.0",
+  "appVersionCode": 1,
+  "splashScreenFadeOutDuration": 300,
+  "shortcuts": [
+    {
+      "name": "포켓몬 검색",
+      "shortName": "검색",
+      "url": "/#/",
+      "chosenIconUrl": "https://jinhyuk5761.github.io/icon-192.png"
+    },
+    {
+      "name": "대미지 계산기",
+      "shortName": "계산기",
+      "url": "/#/calc",
+      "chosenIconUrl": "https://jinhyuk5761.github.io/icon-192.png"
+    }
+  ],
+  "signingKey": {
+    "path": "C:\\Users\\User\\.android-keys\\champions-meta.keystore",
+    "alias": "champions-meta"
+  },
+  "appVersionName": "1.0.0",
+  "webManifestUrl": "https://jinhyuk5761.github.io/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://jinhyuk5761.github.io/",
+  "minSdkVersion": 23,
+  "orientation": "portrait",
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "generatorApp": "bubblewrap-cli"
+}

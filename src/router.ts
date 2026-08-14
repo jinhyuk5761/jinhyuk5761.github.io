@@ -38,6 +38,15 @@ export function parseHash(hash: string): Route {
 }
 
 export function currentRoute(): Route {
+  /*
+   * 안드로이드 앱 바로가기는 주소의 **프래그먼트(#)** 를 그대로 전달하지 못한다.
+   * `/#/mini` 를 넣어도 런처가 무시하고 기본 주소로 앱을 열어버린다.
+   * 그래서 프래그먼트 대신 쿼리(`?view=mini`)로도 들어올 수 있게 한다.
+   */
+  if (!location.hash) {
+    const view = new URLSearchParams(location.search).get('view');
+    if (view) return parseHash(`#/${view}`);
+  }
   return parseHash(location.hash);
 }
 

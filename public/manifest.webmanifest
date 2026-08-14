@@ -33,7 +33,7 @@
     {
       "name": "대미지 계산기",
       "short_name": "계산기",
-      "url": "./#/mini",
+      "url": "./?view=mini",
       "icons": [
         {
           "src": "icon-192.png",
@@ -44,7 +44,7 @@
     {
       "name": "포켓몬 검색",
       "short_name": "검색",
-      "url": "./#/",
+      "url": "./",
       "icons": [
         {
           "src": "icon-192.png",

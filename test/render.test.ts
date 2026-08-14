@@ -1295,6 +1295,40 @@ describe('팝업 전용 계산기 (#/mini)', () => {
       readFileSync(path.join(import.meta.dirname, '..', 'public', 'manifest.webmanifest'), 'utf8'),
     ) as { shortcuts: { short_name: string; url: string }[] };
     const calc = manifest.shortcuts.find((s) => s.short_name === '계산기');
-    expect(calc?.url).toContain('/mini');
+    expect(calc?.url).toContain('view=mini');
+  });
+});
+
+describe('앱 바로가기로 팝업 계산기 열기', () => {
+  it('쿼리(?view=mini)로도 팝업 계산기에 들어간다', async () => {
+    // 안드로이드 바로가기는 주소의 프래그먼트(#)를 전달하지 못한다.
+    // 그래서 쿼리로도 같은 화면에 닿아야 한다.
+    const url = new URL(window.location.href);
+    url.search = '?view=mini';
+    url.hash = '';
+    window.history.replaceState(null, '', url.toString());
+
+    document.body.innerHTML = '<div id="app"></div>';
+    vi.resetModules();
+    await import('../src/main');
+    await vi.waitFor(() => {
+      if (document.querySelector('.notice--loading')) throw new Error('아직 로딩 중');
+    });
+    (await import('../src/store')).stopConfigPolling();
+
+    expect(document.body.classList.contains('mini')).toBe(true);
+    expect(document.querySelector('.shell__header')).toBeNull();
+
+    window.history.replaceState(null, '', url.origin + url.pathname);
+  });
+
+  it('바로가기 주소에 프래그먼트를 쓰지 않는다', () => {
+    const manifest = JSON.parse(
+      readFileSync(path.join(import.meta.dirname, '..', 'android', 'twa-manifest.json'), 'utf8'),
+    ) as { shortcuts: { shortName: string; url: string }[] };
+    const calc = manifest.shortcuts.find((s) => s.shortName === '계산기')!;
+    // '#' 이 들어가면 런처가 무시하고 기본 주소로 앱만 열린다.
+    expect(calc.url).not.toContain('#');
+    expect(calc.url).toContain('view=mini');
   });
 });

@@ -1,8 +1,8 @@
 {
   "packageId": "com.metamon.championsmeta",
   "host": "jinhyuk5761.github.io",
-  "name": "Pokémon Champions 메타",
-  "launcherName": "챔피언스 메타",
+  "name": "메타몬",
+  "launcherName": "메타몬",
   "display": "standalone",
   "themeColor": "#f6f7fb",
   "themeColorDark": "#f6f7fb",
@@ -15,8 +15,8 @@
   "startUrl": "/",
   "iconUrl": "https://jinhyuk5761.github.io/icon-512.png",
   "maskableIconUrl": "https://jinhyuk5761.github.io/icon-maskable-512.png",
-  "appVersion": "1.0.3",
-  "appVersionCode": 4,
+  "appVersion": "1.0.4",
+  "appVersionCode": 5,
   "splashScreenFadeOutDuration": 300,
   "shortcuts": [
     {
@@ -36,7 +36,7 @@
     "path": "C:\\Users\\User\\.android-keys\\champions-meta.keystore",
     "alias": "champions-meta"
   },
-  "appVersionName": "1.0.3",
+  "appVersionName": "1.0.4",
   "webManifestUrl": "https://jinhyuk5761.github.io/manifest.webmanifest",
   "fallbackType": "customtabs",
   "features": {},

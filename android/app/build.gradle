@@ -21,7 +21,7 @@ plugins {
 }
 
 def twaManifest = [
-    applicationId: 'io.github.jinhyuk5761.championsmeta',
+    applicationId: 'com.metamon.championsmeta',
     hostName: 'jinhyuk5761.github.io', // The domain being opened in the TWA.
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
     name: 'Pokémon Champions 메타', // The application name.
@@ -52,9 +52,9 @@ def twaManifest = [
 
 android {
     compileSdkVersion 36
-    namespace "io.github.jinhyuk5761.championsmeta"
+    namespace "com.metamon.championsmeta"
     defaultConfig {
-        applicationId "io.github.jinhyuk5761.championsmeta"
+        applicationId "com.metamon.championsmeta"
         minSdkVersion 23
         targetSdkVersion 36
         versionCode 1

@@ -6,7 +6,7 @@
 
 | | |
 |---|---|
-| 패키지명 | `io.github.jinhyuk5761.championsmeta` |
+| 패키지명 | `com.metamon.championsmeta` |
 | 원본 사이트 | https://jinhyuk5761.github.io |
 | 서명 키 | `~/.android-keys/champions-meta.keystore` (**저장소 밖**, 별칭 `champions-meta`) |
 | 업로드 키 SHA-256 | `C7:96:56:FC:0E:9B:7F:92:6D:7B:30:C9:27:B7:6D:CB:A0:DD:EA:84:57:21:AB:C0:7B:A1:82:E2:DC:67:31:00` |

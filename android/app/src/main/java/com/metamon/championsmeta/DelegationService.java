@@ -1,4 +1,4 @@
-package io.github.jinhyuk5761.championsmeta;
+package com.metamon.championsmeta;
 
 
 

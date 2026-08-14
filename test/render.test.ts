@@ -284,14 +284,25 @@ describe('M2 상세', () => {
     }
   });
 
-  it('수치가 종족값이 아니라 실수치임을 명시하고 종족값을 함께 보여준다', async () => {
+  it('종족값을 왼쪽, 실수치를 오른쪽에 둔다', async () => {
     await mountApp('#/p/garchomp');
-    const text = document.body.textContent ?? '';
-    expect(text).toContain('종족값이 아니라');
-    expect(text).toContain('레벨 50 · 개체값 31 · 노력치 0');
-    // 한카리아스: 실수치 합 775, 역산한 종족값 합 600 (본가 값)
-    expect(text).toContain('775');
-    expect(text).toContain('600');
+    const head = document.querySelector('.stat--head')!.textContent ?? '';
+    // 순서가 뒤집히면 108/183 을 반대로 읽게 된다.
+    expect(head.indexOf('종족값')).toBeLessThan(head.indexOf('실수치'));
+
+    const total = document.querySelector('.stat--total')!;
+    // 한카리아스: 종족값 합 600(본가), 실수치 합 775
+    expect(total.querySelector('.stat__base')?.textContent).toBe('600');
+    expect(total.querySelector('.stat__value')?.textContent).toBe('775');
+  });
+
+  it('폼 선택을 한국어로 보여준다', async () => {
+    await mountApp('#/p/garchomp');
+    const options = [...document.querySelectorAll('.form-select option')].map((o) => o.textContent);
+    expect(options).toContain('한카리아스');
+    expect(options).toContain('메가 한카리아스');
+    // 영문 폼명이 그대로 남으면 안 된다.
+    expect(options).not.toContain('Mega Garchomp');
   });
 
   it('기술을 한국어명과 제원으로 보여준다', async () => {
@@ -415,22 +426,54 @@ describe('M3 카운터', () => {
   });
 });
 
-describe('M4 비교', () => {
-  it('두 마리를 고르면 수치·상성·스피드 판정을 낸다', async () => {
-    await mountApp('#/compare?a=garchomp&b=ninetalesalola');
-    const text = document.body.textContent ?? '';
-    expect(text).toContain('실수치');
-    expect(text).toContain('역산한 종족값');
-    expect(text).toContain('타입 상성');
-    expect(text).toMatch(/스피드 \d+ 만큼 빠릅니다/);
-    // 실수치 옆에 종족값이 함께 나온다 (한카리아스 합계 775 / 600)
-    expect(text).toContain('775');
-    expect(text).toContain('600');
+describe('기술 도감', () => {
+  it('로스터가 쓰는 기술을 모두 보여주고 검색된다', async () => {
+    await mountApp('#/moves');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.dexrow').length).toBeGreaterThan(0);
+    });
+    const rows = document.querySelectorAll('.dexrow').length;
+    expect(document.querySelector('.results__summary')?.textContent).toBe(`전체 ${rows}개`);
+
+    const input = document.querySelector<HTMLInputElement>('.search__input')!;
+    input.value = '지진';
+    input.dispatchEvent(new Event('input'));
+    const names = [...document.querySelectorAll('.dexrow__name')].map((n) => n.textContent);
+    expect(names).toContain('지진');
+    expect(names.length).toBeLessThan(rows);
   });
 
-  it('한 쪽만 고르면 안내한다', async () => {
-    await mountApp('#/compare?a=garchomp');
-    expect(document.body.textContent).toContain('비교할 포켓몬 두 마리를 선택하세요');
+  it('기술을 고르면 배울 수 있는 포켓몬이 나온다', async () => {
+    await mountApp('#/moves?m=Earthquake');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.dexmons')).not.toBeNull();
+    });
+    expect(document.querySelector('.dexhead__name')?.textContent).toBe('지진');
+    // 픽스처에서 지진을 배우는 종이 카드로 나온다.
+    expect(document.querySelectorAll('.dexmon').length).toBeGreaterThan(0);
+    expect(document.body.textContent).toContain('배울 수 있는 포켓몬');
+  });
+});
+
+describe('특성 도감', () => {
+  it('로스터의 특성을 보여주고 검색된다', async () => {
+    await mountApp('#/abilities');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.dexrow').length).toBeGreaterThan(0);
+    });
+    const names = [...document.querySelectorAll('.dexrow__name')].map((n) => n.textContent);
+    // 도감에 한국어명이 있으면 한국어로 나온다.
+    expect(names).toContain('까칠한피부');
+  });
+
+  it('특성을 고르면 가진 포켓몬이 나온다', async () => {
+    await mountApp('#/abilities?a=Rough Skin');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.dexmons')).not.toBeNull();
+    });
+    expect(document.querySelector('.dexhead__name')?.textContent).toBe('까칠한피부');
+    expect(document.body.textContent).toContain('가진 포켓몬');
+    expect(document.querySelectorAll('.dexmon').length).toBeGreaterThan(0);
   });
 });
 
@@ -546,13 +589,25 @@ describe('대미지 계산기', () => {
     });
   });
 
-  it('미지원 요소를 조용히 넘기지 않고 밝힌다', async () => {
+  it('무엇이 적용됐는지는 결과에 그대로 적는다', async () => {
     await mountApp('#/calc?a=garchomp&b=ninetalesalola');
     await vi.waitFor(() => {
-      expect(document.querySelector('.calc__note')).not.toBeNull();
+      expect(document.querySelector('.calc__applied')).not.toBeNull();
     });
-    expect(document.querySelector('.calc__note')?.textContent).toContain('반영되지 않습니다');
-    expect(document.querySelector('.calc__applied')).not.toBeNull();
+    // 계산기에서는 설명을 걷어냈다 — 특성·도구 효과는 「특성」 탭에서 본다.
+    expect(document.body.textContent).not.toContain('반영되지 않습니다');
+    expect(document.body.textContent).not.toContain('Champions 에 실제로 존재하는');
+  });
+
+  it('특성 선택지에 효과 설명을 붙이지 않는다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__ability')).not.toBeNull();
+    });
+    const options = [...document.querySelectorAll('.calc__ability option')].map((o) => o.textContent ?? '');
+    // '까칠한피부 — 접촉 시 …' 처럼 꼬리표가 붙으면 안 된다.
+    expect(options.every((o) => !o.includes('—') || o === '— 없음 —')).toBe(true);
+    expect(options).toContain('까칠한피부');
   });
 
   it('「기타 배율」 입력은 없앴다', async () => {
@@ -764,38 +819,6 @@ describe('대미지 계산기', () => {
   });
 });
 
-describe('M5 구축', () => {
-  it('데이터가 비면 안내로 degrade 한다', async () => {
-    await mountApp('#/builds');
-    await vi.waitFor(() => {
-      expect(document.body.textContent).toContain('출처가 확인된 동결 시즌 구축이 아직 없습니다');
-    });
-  });
-
-  it('출처 없는 항목은 화면에 오르지 못한다', async () => {
-    installFetch({
-      'api/builds': [
-        { title: '출처 없는 구축', season: 'M4', format: 'Singles', pokemon: ['Garchomp'] },
-        {
-          title: '출처 있는 구축',
-          season: 'M4',
-          format: 'Singles',
-          pokemon: ['Garchomp'],
-          sourceUrl: 'https://note.com/a/b',
-        },
-      ],
-    });
-    await mountApp('#/builds');
-    await vi.waitFor(() => {
-      expect(document.body.textContent).toContain('출처 있는 구축');
-    });
-    expect(document.body.textContent).not.toContain('출처 없는 구축');
-    expect(document.querySelector('.build__source a')?.getAttribute('href')).toBe(
-      'https://note.com/a/b',
-    );
-  });
-});
-
 describe('M6 랭킹', () => {
   it('랭킹이 연결되지 않았으면 안내만 낸다', async () => {
     await mountApp('#/ranking');
@@ -804,11 +827,13 @@ describe('M6 랭킹', () => {
     expect([...document.querySelectorAll('.nav__link')].map((n) => n.textContent)).not.toContain('랭킹');
   });
 
-  it('랭킹이 꺼져 있어도 M1~M5 는 완전히 동작한다 (설계 문서 M6)', async () => {
+  it('랭킹이 꺼져 있어도 나머지 화면은 완전히 동작한다 (설계 문서 M6)', async () => {
     await mountApp('#/');
     expect(document.querySelector('.card__name')).not.toBeNull();
-    await mountApp('#/compare?a=garchomp&b=ninetalesalola');
-    expect(document.body.textContent).toContain('타입 상성');
+    await mountApp('#/p/garchomp');
+    expect(document.querySelector('.stat--total')).not.toBeNull();
+    await mountApp('#/moves');
+    expect(document.querySelectorAll('.dexrow').length).toBeGreaterThan(0);
   });
 
   it('서버가 랭킹을 켜면 재빌드 없이 탭과 표가 나타난다', async () => {
@@ -899,46 +924,6 @@ describe('정적 호스팅 (서버 없이 배포)', () => {
 });
 
 describe('런타임 데이터 감지', () => {
-  it('config 버전이 바뀌면 새로고침 없이 화면을 다시 그린다', async () => {
-    // 처음엔 구축 자료가 없다.
-    installFetch();
-    const store = await mountApp('#/builds');
-    await vi.waitFor(() => {
-      expect(document.body.textContent).toContain('출처가 확인된 동결 시즌 구축이 아직 없습니다');
-    });
-
-    // 서버에 자료가 등록된 상황으로 바꾼다.
-    installFetch({
-      'api/config': {
-        ...CONFIG,
-        version: 'v2',
-        builds: { available: true, count: 1, updatedAt: '2026-08-13T10:00:00.000Z' },
-      },
-      'api/builds': {
-        updatedAt: '2026-08-13T10:00:00.000Z',
-        builds: [
-          {
-            title: '새로 등록된 구축',
-            season: 'M4',
-            format: 'Singles',
-            pokemon: ['Garchomp'],
-            sourceUrl: 'https://note.com/a/b',
-          },
-        ],
-      },
-    });
-
-    // 폴링 1회분을 수동으로 돌린다(테스트에서 60초를 기다릴 수는 없다).
-    store.startConfigPolling(1);
-    await vi.waitFor(() => {
-      expect(document.body.textContent).toContain('새로 등록된 구축');
-    });
-    store.stopConfigPolling();
-
-    // 갱신 시각도 함께 안내된다.
-    expect(document.body.textContent).toContain('자동으로 반영됩니다');
-  });
-
   it('카운터 URL 에 버전이 실려 캐시가 자연히 무효화된다', async () => {
     const stub = installFetch();
     await mountApp('#/p/garchomp');

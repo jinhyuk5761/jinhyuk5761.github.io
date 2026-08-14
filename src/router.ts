@@ -29,7 +29,7 @@ export function parseHash(hash: string): Route {
     return { path: '/p', params: { id: decodeURIComponent(segments[1]) }, query };
   }
 
-  const known = ['compare', 'calc', 'builds', 'ranking', 'sources'];
+  const known = ['moves', 'abilities', 'calc', 'ranking', 'sources'];
   if (known.includes(segments[0] as string)) {
     return { path: `/${segments[0]}`, params: {}, query };
   }

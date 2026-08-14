@@ -8,9 +8,8 @@ import { clear, el } from './core/dom';
 import { currentRoute, href, onRouteChange, type Route } from './router';
 import { bootstrap, setFormat, state, subscribe } from './store';
 import type { Format } from './types';
-import { renderBuilds } from './views/builds';
 import { renderCalculator } from './views/calculator';
-import { renderCompare } from './views/compare';
+import { renderAbilityDexView, renderMoveDexView } from './views/dex';
 import { renderDetail } from './views/detail';
 import { renderRanking } from './views/ranking';
 import { renderSearch } from './views/search';
@@ -54,15 +53,14 @@ function shellHeader(route: Route): HTMLElement {
       'div',
       { class: 'shell__brand' },
       el('a', { class: 'brand', href: href('/') }, 'Pokémon Champions 메타'),
-      el('span', { class: 'brand__sub' }, '공개 집계 통계 뷰어'),
     ),
     el(
       'nav',
       { class: 'nav' },
       navLink('/', '검색', route),
-      navLink('/compare', '비교', route),
+      navLink('/moves', '기술', route),
+      navLink('/abilities', '특성', route),
       navLink('/calc', '계산기', route),
-      navLink('/builds', '구축', route),
       // 랭킹 탭은 서버가 "데이터 있음"이라고 알려줄 때만 나타난다.
       // config 를 주기적으로 다시 확인하므로, 랭킹이 붙으면 새로고침 없이 탭이 생긴다.
       state.config.ranking.enabled ? navLink('/ranking', '랭킹', route) : null,
@@ -105,14 +103,14 @@ function renderRoute(route: Route): void {
     case '/p':
       renderDetail(main, route.params.id ?? '');
       break;
-    case '/compare':
-      renderCompare(main, route);
+    case '/moves':
+      renderMoveDexView(main, route);
+      break;
+    case '/abilities':
+      renderAbilityDexView(main, route);
       break;
     case '/calc':
       renderCalculator(main, route);
-      break;
-    case '/builds':
-      renderBuilds(main);
       break;
     case '/ranking':
       renderRanking(main);

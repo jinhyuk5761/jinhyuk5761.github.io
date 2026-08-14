@@ -17,7 +17,8 @@ import { countersUrl } from '../adapters/appConfig';
 import { countersForSpecies, fetchCounters } from '../adapters/smogonCounters';
 import { clear, el, fragment, notice } from '../core/dom';
 import { matchesQuery } from '../core/names';
-import { STAT_BASIS_LABEL, statRatio, toBaseStats } from '../core/stats';
+import { statRatio, toBaseStats } from '../core/stats';
+import { formDisplayName } from '../core/formNames';
 import { defensiveProfile } from '../core/typechart';
 import { href } from '../router';
 import { findPokemon, state } from '../store';
@@ -122,14 +123,14 @@ function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTML
       'div',
       { class: 'stat' },
       el('span', { class: 'stat__label' }, STAT_LABEL[key] ?? key),
-      el('span', { class: 'stat__value' }, String(value)),
+      // 왼쪽이 종족값, 오른쪽이 실수치.
+      el('span', { class: 'stat__base' }, base[key] === null ? '—' : String(base[key])),
       el(
         'span',
         { class: 'stat__track' },
         el('span', { class: 'stat__fill', style: `width:${statRatio(value)}%` }),
       ),
-      // 종족값을 함께 보여준다. 실수치만 보면 본가 수치와 대조가 안 된다.
-      el('span', { class: 'stat__base' }, base[key] === null ? '—' : String(base[key])),
+      el('span', { class: 'stat__value' }, String(value)),
     );
   });
 
@@ -138,7 +139,7 @@ function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTML
       ? (() => {
           const select = el('select', { class: 'form-select', 'aria-label': '폼 선택' });
           for (const candidate of mon.forms) {
-            const option = el('option', { value: candidate.slug }, candidate.formName);
+            const option = el('option', { value: candidate.slug }, formDisplayName(mon, candidate, state.index?.pokemon ?? []));
             if (candidate.slug === form.slug) option.setAttribute('selected', 'selected');
             select.appendChild(option);
           }
@@ -182,29 +183,24 @@ function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTML
           : '',
       ),
       el(
-        'p',
-        { class: 'detail__note' },
-        `championsbattledata 가 제공하는 값은 종족값이 아니라 ${STAT_BASIS_LABEL} 기준 실수치입니다. 오른쪽 열은 역산한 종족값입니다.`,
-      ),
-      el(
         'div',
         { class: 'stats' },
         el(
           'div',
           { class: 'stat stat--head' },
           el('span', { class: 'stat__label' }, ''),
-          el('span', { class: 'stat__value' }, '실수치'),
-          el('span', {}, ''),
           el('span', { class: 'stat__base' }, '종족값'),
+          el('span', {}, ''),
+          el('span', { class: 'stat__value' }, '실수치'),
         ),
         ...statRows,
         el(
           'div',
           { class: 'stat stat--total' },
           el('span', { class: 'stat__label' }, '합계'),
-          el('span', { class: 'stat__value' }, String(stats.total)),
-          el('span', {}, ''),
           el('span', { class: 'stat__base' }, base.total === null ? '—' : String(base.total)),
+          el('span', {}, ''),
+          el('span', { class: 'stat__value' }, String(stats.total)),
         ),
       ),
       weaknessSummary(profile),

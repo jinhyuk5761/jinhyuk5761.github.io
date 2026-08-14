@@ -16,8 +16,6 @@ import { fetchMoveDex, type MoveDex, type MoveInfo } from '../adapters/moveDex';
 import { searchHaystack } from '../adapters/pokeApi';
 import { abilityName, itemName, weightOf } from '../adapters/termDex';
 import {
-  NO_DAMAGE_EFFECT,
-  UNSUPPORTED_ABILITIES,
   attackerAbility,
   defenderAbility,
   resolveAbilities,
@@ -27,7 +25,6 @@ import { clear, el, notice } from '../core/dom';
 import {
   ATTACKER_ITEMS,
   DEFENDER_ITEMS,
-  UNSUPPORTED_ITEMS,
   findItem,
   itemDamageMultiplier,
   itemPowerMultiplier,
@@ -797,21 +794,22 @@ function abilitySelect(
   onChange: () => void,
 ): HTMLElement {
   const owned = abilitiesOf(form);
-  const isAttacker = side === attacker;
 
   const select = el('select', { class: 'calc__ability', 'aria-label': `${title} 특성` });
-  const none = el('option', { value: '' }, '— 없음 —');
-  if (!side.ability) none.setAttribute('selected', 'selected');
-  select.appendChild(none);
+
+  // 특성이 하나뿐인 포켓몬은 그 특성으로 고정한다.
+  // 고를 여지가 없는데 '없음' 을 두면 실제로 불가능한 조합을 계산하게 된다.
+  if (owned.length === 1) {
+    side.ability = owned[0]!;
+  } else {
+    const none = el('option', { value: '' }, '— 없음 —');
+    if (!side.ability) none.setAttribute('selected', 'selected');
+    select.appendChild(none);
+  }
 
   for (const name of owned) {
-    const def = isAttacker ? attackerAbility(name) : defenderAbility(name);
-    const unsupported = UNSUPPORTED_ABILITIES.get(name);
-    const korean = abilityName(state.terms, name);
-    // 계산에 반영되는 것만 설명을 붙인다. 나머지는 이름만 둔다 —
-    // "대미지 영향 없음" 같은 꼬리표를 다 달면 목록만 시끄러워진다.
-    const suffix = def ? ` — ${def.note}` : unsupported ? ' — 미반영' : '';
-    const option = el('option', { value: name }, `${korean}${suffix}`);
+    // 이름만 둔다. 효과 설명은 「특성」 탭에서 본다 — 계산기에서는 목록만 시끄러워진다.
+    const option = el('option', { value: name }, abilityName(state.terms, name));
     if (name === side.ability) option.setAttribute('selected', 'selected');
     select.appendChild(option);
   }
@@ -822,18 +820,6 @@ function abilitySelect(
   });
 
   const field = el('label', { class: 'calc__field' }, el('span', {}, '특성'), select);
-
-  if (side.ability) {
-    const unsupported = UNSUPPORTED_ABILITIES.get(side.ability);
-    const harmless = NO_DAMAGE_EFFECT.get(side.ability);
-    if (unsupported) {
-      field.appendChild(
-        el('span', { class: 'calc__ability-warn' }, `계산에 반영되지 않습니다 — ${unsupported}.`),
-      );
-    } else if (harmless) {
-      field.appendChild(el('span', { class: 'calc__ability-note' }, harmless));
-    }
-  }
 
   return field;
 }
@@ -1041,25 +1027,6 @@ function fieldSection(dex: MoveDex | null, onInput: () => void): HTMLElement {
   }
 
   section.appendChild(grid);
-  section.appendChild(
-    el(
-      'p',
-      { class: 'calc__note' },
-      '목록에 없는 특성·도구는 계산에 반영되지 않습니다. 무엇이 적용됐는지는 결과 아래 「적용된 보정」에 그대로 적습니다.',
-    ),
-  );
-  // 도구 목록은 Champions 에 실재하는 141종에서 추린 것이다. 그중 계산에서 뺀 것과
-  // 그 이유를 밝힌다 — 조용히 빼면 "지원하는데 안 걸리는 건지" 알 수 없다.
-  section.appendChild(
-    el(
-      'p',
-      { class: 'calc__note calc__note--items' },
-      `도구는 Champions 에 실제로 존재하는 것만 넣었습니다 (구애머리띠·구애안경·돌격조끼·진화의휘석은 없습니다). ` +
-        `계산에서 뺀 도구: ${[...UNSUPPORTED_ITEMS]
-          .map(([name, why]) => `${itemName(state.terms, name)} — ${why}`)
-          .join(' · ')}.`,
-    ),
-  );
   return section;
 }
 

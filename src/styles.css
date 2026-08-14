@@ -186,24 +186,24 @@ h4 { font-size: 15px; margin: 0; }
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
-.type--normal { background: #9099a1; }
-.type--fire { background: #ff9d55; }
-.type--water { background: #4d90d5; }
-.type--electric { background: #f3d23b; color: #33320f; }
-.type--grass { background: #63bb5b; }
-.type--ice { background: #74cec0; color: #123; }
-.type--fighting { background: #ce4069; }
-.type--poison { background: #ab6ac8; }
-.type--ground { background: #d97845; }
-.type--flying { background: #8fa8dd; }
-.type--psychic { background: #f97176; }
-.type--bug { background: #90c12c; }
-.type--rock { background: #c7b78b; color: #2a2413; }
-.type--ghost { background: #5269ad; }
-.type--dragon { background: #0b6dc3; }
-.type--dark { background: #5a5465; }
-.type--steel { background: #5a8ea2; }
-.type--fairy { background: #ec8fe6; color: #3a1136; }
+.type--normal { background: #9FA19F; color: #fff; }
+.type--fire { background: #E62829; color: #fff; }
+.type--water { background: #2980EF; color: #fff; }
+.type--electric { background: #FAC000; color: #2a2205; }
+.type--grass { background: #3FA129; color: #fff; }
+.type--ice { background: #3DCEF3; color: #0d2b33; }
+.type--fighting { background: #C03028; color: #fff; }
+.type--poison { background: #9141CB; color: #fff; }
+.type--ground { background: #915121; color: #fff; }
+.type--flying { background: #81B9EF; color: #102436; }
+.type--psychic { background: #EF4179; color: #fff; }
+.type--bug { background: #91A119; color: #fff; }
+.type--rock { background: #AFA981; color: #2a2413; }
+.type--ghost { background: #704170; color: #fff; }
+.type--dragon { background: #5060E1; color: #fff; }
+.type--dark { background: #624D4E; color: #fff; }
+.type--steel { background: #60A1B8; color: #0f2229; }
+.type--fairy { background: #EF70EF; color: #3a1136; }
 
 .sprite { width: 56px; height: 56px; object-fit: contain; image-rendering: auto; }
 .sprite--lg { width: 128px; height: 128px; }
@@ -663,4 +663,61 @@ h4 { font-size: 15px; margin: 0; }
 @media (max-width: 480px) {
   .stat { grid-template-columns: 52px 38px 1fr 34px; gap: 6px; font-size: 11px; }
   .weak__item { font-size: 11px; }
+}
+
+/* ---------- 기술 · 특성 도감 ---------- */
+
+.dexlist { display: grid; gap: 4px; margin-top: 8px; }
+.dexrow {
+  display: grid;
+  grid-template-columns: 62px 1fr auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+}
+.dexrow:hover { border-color: var(--accent); background: var(--accent-soft); }
+.dexrow__name { font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dexrow__meta { font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+/* 몇 종이 쓰는지. 자릿수가 달라도 열이 흔들리지 않게 폭을 고정한다. */
+.dexrow__count { font-size: 12px; color: var(--accent); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+
+.dexback { display: inline-block; margin: 4px 0 12px; font-size: 13px; }
+.dexhead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.dexhead__name { margin: 0; font-size: 20px; }
+.dexhead__en { color: var(--text-dim); font-size: 13px; }
+
+.dexspec { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 8px 0; }
+.dexspec__item { display: flex; gap: 6px; align-items: baseline; font-size: 13px; }
+.dexspec__item span { color: var(--text-dim); }
+
+.dexdesc { margin: 8px 0; line-height: 1.7; }
+.dexeffect { margin: 2px 0; font-size: 13px; color: var(--accent); }
+
+.dexusers__title { margin: 20px 0 8px; font-size: 15px; }
+.dexmons { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+.dexmon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  text-align: center;
+}
+.dexmon:hover { border-color: var(--accent); background: var(--accent-soft); }
+.dexmon__name { font-size: 12px; line-height: 1.4; }
+
+@media (max-width: 720px) {
+  .dexrow { grid-template-columns: 56px 1fr auto; row-gap: 2px; }
+  /* 좁은 화면에서는 제원을 이름 아래로 내린다 */
+  .dexrow__meta { grid-column: 2 / -1; grid-row: 2; }
 }

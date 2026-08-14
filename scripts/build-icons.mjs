@@ -257,11 +257,11 @@ function main() {
 
   const targets = [
     // 일반 아이콘은 여백을 좁게 — 런처가 그대로 보여준다.
-    { file: 'icon-512.png', size: 512, pad: 0.1 },
-    { file: 'icon-192.png', size: 192, pad: 0.1 },
-    { file: 'favicon.png', size: 64, pad: 0.06 },
+    { file: 'icon-512.png', size: 512, pad: 0.02 },
+    { file: 'icon-192.png', size: 192, pad: 0.02 },
+    { file: 'favicon.png', size: 64, pad: 0.02 },
     // maskable 은 런처가 원/사각형으로 잘라낸다. 안전 영역(가운데 80%) 안에 넣어야 한다.
-    { file: 'icon-maskable-512.png', size: 512, pad: 0.22 },
+    { file: 'icon-maskable-512.png', size: 512, pad: 0.14 },
   ];
 
   for (const target of targets) {
@@ -274,7 +274,7 @@ function main() {
   const storeDir = path.join(ROOT, 'android');
   writeFileSync(
     path.join(storeDir, 'store_icon.png'),
-    encodePng(512, render(image, bounds, 512, 0.1)),
+    encodePng(512, render(image, bounds, 512, 0.02)),
   );
   console.log('  android/store_icon.png (512×512)');
 }

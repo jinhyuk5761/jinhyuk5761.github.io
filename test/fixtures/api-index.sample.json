@@ -1,0 +1,5001 @@
+{
+ "generatedAt": "2026-08-05T06:46:04.669Z",
+ "defaultSeason": "Current",
+ "pokemon": [
+  {
+   "name": "Aegislash Shield Forme",
+   "battleName": "Aegislash Shield Forme",
+   "slug": "aegislash-shield-forme",
+   "showdownId": "aegislash",
+   "showdownName": "Aegislash",
+   "metadataCsv": "pokemon_champions_assets/metadata/Aegislash.csv",
+   "battleDataCsvs": [
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Doubles/Aegislash Shield Forme.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Singles/Aegislash Shield Forme.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "Current",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/Singles/Aegislash Shield Forme.csv"
+    },
+    {
+     "season": "Current",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/Doubles/Aegislash Shield Forme.csv"
+    }
+   ],
+   "learnableMoveNames": [
+    "Aerial Ace",
+    "Air Slash",
+    "Attract",
+    "Block",
+    "Brick Break",
+    "Brutal Swing",
+    "Close Combat",
+    "Destiny Bond",
+    "Double Hit",
+    "Endure",
+    "Facade",
+    "Flash Cannon",
+    "Giga Impact",
+    "Gyro Ball",
+    "Head Smash",
+    "Hyper Beam",
+    "Iron Defense",
+    "Iron Head",
+    "King's Shield",
+    "Metal Sound",
+    "Night Slash",
+    "Poltergeist",
+    "Power Trick",
+    "Protect",
+    "Psycho Cut",
+    "Rain Dance",
+    "Reflect",
+    "Rest",
+    "Reversal",
+    "Rock Slide",
+    "Round",
+    "Sacred Sword",
+    "Screech",
+    "Shadow Ball",
+    "Shadow Claw",
+    "Shadow Sneak",
+    "Sleep Talk",
+    "Snore",
+    "Solar Blade",
+    "Steel Beam",
+    "Substitute",
+    "Sunny Day",
+    "Swords Dance",
+    "Wide Guard",
+    "Zen Headbutt"
+   ],
+   "summary": {
+    "dex": null,
+    "sprite": "pokemon_champions_assets/pokemon/Aegislash Shield Forme.png",
+    "types": [
+     "Steel",
+     "Ghost"
+    ],
+    "primary": {
+     "pokemon_name": "Aegislash",
+     "title": "Aegislash",
+     "dex_number": null,
+     "base_dex_url": "",
+     "image_path": "pokemon_champions_assets/pokemon/Aegislash Shield Forme.png",
+     "form_name": "Aegislash Shield Forme",
+     "saved_name": "Aegislash Shield Forme",
+     "slug": "aegislash-shield-forme",
+     "form_kind": "Shield Forme",
+     "types": [
+      "Steel",
+      "Ghost"
+     ],
+     "types_raw": "Steel/Ghost",
+     "abilities": "Stance Change",
+     "hidden_ability": "",
+     "hp": 135,
+     "attack": 70,
+     "defense": 160,
+     "sp_attack": 70,
+     "sp_defense": 160,
+     "speed": 80,
+     "base_stat_total": 675
+    },
+    "forms": [
+     {
+      "pokemon_name": "Aegislash",
+      "title": "Aegislash",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Aegislash Shield Forme.png",
+      "form_name": "Aegislash Shield Forme",
+      "saved_name": "Aegislash Shield Forme",
+      "slug": "aegislash-shield-forme",
+      "form_kind": "Shield Forme",
+      "types": [
+       "Steel",
+       "Ghost"
+      ],
+      "types_raw": "Steel/Ghost",
+      "abilities": "Stance Change",
+      "hidden_ability": "",
+      "hp": 135,
+      "attack": 70,
+      "defense": 160,
+      "sp_attack": 70,
+      "sp_defense": 160,
+      "speed": 80,
+      "base_stat_total": 675
+     },
+     {
+      "pokemon_name": "Aegislash",
+      "title": "Aegislash [Blade Forme]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Aegislash Blade Forme.png",
+      "form_name": "Aegislash Blade Forme",
+      "saved_name": "Aegislash Blade Forme",
+      "slug": "aegislash-blade-forme",
+      "form_kind": "Blade Forme",
+      "types": [
+       "Steel",
+       "Ghost"
+      ],
+      "types_raw": "Steel/Ghost",
+      "abilities": "Stance Change",
+      "hidden_ability": "",
+      "hp": 135,
+      "attack": 160,
+      "defense": 70,
+      "sp_attack": 160,
+      "sp_defense": 70,
+      "speed": 80,
+      "base_stat_total": 675
+     }
+    ],
+    "baseStats": {
+     "hp": 135,
+     "attack": 70,
+     "defense": 160,
+     "sp_attack": 70,
+     "sp_defense": 160,
+     "speed": 80
+    },
+    "baseStatTotal": 675,
+    "battleSummary": {
+     "Current": {
+      "Doubles": {
+       "top": {
+        "move": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 91,
+         "position": 91,
+         "category": "move",
+         "rank": 1,
+         "name": "King's Shield",
+         "percentage": "91.5%",
+         "percentage_value": 91.5,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 91,
+         "position": 91,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Leftovers",
+         "percentage": "34.7%",
+         "percentage_value": 34.7,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 91,
+         "position": 91,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Garchomp",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 91,
+         "position": 91,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Adamant",
+         "percentage": "31.6%",
+         "percentage_value": 31.6,
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "stat_points": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 91,
+         "position": 91,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "15.0%",
+         "percentage_value": 15,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 32,
+         "attack_points": 32,
+         "defense_points": 2,
+         "sp_atk_points": 0,
+         "sp_def_points": 0,
+         "speed_points": 0
+        },
+        "ability": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 91,
+         "position": 91,
+         "category": "ability",
+         "rank": 1,
+         "name": "Stance Change",
+         "percentage": "100.0%",
+         "percentage_value": 100,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "King's Shield",
+         "Iron Head",
+         "Shadow Sneak",
+         "Poltergeist",
+         "Sacred Sword",
+         "Wide Guard",
+         "Shadow Ball",
+         "Flash Cannon",
+         "Swords Dance",
+         "Close Combat"
+        ],
+        "held_item": [
+         "Leftovers",
+         "Spell Tag",
+         "Life Orb",
+         "Focus Sash",
+         "Sitrus Berry",
+         "Colbur Berry",
+         "Expert Belt",
+         "Occa Berry",
+         "Kasib Berry",
+         "Muscle Band"
+        ],
+        "teammate": [
+         "Garchomp",
+         "Incineroar",
+         "Sinistcha",
+         "Whimsicott",
+         "Charizard",
+         "Tyranitar",
+         "Farigiraf",
+         "Sylveon",
+         "Aerodactyl",
+         "Milotic"
+        ],
+        "stat_alignment": [
+         "Adamant",
+         "Brave",
+         "Quiet",
+         "Modest",
+         "Impish",
+         "Relaxed",
+         "Jolly",
+         "Sassy",
+         "Careful",
+         "Serious"
+        ],
+        "stat_points": [
+         "HP 32 / Atk 32 / Def 2 / SpA 0 / SpD 0 / Spe 0",
+         "HP 32 / Atk 32 / Def 0 / SpA 0 / SpD 2 / Spe 0",
+         "HP 32 / Atk 32 / Def 1 / SpA 0 / SpD 1 / Spe 0",
+         "HP 32 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 2",
+         "HP 2 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 32",
+         "HP 0 / Atk 32 / Def 2 / SpA 0 / SpD 32 / Spe 0",
+         "HP 32 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 0",
+         "HP 2 / Atk 32 / Def 0 / SpA 0 / SpD 32 / Spe 0"
+        ],
+        "ability": [
+         "Stance Change"
+        ]
+       },
+       "position": 91,
+       "statChanges": {
+        "Adamant": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "Brave": {
+         "stat_up": "Attack",
+         "stat_down": "Speed"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Impish": {
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "Relaxed": {
+         "stat_up": "Defense",
+         "stat_down": "Speed"
+        },
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "Sassy": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Speed"
+        },
+        "Careful": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Sp. Atk"
+        },
+        "Serious": {
+         "stat_up": "",
+         "stat_down": ""
+        }
+       }
+      },
+      "Singles": {
+       "top": {
+        "move": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 17,
+         "position": 17,
+         "category": "move",
+         "rank": 1,
+         "name": "Shadow Sneak",
+         "percentage": "96.0%",
+         "percentage_value": 96,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 17,
+         "position": 17,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Leftovers",
+         "percentage": "51.9%",
+         "percentage_value": 51.9,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 17,
+         "position": 17,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Hippowdon",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 17,
+         "position": 17,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Adamant",
+         "percentage": "49.3%",
+         "percentage_value": 49.3,
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "stat_points": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 17,
+         "position": 17,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "16.9%",
+         "percentage_value": 16.9,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 32,
+         "attack_points": 32,
+         "defense_points": 1,
+         "sp_atk_points": 0,
+         "sp_def_points": 1,
+         "speed_points": 0
+        },
+        "ability": {
+         "pokemon": "Aegislash Shield Forme",
+         "column_position": 17,
+         "position": 17,
+         "category": "ability",
+         "rank": 1,
+         "name": "Stance Change",
+         "percentage": "100.0%",
+         "percentage_value": 100,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Shadow Sneak",
+         "King's Shield",
+         "Poltergeist",
+         "Sacred Sword",
+         "Shadow Ball",
+         "Swords Dance",
+         "Iron Head",
+         "Close Combat",
+         "Flash Cannon",
+         "Substitute"
+        ],
+        "held_item": [
+         "Leftovers",
+         "Spell Tag",
+         "Life Orb",
+         "Focus Sash",
+         "Sitrus Berry",
+         "Lum Berry",
+         "Shuca Berry",
+         "Expert Belt",
+         "Muscle Band",
+         "Kasib Berry"
+        ],
+        "teammate": [
+         "Hippowdon",
+         "Meowscarada",
+         "Dragonite",
+         "Garchomp",
+         "Primarina",
+         "Glimmora",
+         "Gyarados",
+         "Hydreigon",
+         "Archaludon",
+         "Metagross"
+        ],
+        "stat_alignment": [
+         "Adamant",
+         "Quiet",
+         "Brave",
+         "Sassy",
+         "Modest",
+         "Relaxed",
+         "Impish",
+         "Careful",
+         "Jolly",
+         "Naughty"
+        ],
+        "stat_points": [
+         "HP 32 / Atk 32 / Def 1 / SpA 0 / SpD 1 / Spe 0",
+         "HP 32 / Atk 0 / Def 1 / SpA 32 / SpD 1 / Spe 0",
+         "HP 32 / Atk 2 / Def 0 / SpA 32 / SpD 0 / Spe 0",
+         "HP 32 / Atk 32 / Def 2 / SpA 0 / SpD 0 / Spe 0",
+         "HP 32 / Atk 32 / Def 1 / SpA 0 / SpD 0 / Spe 1",
+         "HP 2 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 0",
+         "HP 32 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 0"
+        ],
+        "ability": [
+         "Stance Change"
+        ]
+       },
+       "position": 17,
+       "statChanges": {
+        "Adamant": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Brave": {
+         "stat_up": "Attack",
+         "stat_down": "Speed"
+        },
+        "Sassy": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Speed"
+        },
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Relaxed": {
+         "stat_up": "Defense",
+         "stat_down": "Speed"
+        },
+        "Impish": {
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "Careful": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Sp. Atk"
+        },
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "Naughty": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Def"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "name": "Alolan Ninetales",
+   "battleName": "Alolan Ninetales",
+   "slug": "alolan-ninetales",
+   "showdownId": "ninetalesalola",
+   "showdownName": "Ninetales-Alola",
+   "metadataCsv": "pokemon_champions_assets/metadata/Ninetales.csv",
+   "battleDataCsvs": [
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Doubles/Alolan Ninetales.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Singles/Alolan Ninetales.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Doubles/Alolan Ninetales.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Singles/Alolan Ninetales.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "Current",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/Singles/Alolan Ninetales.csv"
+    },
+    {
+     "season": "Current",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/Doubles/Alolan Ninetales.csv"
+    }
+   ],
+   "learnableMoveNames": [
+    "Agility",
+    "Attract",
+    "Aurora Veil",
+    "Avalanche",
+    "Baby-Doll Eyes",
+    "Baton Pass",
+    "Blizzard",
+    "Body Slam",
+    "Calm Mind",
+    "Charm",
+    "Chilling Water",
+    "Confuse Ray",
+    "Dark Pulse",
+    "Dazzling Gleam",
+    "Dig",
+    "Disable",
+    "Double-Edge",
+    "Draining Kiss",
+    "Encore",
+    "Endure",
+    "Extrasensory",
+    "Facade",
+    "Fake Tears",
+    "Flail",
+    "Foul Play",
+    "Freeze-Dry",
+    "Giga Impact",
+    "Helping Hand",
+    "Hex",
+    "Howl",
+    "Hyper Beam",
+    "Hypnosis",
+    "Ice Beam",
+    "Ice Shard",
+    "Icicle Spear",
+    "Icy Wind",
+    "Imprison",
+    "Iron Tail",
+    "Misty Terrain",
+    "Moonblast",
+    "Nasty Plot",
+    "Pain Split",
+    "Payback",
+    "Play Rough",
+    "Power Swap",
+    "Protect",
+    "Psych Up",
+    "Psyshock",
+    "Rain Dance",
+    "Rest",
+    "Roar",
+    "Round",
+    "Safeguard",
+    "Sleep Talk",
+    "Snore",
+    "Snowscape",
+    "Spite",
+    "Stored Power",
+    "Substitute",
+    "Tail Slap",
+    "Triple Axel",
+    "Weather Ball",
+    "Wonder Room",
+    "Zen Headbutt"
+   ],
+   "summary": {
+    "dex": null,
+    "sprite": "pokemon_champions_assets/pokemon/Alolan Ninetales.png",
+    "types": [
+     "Ice",
+     "Fairy"
+    ],
+    "primary": {
+     "pokemon_name": "Ninetales",
+     "title": "Ninetales [Alolan Form]",
+     "dex_number": null,
+     "base_dex_url": "",
+     "image_path": "pokemon_champions_assets/pokemon/Alolan Ninetales.png",
+     "form_name": "Alolan Ninetales",
+     "saved_name": "Alolan Ninetales",
+     "slug": "alolan-ninetales",
+     "form_kind": "Alolan",
+     "types": [
+      "Ice",
+      "Fairy"
+     ],
+     "types_raw": "Ice/Fairy",
+     "abilities": "Snow Cloak|Snow Warning",
+     "hidden_ability": "",
+     "hp": 148,
+     "attack": 87,
+     "defense": 95,
+     "sp_attack": 101,
+     "sp_defense": 120,
+     "speed": 129,
+     "base_stat_total": 680
+    },
+    "forms": [
+     {
+      "pokemon_name": "Ninetales",
+      "title": "Ninetales [Alolan Form]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Alolan Ninetales.png",
+      "form_name": "Alolan Ninetales",
+      "saved_name": "Alolan Ninetales",
+      "slug": "alolan-ninetales",
+      "form_kind": "Alolan",
+      "types": [
+       "Ice",
+       "Fairy"
+      ],
+      "types_raw": "Ice/Fairy",
+      "abilities": "Snow Cloak|Snow Warning",
+      "hidden_ability": "",
+      "hp": 148,
+      "attack": 87,
+      "defense": 95,
+      "sp_attack": 101,
+      "sp_defense": 120,
+      "speed": 129,
+      "base_stat_total": 680
+     },
+     {
+      "pokemon_name": "Ninetales",
+      "title": "Ninetales",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Ninetales.png",
+      "form_name": "Ninetales",
+      "saved_name": "Ninetales",
+      "slug": "ninetales",
+      "form_kind": "Base",
+      "types": [
+       "Fire"
+      ],
+      "types_raw": "Fire",
+      "abilities": "Flash Fire|Drought",
+      "hidden_ability": "",
+      "hp": 148,
+      "attack": 96,
+      "defense": 95,
+      "sp_attack": 101,
+      "sp_defense": 120,
+      "speed": 120,
+      "base_stat_total": 680
+     }
+    ],
+    "baseStats": {
+     "hp": 148,
+     "attack": 87,
+     "defense": 95,
+     "sp_attack": 101,
+     "sp_defense": 120,
+     "speed": 129
+    },
+    "baseStatTotal": 680,
+    "battleSummary": {
+     "Current": {
+      "Doubles": {
+       "top": {
+        "move": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 29,
+         "position": 29,
+         "category": "move",
+         "rank": 1,
+         "name": "Blizzard",
+         "percentage": "94.2%",
+         "percentage_value": 94.2,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 29,
+         "position": 29,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Never-Melt Ice",
+         "percentage": "35.8%",
+         "percentage_value": 35.8,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 29,
+         "position": 29,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Kingambit",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 29,
+         "position": 29,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Timid",
+         "percentage": "81.4%",
+         "percentage_value": 81.4,
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "stat_points": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 29,
+         "position": 29,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "34.4%",
+         "percentage_value": 34.4,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 0,
+         "defense_points": 0,
+         "sp_atk_points": 32,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 29,
+         "position": 29,
+         "category": "ability",
+         "rank": 1,
+         "name": "Snow Warning",
+         "percentage": "99.0%",
+         "percentage_value": 99,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Blizzard",
+         "Freeze-Dry",
+         "Protect",
+         "Aurora Veil",
+         "Moonblast",
+         "Encore",
+         "Dazzling Gleam",
+         "Icy Wind",
+         "Disable",
+         "Roar"
+        ],
+        "held_item": [
+         "Never-Melt Ice",
+         "Light Clay",
+         "Focus Sash",
+         "Choice Scarf",
+         "Life Orb",
+         "Sitrus Berry",
+         "Icy Rock",
+         "Leftovers",
+         "Occa Berry",
+         "Quick Claw"
+        ],
+        "teammate": [
+         "Kingambit",
+         "Incineroar",
+         "Basculegion Male",
+         "Raichu",
+         "Garchomp",
+         "Sneasler",
+         "Whimsicott",
+         "Sinistcha",
+         "Milotic",
+         "Blaziken"
+        ],
+        "stat_alignment": [
+         "Timid",
+         "Modest",
+         "Bold",
+         "Mild",
+         "Calm",
+         "Quiet",
+         "Hasty",
+         "Relaxed",
+         "Naive",
+         "Sassy"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 1 / Atk 0 / Def 1 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 32",
+         "HP 9 / Atk 0 / Def 11 / SpA 19 / SpD 0 / Spe 27",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 1 / Atk 0 / Def 0 / SpA 32 / SpD 1 / Spe 32",
+         "HP 32 / Atk 0 / Def 0 / SpA 2 / SpD 0 / Spe 32"
+        ],
+        "ability": [
+         "Snow Warning",
+         "Snow Cloak"
+        ]
+       },
+       "position": 29,
+       "statChanges": {
+        "Timid": {
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Mild": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Defense"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Relaxed": {
+         "stat_up": "Defense",
+         "stat_down": "Speed"
+        },
+        "Naive": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Def"
+        },
+        "Sassy": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Speed"
+        }
+       }
+      },
+      "Singles": {
+       "top": {
+        "move": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 21,
+         "position": 21,
+         "category": "move",
+         "rank": 1,
+         "name": "Aurora Veil",
+         "percentage": "97.2%",
+         "percentage_value": 97.2,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 21,
+         "position": 21,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Light Clay",
+         "percentage": "89.7%",
+         "percentage_value": 89.7,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 21,
+         "position": 21,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Garchomp",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 21,
+         "position": 21,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Timid",
+         "percentage": "85.5%",
+         "percentage_value": 85.5,
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "stat_points": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 21,
+         "position": 21,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "24.9%",
+         "percentage_value": 24.9,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 0,
+         "defense_points": 0,
+         "sp_atk_points": 32,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Alolan Ninetales",
+         "column_position": 21,
+         "position": 21,
+         "category": "ability",
+         "rank": 1,
+         "name": "Snow Warning",
+         "percentage": "99.7%",
+         "percentage_value": 99.7,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Aurora Veil",
+         "Freeze-Dry",
+         "Blizzard",
+         "Encore",
+         "Moonblast",
+         "Pain Split",
+         "Misty Terrain",
+         "Nasty Plot",
+         "Ice Shard",
+         "Foul Play"
+        ],
+        "held_item": [
+         "Light Clay",
+         "Never-Melt Ice",
+         "Focus Sash",
+         "Sitrus Berry",
+         "Choice Scarf",
+         "Icy Rock",
+         "Leftovers",
+         "Life Orb",
+         "Lum Berry",
+         "Bright Powder"
+        ],
+        "teammate": [
+         "Garchomp",
+         "Gyarados",
+         "Blaziken",
+         "Meowscarada",
+         "Hippowdon",
+         "Delphox",
+         "Mimikyu",
+         "Metagross",
+         "Archaludon",
+         "Basculegion Male"
+        ],
+        "stat_alignment": [
+         "Timid",
+         "Modest",
+         "Bold",
+         "Calm",
+         "Hasty",
+         "Mild",
+         "Quiet",
+         "Naive",
+         "Jolly",
+         "Gentle"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 2 / SpA 0 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 32",
+         "HP 31 / Atk 0 / Def 9 / SpA 0 / SpD 0 / Spe 26",
+         "HP 1 / Atk 0 / Def 1 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 32",
+         "HP 11 / Atk 0 / Def 10 / SpA 32 / SpD 0 / Spe 13",
+         "HP 27 / Atk 0 / Def 7 / SpA 0 / SpD 0 / Spe 32"
+        ],
+        "ability": [
+         "Snow Warning",
+         "Snow Cloak"
+        ]
+       },
+       "position": 21,
+       "statChanges": {
+        "Timid": {
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Mild": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Defense"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Naive": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Def"
+        },
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "Gentle": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Defense"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "name": "Alolan Raichu",
+   "battleName": "Alolan Raichu",
+   "slug": "alolan-raichu",
+   "showdownId": "raichualola",
+   "showdownName": "Raichu-Alola",
+   "metadataCsv": "pokemon_champions_assets/metadata/Raichu.csv",
+   "battleDataCsvs": [
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Doubles/Alolan Raichu.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Singles/Alolan Raichu.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Singles/Alolan Raichu.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Singles/Alolan Raichu.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Singles/Alolan Raichu.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Singles/Alolan Raichu.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Singles/Alolan Raichu.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Singles/Alolan Raichu.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Singles/Alolan Raichu.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Singles/Alolan Raichu.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Singles/Alolan Raichu.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Singles/Alolan Raichu.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Singles/Alolan Raichu.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Singles/Alolan Raichu.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Singles/Alolan Raichu.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Singles/Alolan Raichu.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Doubles/Alolan Raichu.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Singles/Alolan Raichu.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "Current",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/Singles/Alolan Raichu.csv"
+    },
+    {
+     "season": "Current",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/Doubles/Alolan Raichu.csv"
+    }
+   ],
+   "learnableMoveNames": [
+    "Agility",
+    "Alluring Voice",
+    "Body Slam",
+    "Brick Break",
+    "Calm Mind",
+    "Charge",
+    "Charge Beam",
+    "Charm",
+    "Dazzling Gleam",
+    "Dig",
+    "Discharge",
+    "Double Team",
+    "Draining Kiss",
+    "Eerie Impulse",
+    "Electric Terrain",
+    "Electro Ball",
+    "Electroweb",
+    "Encore",
+    "Endeavor",
+    "Endure",
+    "Expanding Force",
+    "Facade",
+    "Fake Out",
+    "Fake Tears",
+    "Feint",
+    "Flail",
+    "Fling",
+    "Focus Blast",
+    "Focus Punch",
+    "Giga Impact",
+    "Grass Knot",
+    "Helping Hand",
+    "Hyper Beam",
+    "Iron Tail",
+    "Knock Off",
+    "Light Screen",
+    "Magic Room",
+    "Mega Kick",
+    "Nasty Plot",
+    "Nuzzle",
+    "Play Rough",
+    "Protect",
+    "Psychic",
+    "Psychic Noise",
+    "Psychic Terrain",
+    "Psyshock",
+    "Quick Attack",
+    "Rain Dance",
+    "Reflect",
+    "Rest",
+    "Reversal",
+    "Rising Voltage",
+    "Round",
+    "Skill Swap",
+    "Sleep Talk",
+    "Snore",
+    "Speed Swap",
+    "Stored Power",
+    "Substitute",
+    "Surf",
+    "Sweet Kiss",
+    "Thief",
+    "Thunder",
+    "Thunder Punch",
+    "Thunder Wave",
+    "Thunderbolt",
+    "Tickle",
+    "Trailblaze",
+    "Upper Hand",
+    "Volt Switch",
+    "Volt Tackle",
+    "Wild Charge",
+    "Wish",
+    "Zap Cannon"
+   ],
+   "summary": {
+    "dex": null,
+    "sprite": "pokemon_champions_assets/pokemon/Alolan Raichu.png",
+    "types": [
+     "Electric",
+     "Psychic"
+    ],
+    "primary": {
+     "pokemon_name": "Raichu",
+     "title": "Raichu [Alolan Form]",
+     "dex_number": null,
+     "base_dex_url": "",
+     "image_path": "pokemon_champions_assets/pokemon/Alolan Raichu.png",
+     "form_name": "Alolan Raichu",
+     "saved_name": "Alolan Raichu",
+     "slug": "alolan-raichu",
+     "form_kind": "Alolan",
+     "types": [
+      "Electric",
+      "Psychic"
+     ],
+     "types_raw": "Electric/Psychic",
+     "abilities": "Surge Surfer",
+     "hidden_ability": "",
+     "hp": 135,
+     "attack": 105,
+     "defense": 70,
+     "sp_attack": 115,
+     "sp_defense": 105,
+     "speed": 130,
+     "base_stat_total": 660
+    },
+    "forms": [
+     {
+      "pokemon_name": "Raichu",
+      "title": "Raichu",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Raichu.png",
+      "form_name": "Raichu",
+      "saved_name": "Raichu",
+      "slug": "raichu",
+      "form_kind": "Base",
+      "types": [
+       "Electric"
+      ],
+      "types_raw": "Electric",
+      "abilities": "Static|Lightning Rod",
+      "hidden_ability": "",
+      "hp": 135,
+      "attack": 110,
+      "defense": 75,
+      "sp_attack": 110,
+      "sp_defense": 100,
+      "speed": 130,
+      "base_stat_total": 660
+     },
+     {
+      "pokemon_name": "Raichu",
+      "title": "Raichu [Alolan Form]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Alolan Raichu.png",
+      "form_name": "Alolan Raichu",
+      "saved_name": "Alolan Raichu",
+      "slug": "alolan-raichu",
+      "form_kind": "Alolan",
+      "types": [
+       "Electric",
+       "Psychic"
+      ],
+      "types_raw": "Electric/Psychic",
+      "abilities": "Surge Surfer",
+      "hidden_ability": "",
+      "hp": 135,
+      "attack": 105,
+      "defense": 70,
+      "sp_attack": 115,
+      "sp_defense": 105,
+      "speed": 130,
+      "base_stat_total": 660
+     },
+     {
+      "pokemon_name": "Raichu",
+      "title": "Mega Raichu X",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Mega Raichu X.png",
+      "form_name": "Mega Raichu X",
+      "saved_name": "Mega Raichu X",
+      "slug": "mega-raichu-x",
+      "form_kind": "Mega X",
+      "types": [
+       "Electric"
+      ],
+      "types_raw": "Electric",
+      "abilities": "Electric Surge",
+      "hidden_ability": "",
+      "hp": 135,
+      "attack": 155,
+      "defense": 115,
+      "sp_attack": 110,
+      "sp_defense": 115,
+      "speed": 130,
+      "base_stat_total": 760
+     },
+     {
+      "pokemon_name": "Raichu",
+      "title": "Mega Raichu Y",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Mega Raichu Y.png",
+      "form_name": "Mega Raichu Y",
+      "saved_name": "Mega Raichu Y",
+      "slug": "mega-raichu-y",
+      "form_kind": "Mega Y",
+      "types": [
+       "Electric"
+      ],
+      "types_raw": "Electric",
+      "abilities": "No Guard",
+      "hidden_ability": "",
+      "hp": 135,
+      "attack": 120,
+      "defense": 75,
+      "sp_attack": 180,
+      "sp_defense": 100,
+      "speed": 150,
+      "base_stat_total": 760
+     }
+    ],
+    "baseStats": {
+     "hp": 135,
+     "attack": 105,
+     "defense": 70,
+     "sp_attack": 115,
+     "sp_defense": 105,
+     "speed": 130
+    },
+    "baseStatTotal": 660,
+    "battleSummary": {
+     "Current": {
+      "Doubles": {
+       "top": {
+        "move": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 198,
+         "position": 198,
+         "category": "move",
+         "rank": 1,
+         "name": "Fake Out",
+         "percentage": "56.7%",
+         "percentage_value": 56.7,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 198,
+         "position": 198,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Focus Sash",
+         "percentage": "47.9%",
+         "percentage_value": 47.9,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 198,
+         "position": 198,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Sceptile",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 198,
+         "position": 198,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Timid",
+         "percentage": "50.4%",
+         "percentage_value": 50.4,
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "stat_points": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 198,
+         "position": 198,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "39.6%",
+         "percentage_value": 39.6,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 0,
+         "defense_points": 0,
+         "sp_atk_points": 32,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 198,
+         "position": 198,
+         "category": "ability",
+         "rank": 1,
+         "name": "Surge Surfer",
+         "percentage": "100.0%",
+         "percentage_value": 100,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Fake Out",
+         "Thunderbolt",
+         "Psychic",
+         "Protect",
+         "Expanding Force",
+         "Psychic Terrain",
+         "Discharge",
+         "Volt Switch",
+         "Rising Voltage",
+         "Electric Terrain"
+        ],
+        "held_item": [
+         "Focus Sash",
+         "Life Orb",
+         "Magnet",
+         "Quick Claw",
+         "Sitrus Berry",
+         "Wise Glasses",
+         "Choice Scarf",
+         "Shuca Berry",
+         "Twisted Spoon",
+         "Leftovers"
+        ],
+        "teammate": [
+         "Sceptile",
+         "Whimsicott",
+         "Garchomp",
+         "Alolan Ninetales",
+         "Charizard",
+         "Sinistcha",
+         "Incineroar",
+         "Farigiraf",
+         "Aerodactyl",
+         "Sylveon"
+        ],
+        "stat_alignment": [
+         "Timid",
+         "Modest",
+         "Hasty",
+         "Bold",
+         "Jolly",
+         "Mild",
+         "Calm",
+         "Naive",
+         "Quiet",
+         "Adamant"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 32",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 32 / Spe 2",
+         "HP 32 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 0",
+         "HP 32 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 2",
+         "HP 32 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 0"
+        ],
+        "ability": [
+         "Surge Surfer"
+        ]
+       },
+       "position": 198,
+       "statChanges": {
+        "Timid": {
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "Mild": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Defense"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Naive": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Def"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Adamant": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        }
+       }
+      },
+      "Singles": {
+       "top": {
+        "move": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 219,
+         "position": 219,
+         "category": "move",
+         "rank": 1,
+         "name": "Electric Terrain",
+         "percentage": "53.4%",
+         "percentage_value": 53.4,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 219,
+         "position": 219,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Focus Sash",
+         "percentage": "67.5%",
+         "percentage_value": 67.5,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 219,
+         "position": 219,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Garchomp",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 219,
+         "position": 219,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Modest",
+         "percentage": "33.5%",
+         "percentage_value": 33.5,
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "stat_points": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 219,
+         "position": 219,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "48.5%",
+         "percentage_value": 48.5,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 0,
+         "defense_points": 0,
+         "sp_atk_points": 32,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Alolan Raichu",
+         "column_position": 219,
+         "position": 219,
+         "category": "ability",
+         "rank": 1,
+         "name": "Surge Surfer",
+         "percentage": "100.0%",
+         "percentage_value": 100,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Electric Terrain",
+         "Psychic",
+         "Rising Voltage",
+         "Thunderbolt",
+         "Alluring Voice",
+         "Encore",
+         "Surf",
+         "Grass Knot",
+         "Volt Switch",
+         "Nasty Plot"
+        ],
+        "held_item": [
+         "Focus Sash",
+         "Life Orb",
+         "Magnet",
+         "Choice Scarf",
+         "Wise Glasses",
+         "Sitrus Berry",
+         "Expert Belt",
+         "Quick Claw",
+         "Shuca Berry",
+         "Raichunite Y"
+        ],
+        "teammate": [
+         "Garchomp",
+         "Mimikyu",
+         "Charizard",
+         "Meowscarada",
+         "Blaziken",
+         "Dragonite",
+         "Metagross",
+         "Alolan Ninetales",
+         "Primarina",
+         "Archaludon"
+        ],
+        "stat_alignment": [
+         "Modest",
+         "Timid",
+         "Mild",
+         "Hasty",
+         "Bold",
+         "Quiet",
+         "Calm",
+         "Impish",
+         "Rash",
+         "Gentle"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 32",
+         "HP 0 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 2",
+         "HP 2 / Atk 0 / Def 0 / SpA 32 / SpD 32 / Spe 0",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 32 / Spe 2",
+         "HP 32 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 0"
+        ],
+        "ability": [
+         "Surge Surfer"
+        ]
+       },
+       "position": 219,
+       "statChanges": {
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Timid": {
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "Mild": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Defense"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Impish": {
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "Rash": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Sp. Def"
+        },
+        "Gentle": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Defense"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "name": "Fan Rotom",
+   "battleName": "Fan Rotom",
+   "slug": "fan-rotom",
+   "showdownId": "rotomfan",
+   "showdownName": "Rotom-Fan",
+   "metadataCsv": "pokemon_champions_assets/metadata/Fan Rotom.csv",
+   "battleDataCsvs": [
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Doubles/Rotom Fan.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Singles/Rotom Fan.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Doubles/Rotom Fan.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Singles/Rotom Fan.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Doubles/Rotom Fan.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Singles/Rotom Fan.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Doubles/Rotom Fan.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Singles/Rotom Fan.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Doubles/Rotom Fan.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Singles/Rotom Fan.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Doubles/Rotom Fan.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Singles/Rotom Fan.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Doubles/Rotom Fan.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Singles/Rotom Fan.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Doubles/Rotom Fan.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Singles/Rotom Fan.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Doubles/Rotom Fan.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Singles/Rotom Fan.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Doubles/Rotom Fan.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Singles/Rotom Fan.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Doubles/Rotom Fan.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Singles/Rotom Fan.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Doubles/Rotom Fan.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Singles/Rotom Fan.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Doubles/Rotom Fan.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Singles/Rotom Fan.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Doubles/Rotom Fan.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Singles/Rotom Fan.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "Current",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/Singles/Rotom Fan.csv"
+    },
+    {
+     "season": "Current",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/Doubles/Rotom Fan.csv"
+    }
+   ],
+   "learnableMoveNames": [
+    "Air Slash",
+    "Charge",
+    "Charge Beam",
+    "Confuse Ray",
+    "Dark Pulse",
+    "Discharge",
+    "Double Team",
+    "Eerie Impulse",
+    "Electric Terrain",
+    "Electro Ball",
+    "Electroweb",
+    "Endure",
+    "Facade",
+    "Foul Play",
+    "Helping Hand",
+    "Hex",
+    "Hyper Voice",
+    "Light Screen",
+    "Nasty Plot",
+    "Night Shade",
+    "Pain Split",
+    "Poltergeist",
+    "Protect",
+    "Rain Dance",
+    "Reflect",
+    "Rest",
+    "Rising Voltage",
+    "Round",
+    "Shadow Ball",
+    "Sleep Talk",
+    "Snore",
+    "Spite",
+    "Stored Power",
+    "Substitute",
+    "Sunny Day",
+    "Thief",
+    "Thunder",
+    "Thunder Wave",
+    "Thunderbolt",
+    "Trick",
+    "Uproar",
+    "Volt Switch",
+    "Will-O-Wisp"
+   ],
+   "summary": {
+    "dex": null,
+    "sprite": "pokemon_champions_assets/pokemon/Fan Rotom.png",
+    "types": [
+     "Electric",
+     "Flying"
+    ],
+    "primary": {
+     "pokemon_name": "Fan Rotom",
+     "title": "Fan Rotom",
+     "dex_number": null,
+     "base_dex_url": "",
+     "image_path": "pokemon_champions_assets/pokemon/Fan Rotom.png",
+     "form_name": "Fan Rotom",
+     "saved_name": "Fan Rotom",
+     "slug": "fan-rotom",
+     "form_kind": "Base",
+     "types": [
+      "Electric",
+      "Flying"
+     ],
+     "types_raw": "Electric/Flying",
+     "abilities": "Levitate",
+     "hidden_ability": "",
+     "hp": 125,
+     "attack": 85,
+     "defense": 127,
+     "sp_attack": 125,
+     "sp_defense": 127,
+     "speed": 106,
+     "base_stat_total": 695
+    },
+    "forms": [
+     {
+      "pokemon_name": "Fan Rotom",
+      "title": "Fan Rotom",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Fan Rotom.png",
+      "form_name": "Fan Rotom",
+      "saved_name": "Fan Rotom",
+      "slug": "fan-rotom",
+      "form_kind": "Base",
+      "types": [
+       "Electric",
+       "Flying"
+      ],
+      "types_raw": "Electric/Flying",
+      "abilities": "Levitate",
+      "hidden_ability": "",
+      "hp": 125,
+      "attack": 85,
+      "defense": 127,
+      "sp_attack": 125,
+      "sp_defense": 127,
+      "speed": 106,
+      "base_stat_total": 695
+     }
+    ],
+    "baseStats": {
+     "hp": 125,
+     "attack": 85,
+     "defense": 127,
+     "sp_attack": 125,
+     "sp_defense": 127,
+     "speed": 106
+    },
+    "baseStatTotal": 695,
+    "battleSummary": {
+     "Current": {
+      "Doubles": {
+       "top": {
+        "move": {
+         "pokemon": "Fan Rotom",
+         "column_position": 216,
+         "position": 216,
+         "category": "move",
+         "rank": 1,
+         "name": "Air Slash",
+         "percentage": "85.8%",
+         "percentage_value": 85.8,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Fan Rotom",
+         "column_position": 216,
+         "position": 216,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Choice Scarf",
+         "percentage": "35.3%",
+         "percentage_value": 35.3,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Fan Rotom",
+         "column_position": 216,
+         "position": 216,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Garchomp",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Fan Rotom",
+         "column_position": 216,
+         "position": 216,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Modest",
+         "percentage": "41.9%",
+         "percentage_value": 41.9,
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "stat_points": {
+         "pokemon": "Fan Rotom",
+         "column_position": 216,
+         "position": 216,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "17.9%",
+         "percentage_value": 17.9,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 0,
+         "defense_points": 0,
+         "sp_atk_points": 32,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Fan Rotom",
+         "column_position": 216,
+         "position": 216,
+         "category": "ability",
+         "rank": 1,
+         "name": "Levitate",
+         "percentage": "100.0%",
+         "percentage_value": 100,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Air Slash",
+         "Thunderbolt",
+         "Discharge",
+         "Volt Switch",
+         "Will-O-Wisp",
+         "Protect",
+         "Shadow Ball",
+         "Electroweb",
+         "Light Screen",
+         "Trick"
+        ],
+        "held_item": [
+         "Choice Scarf",
+         "Sitrus Berry",
+         "Magnet",
+         "Life Orb",
+         "Expert Belt",
+         "Wise Glasses",
+         "Focus Sash",
+         "Wide Lens",
+         "Quick Claw",
+         "Leftovers"
+        ],
+        "teammate": [
+         "Garchomp",
+         "Sinistcha",
+         "Milotic",
+         "Incineroar",
+         "Sceptile",
+         "Tyranitar",
+         "Whimsicott",
+         "Sneasler",
+         "Pelipper",
+         "Glimmora"
+        ],
+        "stat_alignment": [
+         "Modest",
+         "Timid",
+         "Quiet",
+         "Bold",
+         "Mild",
+         "Calm",
+         "Hasty",
+         "Relaxed",
+         "Sassy",
+         "Gentle"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 0",
+         "HP 0 / Atk 0 / Def 2 / SpA 32 / SpD 32 / Spe 0",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 32",
+         "HP 0 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 0",
+         "HP 9 / Atk 0 / Def 0 / SpA 25 / SpD 0 / Spe 32",
+         "HP 0 / Atk 0 / Def 32 / SpA 32 / SpD 0 / Spe 2"
+        ],
+        "ability": [
+         "Levitate"
+        ]
+       },
+       "position": 216,
+       "statChanges": {
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Timid": {
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Mild": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Defense"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Relaxed": {
+         "stat_up": "Defense",
+         "stat_down": "Speed"
+        },
+        "Sassy": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Speed"
+        },
+        "Gentle": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Defense"
+        }
+       }
+      },
+      "Singles": {
+       "top": {
+        "move": {
+         "pokemon": "Fan Rotom",
+         "column_position": 217,
+         "position": 217,
+         "category": "move",
+         "rank": 1,
+         "name": "Air Slash",
+         "percentage": "90.8%",
+         "percentage_value": 90.8,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Fan Rotom",
+         "column_position": 217,
+         "position": 217,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Choice Scarf",
+         "percentage": "43.9%",
+         "percentage_value": 43.9,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Fan Rotom",
+         "column_position": 217,
+         "position": 217,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Garchomp",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Fan Rotom",
+         "column_position": 217,
+         "position": 217,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Modest",
+         "percentage": "37.8%",
+         "percentage_value": 37.8,
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "stat_points": {
+         "pokemon": "Fan Rotom",
+         "column_position": 217,
+         "position": 217,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "26.3%",
+         "percentage_value": 26.3,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 0,
+         "defense_points": 0,
+         "sp_atk_points": 32,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Fan Rotom",
+         "column_position": 217,
+         "position": 217,
+         "category": "ability",
+         "rank": 1,
+         "name": "Levitate",
+         "percentage": "100.0%",
+         "percentage_value": 100,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Air Slash",
+         "Volt Switch",
+         "Thunderbolt",
+         "Will-O-Wisp",
+         "Trick",
+         "Pain Split",
+         "Dark Pulse",
+         "Nasty Plot",
+         "Discharge",
+         "Shadow Ball"
+        ],
+        "held_item": [
+         "Choice Scarf",
+         "Sitrus Berry",
+         "Leftovers",
+         "Life Orb",
+         "Magnet",
+         "Focus Sash",
+         "Quick Claw",
+         "Wide Lens",
+         "Lum Berry",
+         "Light Clay"
+        ],
+        "teammate": [
+         "Garchomp",
+         "Blaziken",
+         "Meowscarada",
+         "Mimikyu",
+         "Greninja",
+         "Gyarados",
+         "Hippowdon",
+         "Primarina",
+         "Scizor",
+         "Dragapult"
+        ],
+        "stat_alignment": [
+         "Modest",
+         "Timid",
+         "Bold",
+         "Calm",
+         "Mild",
+         "Quiet",
+         "Hasty",
+         "Relaxed",
+         "Sassy",
+         "Gentle"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 0 / Def 0 / SpA 32 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 32 / SpA 0 / SpD 2 / Spe 0",
+         "HP 0 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 2 / SpA 32 / SpD 0 / Spe 0",
+         "HP 0 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 32",
+         "HP 32 / Atk 0 / Def 0 / SpA 32 / SpD 2 / Spe 0",
+         "HP 0 / Atk 0 / Def 32 / SpA 32 / SpD 0 / Spe 2",
+         "HP 32 / Atk 0 / Def 32 / SpA 0 / SpD 0 / Spe 2"
+        ],
+        "ability": [
+         "Levitate"
+        ]
+       },
+       "position": 217,
+       "statChanges": {
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Timid": {
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Mild": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Defense"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Relaxed": {
+         "stat_up": "Defense",
+         "stat_down": "Speed"
+        },
+        "Sassy": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Speed"
+        },
+        "Gentle": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Defense"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "name": "Garchomp",
+   "battleName": "Garchomp",
+   "slug": "garchomp",
+   "showdownId": "garchomp",
+   "showdownName": "Garchomp",
+   "metadataCsv": "pokemon_champions_assets/metadata/Garchomp.csv",
+   "battleDataCsvs": [
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Doubles/Garchomp.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Singles/Garchomp.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Doubles/Garchomp.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Singles/Garchomp.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Doubles/Garchomp.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Singles/Garchomp.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Doubles/Garchomp.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Singles/Garchomp.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Doubles/Garchomp.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Singles/Garchomp.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Doubles/Garchomp.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Singles/Garchomp.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Doubles/Garchomp.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Singles/Garchomp.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Doubles/Garchomp.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Singles/Garchomp.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Doubles/Garchomp.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Singles/Garchomp.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Doubles/Garchomp.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Singles/Garchomp.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Doubles/Garchomp.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Singles/Garchomp.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Doubles/Garchomp.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Singles/Garchomp.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Doubles/Garchomp.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Singles/Garchomp.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Doubles/Garchomp.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Singles/Garchomp.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Doubles/Garchomp.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Singles/Garchomp.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Doubles/Garchomp.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Singles/Garchomp.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "Current",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/Singles/Garchomp.csv"
+    },
+    {
+     "season": "Current",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/Doubles/Garchomp.csv"
+    }
+   ],
+   "learnableMoveNames": [
+    "Aerial Ace",
+    "Bite",
+    "Body Slam",
+    "Breaking Swipe",
+    "Brick Break",
+    "Brutal Swing",
+    "Bulldoze",
+    "Crunch",
+    "Dig",
+    "Double-Edge",
+    "Draco Meteor",
+    "Dragon Cheer",
+    "Dragon Claw",
+    "Dragon Pulse",
+    "Dragon Rush",
+    "Dragon Tail",
+    "Earth Power",
+    "Earthquake",
+    "Endure",
+    "Facade",
+    "Fire Blast",
+    "Fire Fang",
+    "Flamethrower",
+    "Fling",
+    "Giga Impact",
+    "Helping Hand",
+    "Hyper Beam",
+    "Iron Head",
+    "Iron Tail",
+    "Liquidation",
+    "Mud Shot",
+    "Outrage",
+    "Poison Jab",
+    "Power Gem",
+    "Protect",
+    "Rain Dance",
+    "Rest",
+    "Rock Slide",
+    "Rock Tomb",
+    "Round",
+    "Sand Tomb",
+    "Sandstorm",
+    "Scale Shot",
+    "Scary Face",
+    "Scorching Sands",
+    "Shadow Claw",
+    "Sleep Talk",
+    "Snore",
+    "Spikes",
+    "Stealth Rock",
+    "Stomping Tantrum",
+    "Stone Edge",
+    "Substitute",
+    "Sunny Day",
+    "Surf",
+    "Swords Dance",
+    "Thrash",
+    "Thunder Fang"
+   ],
+   "summary": {
+    "dex": null,
+    "sprite": "pokemon_champions_assets/pokemon/Garchomp.png",
+    "types": [
+     "Dragon",
+     "Ground"
+    ],
+    "primary": {
+     "pokemon_name": "Garchomp",
+     "title": "Garchomp",
+     "dex_number": null,
+     "base_dex_url": "",
+     "image_path": "pokemon_champions_assets/pokemon/Garchomp.png",
+     "form_name": "Garchomp",
+     "saved_name": "Garchomp",
+     "slug": "garchomp",
+     "form_kind": "Base",
+     "types": [
+      "Dragon",
+      "Ground"
+     ],
+     "types_raw": "Dragon/Ground",
+     "abilities": "Sand Veil|Rough Skin",
+     "hidden_ability": "",
+     "hp": 183,
+     "attack": 150,
+     "defense": 115,
+     "sp_attack": 100,
+     "sp_defense": 105,
+     "speed": 122,
+     "base_stat_total": 775
+    },
+    "forms": [
+     {
+      "pokemon_name": "Garchomp",
+      "title": "Garchomp",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Garchomp.png",
+      "form_name": "Garchomp",
+      "saved_name": "Garchomp",
+      "slug": "garchomp",
+      "form_kind": "Base",
+      "types": [
+       "Dragon",
+       "Ground"
+      ],
+      "types_raw": "Dragon/Ground",
+      "abilities": "Sand Veil|Rough Skin",
+      "hidden_ability": "",
+      "hp": 183,
+      "attack": 150,
+      "defense": 115,
+      "sp_attack": 100,
+      "sp_defense": 105,
+      "speed": 122,
+      "base_stat_total": 775
+     },
+     {
+      "pokemon_name": "Garchomp",
+      "title": "Garchomp [Mega Garchomp]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Mega Garchomp.png",
+      "form_name": "Mega Garchomp",
+      "saved_name": "Mega Garchomp",
+      "slug": "mega-garchomp",
+      "form_kind": "Mega",
+      "types": [
+       "Dragon",
+       "Ground"
+      ],
+      "types_raw": "Dragon/Ground",
+      "abilities": "Sand Force",
+      "hidden_ability": "",
+      "hp": 183,
+      "attack": 190,
+      "defense": 135,
+      "sp_attack": 140,
+      "sp_defense": 115,
+      "speed": 112,
+      "base_stat_total": 875
+     }
+    ],
+    "baseStats": {
+     "hp": 183,
+     "attack": 150,
+     "defense": 115,
+     "sp_attack": 100,
+     "sp_defense": 105,
+     "speed": 122
+    },
+    "baseStatTotal": 775,
+    "battleSummary": {
+     "Current": {
+      "Doubles": {
+       "top": {
+        "move": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "move",
+         "rank": 1,
+         "name": "Dragon Claw",
+         "percentage": "85.0%",
+         "percentage_value": 85,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Life Orb",
+         "percentage": "69.1%",
+         "percentage_value": 69.1,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Charizard",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Jolly",
+         "percentage": "66.9%",
+         "percentage_value": 66.9,
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "stat_points": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "45.2%",
+         "percentage_value": 45.2,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 32,
+         "defense_points": 0,
+         "sp_atk_points": 0,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "ability",
+         "rank": 1,
+         "name": "Rough Skin",
+         "percentage": "97.3%",
+         "percentage_value": 97.3,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Dragon Claw",
+         "Earthquake",
+         "Rock Slide",
+         "Protect",
+         "Stomping Tantrum",
+         "Poison Jab",
+         "Dragon Tail",
+         "Iron Head",
+         "Rock Tomb",
+         "Swords Dance"
+        ],
+        "held_item": [
+         "Life Orb",
+         "Choice Scarf",
+         "Sitrus Berry",
+         "Garchompite",
+         "Roseli Berry",
+         "Focus Sash",
+         "Soft Sand",
+         "Yache Berry",
+         "Lum Berry",
+         "Expert Belt"
+        ],
+        "teammate": [
+         "Charizard",
+         "Whimsicott",
+         "Kingambit",
+         "Sylveon",
+         "Incineroar",
+         "Basculegion Male",
+         "Aerodactyl",
+         "Staraptor",
+         "Farigiraf",
+         "Sneasler"
+        ],
+        "stat_alignment": [
+         "Jolly",
+         "Adamant",
+         "Brave",
+         "Modest",
+         "Impish",
+         "Naughty",
+         "Naive",
+         "Hasty",
+         "Careful",
+         "Lonely"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 32",
+         "HP 0 / Atk 32 / Def 1 / SpA 0 / SpD 1 / Spe 32",
+         "HP 0 / Atk 32 / Def 2 / SpA 0 / SpD 0 / Spe 32",
+         "HP 0 / Atk 32 / Def 0 / SpA 0 / SpD 2 / Spe 32",
+         "HP 0 / Atk 27 / Def 7 / SpA 0 / SpD 0 / Spe 32",
+         "HP 0 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 32",
+         "HP 0 / Atk 30 / Def 4 / SpA 0 / SpD 0 / Spe 32",
+         "HP 4 / Atk 30 / Def 0 / SpA 0 / SpD 0 / Spe 32"
+        ],
+        "ability": [
+         "Rough Skin",
+         "Sand Veil"
+        ]
+       },
+       "position": 1,
+       "statChanges": {
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "Adamant": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "Brave": {
+         "stat_up": "Attack",
+         "stat_down": "Speed"
+        },
+        "Modest": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Attack"
+        },
+        "Impish": {
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "Naughty": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Def"
+        },
+        "Naive": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Def"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Careful": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Sp. Atk"
+        },
+        "Lonely": {
+         "stat_up": "Attack",
+         "stat_down": "Defense"
+        }
+       }
+      },
+      "Singles": {
+       "top": {
+        "move": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "move",
+         "rank": 1,
+         "name": "Earthquake",
+         "percentage": "99.3%",
+         "percentage_value": 99.3,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Focus Sash",
+         "percentage": "40.5%",
+         "percentage_value": 40.5,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Mimikyu",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Jolly",
+         "percentage": "54.1%",
+         "percentage_value": 54.1,
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "stat_points": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "52.8%",
+         "percentage_value": 52.8,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 2,
+         "attack_points": 32,
+         "defense_points": 0,
+         "sp_atk_points": 0,
+         "sp_def_points": 0,
+         "speed_points": 32
+        },
+        "ability": {
+         "pokemon": "Garchomp",
+         "column_position": 1,
+         "position": 1,
+         "category": "ability",
+         "rank": 1,
+         "name": "Rough Skin",
+         "percentage": "98.9%",
+         "percentage_value": 98.9,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Earthquake",
+         "Stealth Rock",
+         "Scale Shot",
+         "Outrage",
+         "Swords Dance",
+         "Rock Tomb",
+         "Dragon Tail",
+         "Poison Jab",
+         "Rock Slide",
+         "Spikes"
+        ],
+        "held_item": [
+         "Focus Sash",
+         "Sitrus Berry",
+         "Choice Scarf",
+         "Lum Berry",
+         "Life Orb",
+         "Garchompite",
+         "Leftovers",
+         "Yache Berry",
+         "Haban Berry",
+         "Quick Claw"
+        ],
+        "teammate": [
+         "Mimikyu",
+         "Primarina",
+         "Meowscarada",
+         "Metagross",
+         "Archaludon",
+         "Gyarados",
+         "Delphox",
+         "Charizard",
+         "Blaziken",
+         "Scizor"
+        ],
+        "stat_alignment": [
+         "Jolly",
+         "Adamant",
+         "Impish",
+         "Careful",
+         "Naive",
+         "Naughty",
+         "Hasty",
+         "Bold",
+         "Lonely",
+         "Timid"
+        ],
+        "stat_points": [
+         "HP 2 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 32",
+         "HP 0 / Atk 32 / Def 2 / SpA 0 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 32 / SpA 0 / SpD 0 / Spe 2",
+         "HP 0 / Atk 32 / Def 1 / SpA 0 / SpD 1 / Spe 32",
+         "HP 0 / Atk 32 / Def 0 / SpA 0 / SpD 2 / Spe 32",
+         "HP 0 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 32",
+         "HP 32 / Atk 0 / Def 25 / SpA 0 / SpD 0 / Spe 9",
+         "HP 32 / Atk 0 / Def 19 / SpA 0 / SpD 15 / Spe 0"
+        ],
+        "ability": [
+         "Rough Skin",
+         "Sand Veil"
+        ]
+       },
+       "position": 1,
+       "statChanges": {
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "Adamant": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "Impish": {
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "Careful": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Sp. Atk"
+        },
+        "Naive": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Def"
+        },
+        "Naughty": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Def"
+        },
+        "Hasty": {
+         "stat_up": "Speed",
+         "stat_down": "Defense"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Lonely": {
+         "stat_up": "Attack",
+         "stat_down": "Defense"
+        },
+        "Timid": {
+         "stat_up": "Speed",
+         "stat_down": "Attack"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "name": "Gourgeist Jumbo Variety",
+   "battleName": "Gourgeist Jumbo Variety",
+   "slug": "gourgeist-jumbo-variety",
+   "showdownId": "gourgeistsuper",
+   "showdownName": "Gourgeist-Super",
+   "metadataCsv": "pokemon_champions_assets/metadata/Gourgeist.csv",
+   "battleDataCsvs": [
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/04_08_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "04_08_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/30_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "30_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/29_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "29_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/28_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "28_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/27_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "27_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/26_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "26_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/25_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "25_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/24_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "24_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/23_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "23_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/22_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "22_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/21_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "21_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/20_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "20_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/19_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "19_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/18_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "18_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Doubles/Gourgeist Jumbo Variety.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Singles/Gourgeist Jumbo Variety.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "Current",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/Singles/Gourgeist Jumbo Variety.csv"
+    },
+    {
+     "season": "Current",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/Doubles/Gourgeist Jumbo Variety.csv"
+    }
+   ],
+   "learnableMoveNames": [
+    "Ally Switch",
+    "Astonish",
+    "Attract",
+    "Brutal Swing",
+    "Bullet Seed",
+    "Confuse Ray",
+    "Curse",
+    "Dark Pulse",
+    "Destiny Bond",
+    "Disable",
+    "Endure",
+    "Energy Ball",
+    "Explosion",
+    "Facade",
+    "Fire Blast",
+    "Flamethrower",
+    "Focus Blast",
+    "Foul Play",
+    "Giga Drain",
+    "Giga Impact",
+    "Grass Knot",
+    "Grassy Glide",
+    "Gyro Ball",
+    "Hex",
+    "Hyper Beam",
+    "Hypnosis",
+    "Imprison",
+    "Leech Seed",
+    "Light Screen",
+    "Moonblast",
+    "Mystical Fire",
+    "Nasty Plot",
+    "Pain Split",
+    "Phantom Force",
+    "Poltergeist",
+    "Power Whip",
+    "Protect",
+    "Psychic",
+    "Rest",
+    "Rock Slide",
+    "Round",
+    "Safeguard",
+    "Scary Face",
+    "Seed Bomb",
+    "Self-Destruct",
+    "Shadow Ball",
+    "Shadow Sneak",
+    "Skill Swap",
+    "Skitter Smack",
+    "Sleep Talk",
+    "Sludge Bomb",
+    "Snore",
+    "Solar Beam",
+    "Substitute",
+    "Sunny Day",
+    "Thief",
+    "Trick",
+    "Trick Room",
+    "Trick-or-Treat",
+    "Will-O-Wisp",
+    "Worry Seed"
+   ],
+   "summary": {
+    "dex": null,
+    "sprite": "pokemon_champions_assets/pokemon/Gourgeist Jumbo Variety.png",
+    "types": [
+     "Ghost",
+     "Grass"
+    ],
+    "primary": {
+     "pokemon_name": "Gourgeist",
+     "title": "Gourgeist [Jumbo Variety]",
+     "dex_number": null,
+     "base_dex_url": "",
+     "image_path": "pokemon_champions_assets/pokemon/Gourgeist Jumbo Variety.png",
+     "form_name": "Gourgeist Jumbo Variety",
+     "saved_name": "Gourgeist Jumbo Variety",
+     "slug": "gourgeist-jumbo-variety",
+     "form_kind": "Jumbo Variety",
+     "types": [
+      "Ghost",
+      "Grass"
+     ],
+     "types_raw": "Ghost/Grass",
+     "abilities": "Pickup|Frisk|Insomnia",
+     "hidden_ability": "",
+     "hp": 160,
+     "attack": 120,
+     "defense": 142,
+     "sp_attack": 78,
+     "sp_defense": 95,
+     "speed": 74,
+     "base_stat_total": 669
+    },
+    "forms": [
+     {
+      "pokemon_name": "Gourgeist",
+      "title": "Gourgeist",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Gourgeist.png",
+      "form_name": "Gourgeist",
+      "saved_name": "Gourgeist",
+      "slug": "gourgeist",
+      "form_kind": "Base",
+      "types": [
+       "Ghost",
+       "Grass"
+      ],
+      "types_raw": "Ghost/Grass",
+      "abilities": "Pickup|Frisk|Insomnia",
+      "hidden_ability": "",
+      "hp": 140,
+      "attack": 110,
+      "defense": 142,
+      "sp_attack": 78,
+      "sp_defense": 95,
+      "speed": 104,
+      "base_stat_total": 669
+     },
+     {
+      "pokemon_name": "Gourgeist",
+      "title": "Gourgeist [Jumbo Variety]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Gourgeist Jumbo Variety.png",
+      "form_name": "Gourgeist Jumbo Variety",
+      "saved_name": "Gourgeist Jumbo Variety",
+      "slug": "gourgeist-jumbo-variety",
+      "form_kind": "Jumbo Variety",
+      "types": [
+       "Ghost",
+       "Grass"
+      ],
+      "types_raw": "Ghost/Grass",
+      "abilities": "Pickup|Frisk|Insomnia",
+      "hidden_ability": "",
+      "hp": 160,
+      "attack": 120,
+      "defense": 142,
+      "sp_attack": 78,
+      "sp_defense": 95,
+      "speed": 74,
+      "base_stat_total": 669
+     },
+     {
+      "pokemon_name": "Gourgeist",
+      "title": "Gourgeist [Large Variety]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Gourgeist Large Variety.png",
+      "form_name": "Gourgeist Large Variety",
+      "saved_name": "Gourgeist Large Variety",
+      "slug": "gourgeist-large-variety",
+      "form_kind": "Large Variety",
+      "types": [
+       "Ghost",
+       "Grass"
+      ],
+      "types_raw": "Ghost/Grass",
+      "abilities": "Pickup|Frisk|Insomnia",
+      "hidden_ability": "",
+      "hp": 150,
+      "attack": 115,
+      "defense": 142,
+      "sp_attack": 78,
+      "sp_defense": 95,
+      "speed": 89,
+      "base_stat_total": 669
+     },
+     {
+      "pokemon_name": "Gourgeist",
+      "title": "Gourgeist [Small Variety]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Gourgeist Small Variety.png",
+      "form_name": "Gourgeist Small Variety",
+      "saved_name": "Gourgeist Small Variety",
+      "slug": "gourgeist-small-variety",
+      "form_kind": "Small Variety",
+      "types": [
+       "Ghost",
+       "Grass"
+      ],
+      "types_raw": "Ghost/Grass",
+      "abilities": "Pickup|Frisk|Insomnia",
+      "hidden_ability": "",
+      "hp": 130,
+      "attack": 105,
+      "defense": 142,
+      "sp_attack": 78,
+      "sp_defense": 95,
+      "speed": 119,
+      "base_stat_total": 669
+     }
+    ],
+    "baseStats": {
+     "hp": 160,
+     "attack": 120,
+     "defense": 142,
+     "sp_attack": 78,
+     "sp_defense": 95,
+     "speed": 74
+    },
+    "baseStatTotal": 669,
+    "battleSummary": {
+     "Current": {
+      "Doubles": {
+       "top": {
+        "move": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 202,
+         "position": 202,
+         "category": "move",
+         "rank": 1,
+         "name": "Trick Room",
+         "percentage": "73.6%",
+         "percentage_value": 73.6,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 202,
+         "position": 202,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Sitrus Berry",
+         "percentage": "39.9%",
+         "percentage_value": 39.9,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 202,
+         "position": 202,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Tyranitar",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 202,
+         "position": 202,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Brave",
+         "percentage": "27.4%",
+         "percentage_value": 27.4,
+         "stat_up": "Attack",
+         "stat_down": "Speed"
+        },
+        "stat_points": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 202,
+         "position": 202,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "16.6%",
+         "percentage_value": 16.6,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 32,
+         "attack_points": 0,
+         "defense_points": 2,
+         "sp_atk_points": 0,
+         "sp_def_points": 32,
+         "speed_points": 0
+        },
+        "ability": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 202,
+         "position": 202,
+         "category": "ability",
+         "rank": 1,
+         "name": "Frisk",
+         "percentage": "74.1%",
+         "percentage_value": 74.1,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Trick Room",
+         "Trick-or-Treat",
+         "Poltergeist",
+         "Power Whip",
+         "Will-O-Wisp",
+         "Explosion",
+         "Protect",
+         "Ally Switch",
+         "Shadow Sneak",
+         "Leech Seed"
+        ],
+        "held_item": [
+         "Sitrus Berry",
+         "Focus Sash",
+         "Mental Herb",
+         "Leftovers",
+         "Occa Berry",
+         "Wide Lens",
+         "Colbur Berry",
+         "Life Orb",
+         "Silk Scarf",
+         "Zoom Lens"
+        ],
+        "teammate": [
+         "Tyranitar",
+         "Torkoal",
+         "Kingambit",
+         "Farigiraf",
+         "Sylveon",
+         "Snorlax",
+         "Camerupt",
+         "Golurk",
+         "Grimmsnarl",
+         "Mawile"
+        ],
+        "stat_alignment": [
+         "Brave",
+         "Sassy",
+         "Relaxed",
+         "Adamant",
+         "Careful",
+         "Impish",
+         "Jolly",
+         "Bold",
+         "Calm",
+         "Lonely"
+        ],
+        "stat_points": [
+         "HP 32 / Atk 0 / Def 2 / SpA 0 / SpD 32 / Spe 0",
+         "HP 32 / Atk 32 / Def 0 / SpA 0 / SpD 2 / Spe 0",
+         "HP 32 / Atk 32 / Def 2 / SpA 0 / SpD 0 / Spe 0",
+         "HP 32 / Atk 32 / Def 0 / SpA 0 / SpD 0 / Spe 2",
+         "HP 31 / Atk 0 / Def 3 / SpA 0 / SpD 32 / Spe 0",
+         "HP 0 / Atk 32 / Def 2 / SpA 0 / SpD 32 / Spe 0",
+         "HP 2 / Atk 32 / Def 0 / SpA 0 / SpD 32 / Spe 0",
+         "HP 32 / Atk 0 / Def 0 / SpA 0 / SpD 32 / Spe 0"
+        ],
+        "ability": [
+         "Frisk",
+         "Insomnia",
+         "Pickup"
+        ]
+       },
+       "position": 202,
+       "statChanges": {
+        "Brave": {
+         "stat_up": "Attack",
+         "stat_down": "Speed"
+        },
+        "Sassy": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Speed"
+        },
+        "Relaxed": {
+         "stat_up": "Defense",
+         "stat_down": "Speed"
+        },
+        "Adamant": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "Careful": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Sp. Atk"
+        },
+        "Impish": {
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Lonely": {
+         "stat_up": "Attack",
+         "stat_down": "Defense"
+        }
+       }
+      },
+      "Singles": {
+       "top": {
+        "move": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 204,
+         "position": 204,
+         "category": "move",
+         "rank": 1,
+         "name": "Will-O-Wisp",
+         "percentage": "58.7%",
+         "percentage_value": 58.7,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "held_item": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 204,
+         "position": 204,
+         "category": "held_item",
+         "rank": 1,
+         "name": "Leftovers",
+         "percentage": "46.7%",
+         "percentage_value": 46.7,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "teammate": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 204,
+         "position": 204,
+         "category": "teammate",
+         "rank": 1,
+         "name": "Garchomp",
+         "percentage": "",
+         "percentage_value": null,
+         "stat_up": "",
+         "stat_down": ""
+        },
+        "stat_alignment": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 204,
+         "position": 204,
+         "category": "stat_alignment",
+         "rank": 1,
+         "name": "Impish",
+         "percentage": "40.2%",
+         "percentage_value": 40.2,
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "stat_points": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 204,
+         "position": 204,
+         "category": "stat_points",
+         "rank": 1,
+         "name": "",
+         "percentage": "21.0%",
+         "percentage_value": 21,
+         "stat_up": "",
+         "stat_down": "",
+         "hp_points": 32,
+         "attack_points": 0,
+         "defense_points": 32,
+         "sp_atk_points": 0,
+         "sp_def_points": 2,
+         "speed_points": 0
+        },
+        "ability": {
+         "pokemon": "Gourgeist Jumbo Variety",
+         "column_position": 204,
+         "position": 204,
+         "category": "ability",
+         "rank": 1,
+         "name": "Insomnia",
+         "percentage": "64.8%",
+         "percentage_value": 64.8,
+         "stat_up": "",
+         "stat_down": ""
+        }
+       },
+       "values": {
+        "move": [
+         "Will-O-Wisp",
+         "Poltergeist",
+         "Leech Seed",
+         "Power Whip",
+         "Trick Room",
+         "Shadow Sneak",
+         "Explosion",
+         "Protect",
+         "Destiny Bond",
+         "Curse"
+        ],
+        "held_item": [
+         "Leftovers",
+         "Focus Sash",
+         "Sitrus Berry",
+         "Wide Lens",
+         "Zoom Lens",
+         "Big Root",
+         "Life Orb",
+         "Occa Berry",
+         "Choice Scarf",
+         "Kasib Berry"
+        ],
+        "teammate": [
+         "Garchomp",
+         "Mawile",
+         "Mimikyu",
+         "Tyranitar",
+         "Primarina",
+         "Archaludon",
+         "Gyarados",
+         "Blaziken",
+         "Metagross",
+         "Delphox"
+        ],
+        "stat_alignment": [
+         "Impish",
+         "Brave",
+         "Adamant",
+         "Relaxed",
+         "Careful",
+         "Sassy",
+         "Bold",
+         "Calm",
+         "Quiet",
+         "Jolly"
+        ],
+        "stat_points": [
+         "HP 32 / Atk 0 / Def 32 / SpA 0 / SpD 2 / Spe 0",
+         "HP 32 / Atk 32 / Def 2 / SpA 0 / SpD 0 / Spe 0",
+         "HP 32 / Atk 32 / Def 0 / SpA 0 / SpD 2 / Spe 0",
+         "HP 32 / Atk 2 / Def 32 / SpA 0 / SpD 0 / Spe 0",
+         "HP 32 / Atk 0 / Def 2 / SpA 0 / SpD 32 / Spe 0",
+         "HP 0 / Atk 32 / Def 2 / SpA 0 / SpD 32 / Spe 0",
+         "HP 0 / Atk 32 / Def 32 / SpA 0 / SpD 2 / Spe 0",
+         "HP 32 / Atk 0 / Def 29 / SpA 0 / SpD 0 / Spe 5"
+        ],
+        "ability": [
+         "Insomnia",
+         "Frisk",
+         "Pickup"
+        ]
+       },
+       "position": 204,
+       "statChanges": {
+        "Impish": {
+         "stat_up": "Defense",
+         "stat_down": "Sp. Atk"
+        },
+        "Brave": {
+         "stat_up": "Attack",
+         "stat_down": "Speed"
+        },
+        "Adamant": {
+         "stat_up": "Attack",
+         "stat_down": "Sp. Atk"
+        },
+        "Relaxed": {
+         "stat_up": "Defense",
+         "stat_down": "Speed"
+        },
+        "Careful": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Sp. Atk"
+        },
+        "Sassy": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Speed"
+        },
+        "Bold": {
+         "stat_up": "Defense",
+         "stat_down": "Attack"
+        },
+        "Calm": {
+         "stat_up": "Sp. Def",
+         "stat_down": "Attack"
+        },
+        "Quiet": {
+         "stat_up": "Sp. Atk",
+         "stat_down": "Speed"
+        },
+        "Jolly": {
+         "stat_up": "Speed",
+         "stat_down": "Sp. Atk"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  {
+   "name": "Rotom Fan",
+   "battleName": "Rotom Fan",
+   "slug": "rotom-fan",
+   "showdownId": "rotomfan",
+   "showdownName": "Rotom-Fan",
+   "metadataCsv": "pokemon_champions_assets/metadata/Rotom.csv",
+   "battleDataCsvs": [
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Doubles/Rotom Fan.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/17_07_2026/Singles/Rotom Fan.csv",
+     "date": "17_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Doubles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Doubles/Rotom Fan.csv",
+     "date": "16_07_2026",
+     "daily": true
+    },
+    {
+     "season": "M4",
+     "format": "Singles",
+     "path": "pokemon_champions_assets/battle_data/M4/16_07_2026/Singles/Rotom Fan.csv",
+     "date": "16_07_2026",
+     "daily": true
+    }
+   ],
+   "learnableMoveNames": [
+    "Air Slash",
+    "Charge",
+    "Charge Beam",
+    "Confuse Ray",
+    "Dark Pulse",
+    "Discharge",
+    "Double Team",
+    "Eerie Impulse",
+    "Electric Terrain",
+    "Electro Ball",
+    "Electroweb",
+    "Endure",
+    "Facade",
+    "Foul Play",
+    "Helping Hand",
+    "Hex",
+    "Hyper Voice",
+    "Light Screen",
+    "Nasty Plot",
+    "Night Shade",
+    "Pain Split",
+    "Poltergeist",
+    "Protect",
+    "Rain Dance",
+    "Reflect",
+    "Rest",
+    "Rising Voltage",
+    "Round",
+    "Shadow Ball",
+    "Sleep Talk",
+    "Snore",
+    "Spite",
+    "Stored Power",
+    "Substitute",
+    "Sunny Day",
+    "Thief",
+    "Thunder",
+    "Thunder Shock",
+    "Thunder Wave",
+    "Thunderbolt",
+    "Trick",
+    "Uproar",
+    "Volt Switch",
+    "Will-O-Wisp"
+   ],
+   "summary": {
+    "dex": null,
+    "sprite": "pokemon_champions_assets/pokemon/Rotom Fan.png",
+    "types": [
+     "Electric",
+     "Flying"
+    ],
+    "primary": {
+     "pokemon_name": "Rotom",
+     "title": "Rotom [Fan Rotom]",
+     "dex_number": null,
+     "base_dex_url": "",
+     "image_path": "pokemon_champions_assets/pokemon/Rotom Fan.png",
+     "form_name": "Rotom Fan",
+     "saved_name": "Rotom Fan",
+     "slug": "rotom-fan",
+     "form_kind": "Fan",
+     "types": [
+      "Electric",
+      "Flying"
+     ],
+     "types_raw": "Electric/Flying",
+     "abilities": "Levitate",
+     "hidden_ability": "",
+     "hp": 125,
+     "attack": 85,
+     "defense": 127,
+     "sp_attack": 125,
+     "sp_defense": 127,
+     "speed": 106,
+     "base_stat_total": 695
+    },
+    "forms": [
+     {
+      "pokemon_name": "Rotom",
+      "title": "Rotom [Wash Rotom]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Rotom Wash.png",
+      "form_name": "Rotom Wash",
+      "saved_name": "Rotom Wash",
+      "slug": "rotom-wash",
+      "form_kind": "Wash",
+      "types": [
+       "Electric",
+       "Water"
+      ],
+      "types_raw": "Electric/Water",
+      "abilities": "Levitate",
+      "hidden_ability": "",
+      "hp": 125,
+      "attack": 85,
+      "defense": 127,
+      "sp_attack": 125,
+      "sp_defense": 127,
+      "speed": 106,
+      "base_stat_total": 695
+     },
+     {
+      "pokemon_name": "Rotom",
+      "title": "Rotom",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Rotom.png",
+      "form_name": "Rotom",
+      "saved_name": "Rotom",
+      "slug": "rotom",
+      "form_kind": "Base",
+      "types": [
+       "Electric",
+       "Ghost"
+      ],
+      "types_raw": "Electric/Ghost",
+      "abilities": "Levitate",
+      "hidden_ability": "",
+      "hp": 125,
+      "attack": 70,
+      "defense": 97,
+      "sp_attack": 115,
+      "sp_defense": 97,
+      "speed": 111,
+      "base_stat_total": 615
+     },
+     {
+      "pokemon_name": "Rotom",
+      "title": "Rotom [Fan Rotom]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Rotom Fan.png",
+      "form_name": "Rotom Fan",
+      "saved_name": "Rotom Fan",
+      "slug": "rotom-fan",
+      "form_kind": "Fan",
+      "types": [
+       "Electric",
+       "Flying"
+      ],
+      "types_raw": "Electric/Flying",
+      "abilities": "Levitate",
+      "hidden_ability": "",
+      "hp": 125,
+      "attack": 85,
+      "defense": 127,
+      "sp_attack": 125,
+      "sp_defense": 127,
+      "speed": 106,
+      "base_stat_total": 695
+     },
+     {
+      "pokemon_name": "Rotom",
+      "title": "Rotom [Frost Rotom]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Rotom Frost.png",
+      "form_name": "Rotom Frost",
+      "saved_name": "Rotom Frost",
+      "slug": "rotom-frost",
+      "form_kind": "Frost",
+      "types": [
+       "Electric",
+       "Ice"
+      ],
+      "types_raw": "Electric/Ice",
+      "abilities": "Levitate",
+      "hidden_ability": "",
+      "hp": 125,
+      "attack": 85,
+      "defense": 127,
+      "sp_attack": 125,
+      "sp_defense": 127,
+      "speed": 106,
+      "base_stat_total": 695
+     },
+     {
+      "pokemon_name": "Rotom",
+      "title": "Rotom [Heat Rotom]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Rotom Heat.png",
+      "form_name": "Rotom Heat",
+      "saved_name": "Rotom Heat",
+      "slug": "rotom-heat",
+      "form_kind": "Heat",
+      "types": [
+       "Electric",
+       "Fire"
+      ],
+      "types_raw": "Electric/Fire",
+      "abilities": "Levitate",
+      "hidden_ability": "",
+      "hp": 125,
+      "attack": 85,
+      "defense": 127,
+      "sp_attack": 125,
+      "sp_defense": 127,
+      "speed": 106,
+      "base_stat_total": 695
+     },
+     {
+      "pokemon_name": "Rotom",
+      "title": "Rotom [Mow Rotom]",
+      "dex_number": null,
+      "base_dex_url": "",
+      "image_path": "pokemon_champions_assets/pokemon/Rotom Mow.png",
+      "form_name": "Rotom Mow",
+      "saved_name": "Rotom Mow",
+      "slug": "rotom-mow",
+      "form_kind": "Mow",
+      "types": [
+       "Electric",
+       "Grass"
+      ],
+      "types_raw": "Electric/Grass",
+      "abilities": "Levitate",
+      "hidden_ability": "",
+      "hp": 125,
+      "attack": 85,
+      "defense": 127,
+      "sp_attack": 125,
+      "sp_defense": 127,
+      "speed": 106,
+      "base_stat_total": 695
+     }
+    ],
+    "baseStats": {
+     "hp": 125,
+     "attack": 85,
+     "defense": 127,
+     "sp_attack": 125,
+     "sp_defense": 127,
+     "speed": 106
+    },
+    "baseStatTotal": 695,
+    "battleSummary": {}
+   }
+  }
+ ]
+}

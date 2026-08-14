@@ -1,0 +1,23 @@
+node_modules/
+dist/
+
+# 빌드 스크립트가 받아 둔 상류 원본 (Smogon chaos 등). 100MB 넘고 언제든 다시 받을 수 있다.
+.cache/
+
+# 서버가 재생성한 산출물. dist/ 를 건드리지 않으려고 여기 쓴다.
+var/
+
+*.local
+.env
+.env.*
+!.env.example
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 초기 탐색용 상류 응답 덤프 (40MB). 코드에서 쓰지 않는다 —
+# 테스트가 쓰는 건 test/fixtures/ 쪽이다.
+/fixtures/
+*.log

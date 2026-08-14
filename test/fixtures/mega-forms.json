@@ -1,0 +1,476 @@
+[
+ {
+  "species": "Abomasnow",
+  "showdownId": "abomasnow",
+  "formName": "Mega Abomasnow",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Absol",
+  "showdownId": "absol",
+  "formName": "Mega Absol",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Aerodactyl",
+  "showdownId": "aerodactyl",
+  "formName": "Mega Aerodactyl",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Aggron",
+  "showdownId": "aggron",
+  "formName": "Mega Aggron",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Alakazam",
+  "showdownId": "alakazam",
+  "formName": "Mega Alakazam",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Alolan Raichu",
+  "showdownId": "raichualola",
+  "formName": "Mega Raichu X",
+  "formKind": "Mega X"
+ },
+ {
+  "species": "Alolan Raichu",
+  "showdownId": "raichualola",
+  "formName": "Mega Raichu Y",
+  "formKind": "Mega Y"
+ },
+ {
+  "species": "Altaria",
+  "showdownId": "altaria",
+  "formName": "Mega Altaria",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Ampharos",
+  "showdownId": "ampharos",
+  "formName": "Mega Ampharos",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Audino",
+  "showdownId": "audino",
+  "formName": "Mega Audino",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Banette",
+  "showdownId": "banette",
+  "formName": "Mega Banette",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Barbaracle",
+  "showdownId": "barbaracle",
+  "formName": "Mega Barbaracle",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Beedrill",
+  "showdownId": "beedrill",
+  "formName": "Mega Beedrill",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Blastoise",
+  "showdownId": "blastoise",
+  "formName": "Mega Blastoise",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Blaziken",
+  "showdownId": "blaziken",
+  "formName": "Mega Blaziken",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Camerupt",
+  "showdownId": "camerupt",
+  "formName": "Mega Camerupt",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Chandelure",
+  "showdownId": "chandelure",
+  "formName": "Mega Chandelure",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Charizard",
+  "showdownId": "charizard",
+  "formName": "Mega Charizard X",
+  "formKind": "Mega X"
+ },
+ {
+  "species": "Charizard",
+  "showdownId": "charizard",
+  "formName": "Mega Charizard Y",
+  "formKind": "Mega Y"
+ },
+ {
+  "species": "Chesnaught",
+  "showdownId": "chesnaught",
+  "formName": "Mega Chesnaught",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Chimecho",
+  "showdownId": "chimecho",
+  "formName": "Mega Chimecho",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Clefable",
+  "showdownId": "clefable",
+  "formName": "Mega Clefable",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Crabominable",
+  "showdownId": "crabominable",
+  "formName": "Mega Crabominable",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Delphox",
+  "showdownId": "delphox",
+  "formName": "Mega Delphox",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Dragalge",
+  "showdownId": "dragalge",
+  "formName": "Mega Dragalge",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Dragonite",
+  "showdownId": "dragonite",
+  "formName": "Mega Dragonite",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Drampa",
+  "showdownId": "drampa",
+  "formName": "Mega Drampa",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Eelektross",
+  "showdownId": "eelektross",
+  "formName": "Mega Eelektross",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Emboar",
+  "showdownId": "emboar",
+  "formName": "Mega Emboar",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Excadrill",
+  "showdownId": "excadrill",
+  "formName": "Mega Excadrill",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Falinks",
+  "showdownId": "falinks",
+  "formName": "Mega Falinks",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Feraligatr",
+  "showdownId": "feraligatr",
+  "formName": "Mega Feraligatr",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Floette",
+  "showdownId": "floette",
+  "formName": "Mega Floette",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Froslass",
+  "showdownId": "froslass",
+  "formName": "Mega Froslass",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Galarian Slowbro",
+  "showdownId": "slowbrogalar",
+  "formName": "Mega Slowbro",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Gallade",
+  "showdownId": "gallade",
+  "formName": "Mega Gallade",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Garchomp",
+  "showdownId": "garchomp",
+  "formName": "Mega Garchomp",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Gardevoir",
+  "showdownId": "gardevoir",
+  "formName": "Mega Gardevoir",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Gengar",
+  "showdownId": "gengar",
+  "formName": "Mega Gengar",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Glalie",
+  "showdownId": "glalie",
+  "formName": "Mega Glalie",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Glimmora",
+  "showdownId": "glimmora",
+  "formName": "Mega Glimmora",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Golurk",
+  "showdownId": "golurk",
+  "formName": "Mega Golurk",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Greninja",
+  "showdownId": "greninja",
+  "formName": "Mega Greninja",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Gyarados",
+  "showdownId": "gyarados",
+  "formName": "Mega Gyarados",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Hawlucha",
+  "showdownId": "hawlucha",
+  "formName": "Mega Hawlucha",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Heracross",
+  "showdownId": "heracross",
+  "formName": "Mega Heracross",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Houndoom",
+  "showdownId": "houndoom",
+  "formName": "Mega Houndoom",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Kangaskhan",
+  "showdownId": "kangaskhan",
+  "formName": "Mega Kangaskhan",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Lopunny",
+  "showdownId": "lopunny",
+  "formName": "Mega Lopunny",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Lucario",
+  "showdownId": "lucario",
+  "formName": "Mega Lucario",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Malamar",
+  "showdownId": "malamar",
+  "formName": "Mega Malamar",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Manectric",
+  "showdownId": "manectric",
+  "formName": "Mega Manectric",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Mawile",
+  "showdownId": "mawile",
+  "formName": "Mega Mawile",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Medicham",
+  "showdownId": "medicham",
+  "formName": "Mega Medicham",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Meganium",
+  "showdownId": "meganium",
+  "formName": "Mega Meganium",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Meowstic",
+  "showdownId": "meowstic",
+  "formName": "Mega Meowstic",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Meowstic Female",
+  "showdownId": "meowsticf",
+  "formName": "Mega Meowstic",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Metagross",
+  "showdownId": "metagross",
+  "formName": "Mega Metagross",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Pidgeot",
+  "showdownId": "pidgeot",
+  "formName": "Mega Pidgeot",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Pinsir",
+  "showdownId": "pinsir",
+  "formName": "Mega Pinsir",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Pyroar",
+  "showdownId": "pyroar",
+  "formName": "Mega Pyroar",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Raichu",
+  "showdownId": "raichu",
+  "formName": "Mega Raichu X",
+  "formKind": "Mega X"
+ },
+ {
+  "species": "Raichu",
+  "showdownId": "raichu",
+  "formName": "Mega Raichu Y",
+  "formKind": "Mega Y"
+ },
+ {
+  "species": "Sableye",
+  "showdownId": "sableye",
+  "formName": "Mega Sableye",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Sceptile",
+  "showdownId": "sceptile",
+  "formName": "Mega Sceptile",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Scizor",
+  "showdownId": "scizor",
+  "formName": "Mega Scizor",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Scolipede",
+  "showdownId": "scolipede",
+  "formName": "Mega Scolipede",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Scovillain",
+  "showdownId": "scovillain",
+  "formName": "Mega Scovillain",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Scrafty",
+  "showdownId": "scrafty",
+  "formName": "Mega Scrafty",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Sharpedo",
+  "showdownId": "sharpedo",
+  "formName": "Mega Sharpedo",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Skarmory",
+  "showdownId": "skarmory",
+  "formName": "Mega Skarmory",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Slowbro",
+  "showdownId": "slowbro",
+  "formName": "Mega Slowbro",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Staraptor",
+  "showdownId": "staraptor",
+  "formName": "Mega Staraptor",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Starmie",
+  "showdownId": "starmie",
+  "formName": "Mega Starmie",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Steelix",
+  "showdownId": "steelix",
+  "formName": "Mega Steelix",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Swampert",
+  "showdownId": "swampert",
+  "formName": "Mega Swampert",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Tyranitar",
+  "showdownId": "tyranitar",
+  "formName": "Mega Tyranitar",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Venusaur",
+  "showdownId": "venusaur",
+  "formName": "Mega Venusaur",
+  "formKind": "Mega"
+ },
+ {
+  "species": "Victreebel",
+  "showdownId": "victreebel",
+  "formName": "Mega Victreebel",
+  "formKind": "Mega"
+ }
+]

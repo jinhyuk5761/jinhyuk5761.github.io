@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Pokémon Champions 메타 · 공개 집계 통계 뷰어</title>
+    <meta
+      name="description"
+      content="Pokémon Champions 의 공개 집계 통계를 보여주는 메타 뷰어. 사용률, Checks & Counters, 포켓몬 비교."
+    />
+
+    <!-- PWA: 홈 화면에 설치했을 때 앱처럼 뜨게 한다 -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#181c23" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="./favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="./icon-192.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="챔피언스 메타" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>이 앱은 JavaScript 가 필요합니다.</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

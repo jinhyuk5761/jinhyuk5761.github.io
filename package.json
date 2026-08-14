@@ -1,0 +1,29 @@
+{
+  "name": "pokemon-champions-meta",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "serve": "node server/index.mjs",
+    "data": "npm run data:locales && npm run data:moves && npm run data:terms && npm run data:counters && npm run data:builds && npm run data:icons",
+    "data:moves": "node scripts/build-moves.mjs",
+    "data:terms": "node scripts/build-terms.mjs",
+    "data:icons": "node scripts/build-icons.mjs",
+    "phone": "node scripts/phone-install.mjs",
+    "data:locales": "node scripts/build-locales.mjs",
+    "data:counters": "node scripts/build-counters.mjs",
+    "data:builds": "node scripts/build-frozen-season.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "jsdom": "^30.0.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}

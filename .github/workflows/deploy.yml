@@ -1,0 +1,71 @@
+name: 배포
+
+# 왜 주기 실행이 붙어 있나:
+#   포켓몬 인덱스·사용률·순위는 앱이 실행 중에 championsbattledata 에서 직접 받으므로
+#   재배포 없이도 항상 최신이다. 하지만 Smogon 카운터는 빌드 시점에 굳는 정적 파일이라
+#   월간 통계가 새로 올라오면 다시 만들어야 한다. 그걸 자동화한 것이다.
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 매주 월요일 03:00 KST. Smogon 월간 통계는 매달 초에 올라온다.
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 배포는 한 번에 하나만. 밀리면 최신 것만 남긴다.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # 상류가 죽어 있어도 배포는 되게 한다 —
+      # 저장소에 들어 있는 기존 카운터 데이터로 그대로 나간다.
+      - name: 카운터 데이터 갱신 (실패해도 계속)
+        run: npm run data:counters
+        continue-on-error: true
+
+      - name: 타입체크 · 테스트
+        run: |
+          npx tsc --noEmit
+          npm test
+
+      - name: 빌드
+        run: npm run build
+        env:
+          BASE_PATH: ${{ vars.BASE_PATH || '/' }}
+
+      # SPA 라우팅용. 해시 라우터라 대부분 필요 없지만,
+      # 사용자가 새로고침했을 때 404 페이지가 뜨는 것만 막아 준다.
+      - name: 404 폴백
+        run: cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,990 @@
+/**
+ * @vitest-environment jsdom
+ *
+ * 렌더 스모크 테스트.
+ *
+ * 타입체크는 "el('div') 가 컴파일된다"만 보장한다. 실제로 화면이 그려지는지,
+ * 어댑터가 실패했을 때 앱이 통째로 죽는 대신 안내문으로 degrade 하는지는
+ * DOM 을 붙여봐야 안다. 설계 문서 2절의 "한 어댑터가 죽어도 앱은 산다"를 검증한다.
+ */
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+const readFixture = (name: string) =>
+  JSON.parse(readFileSync(path.join(import.meta.dirname, 'fixtures', name), 'utf8'));
+
+const rawIndex = readFixture('api-index.sample.json');
+const rawBattle = readFixture('battle-singles-garchomp.json');
+
+const LOCALES = {
+  garchomp: { en: 'Garchomp', ko: '한카리아스', ja: 'ガブリアス', koSpecies: '한카리아스', jaSpecies: 'ガブリアス' },
+  ninetalesalola: {
+    en: 'Alolan Ninetales',
+    ko: '알로라 나인테일',
+    ja: 'アローラキュウコン',
+    koSpecies: '나인테일',
+    jaSpecies: 'キュウコン',
+  },
+};
+
+const COUNTERS = {
+  format: 'Singles',
+  metagame: 'gen9championsbssregmb',
+  cutoff: 1500,
+  months: ['2026-07'],
+  battles: 97966,
+  targets: {
+    Garchomp: {
+      showdownId: 'garchomp',
+      entries: [
+        { s: 'Ninetales-Alola', c: 'Alolan Ninetales', i: 'ninetalesalola', n: 1048, p: 0.81, d: 0.017 },
+        { s: 'Floette-Eternal', c: null, i: null, n: 40, p: 0.7, d: 0.05 },
+      ],
+    },
+  },
+};
+
+const MOVES = {
+  moves: {
+    Earthquake: {
+      n: 'Earthquake', ko: '지진', ja: 'じしん', type: 'ground', cls: 'physical',
+      pow: 100, acc: 100, pp: 10, pri: 0,
+      // 자신을 뺀 전원 — 더블에서는 파트너도 맞는다. 비접촉이라 flags 가 비어 있다.
+      tgt: 'all-other-pokemon', flags: [],
+      desc: '지진의 충격으로 자신의 주위에 있는 포켓몬을 공격한다.',
+    },
+    'Rock Slide': {
+      n: 'Rock Slide', ko: '스톤에지', type: 'rock', cls: 'physical',
+      pow: 75, acc: 90, pp: 10, pri: 0,
+      // 상대만 때리는 광역 — 지진과 구분되는지 보려고 둔다.
+      tgt: 'all-opponents', flags: [],
+      desc: '큰 바위를 상대에게 세게 부딪쳐서 공격한다.',
+    },
+    'Iron Head': {
+      n: 'Iron Head', ko: '아이언헤드', type: 'steel', cls: 'physical',
+      pow: 80, acc: 100, pp: 15, pri: 0,
+      tgt: 'selected-pokemon', flags: ['contact'],
+      desc: '강철 같은 머리로 상대에게 부딪쳐서 공격한다.',
+    },
+    'Stealth Rock': {
+      n: 'Stealth Rock', ko: '스텔스록', type: 'rock', cls: 'status',
+      pow: null, acc: null, pp: 20, pri: 0,
+      desc: '상대 주위에 뾰족한 돌을 띄운다.',
+    },
+    'Swords Dance': {
+      n: 'Swords Dance', ko: '칼춤', type: 'normal', cls: 'status',
+      pow: null, acc: null, pp: 20, pri: 0,
+      desc: '자신의 공격을 크게 올린다.',
+      sc: [['attack', 2]], statc: 0,
+    },
+  },
+};
+
+const TERMS = {
+  types: { Dragon: '드래곤', Ground: '땅', Ice: '얼음', Fairy: '페어리' },
+  abilities: {
+    'Rough Skin': { ko: '까칠한피부', desc: '접촉한 상대에게 데미지를 준다.' },
+    'Sand Veil': { ko: '모래숨기', desc: null },
+  },
+  items: { 'Focus Sash': { ko: '기합의띠', desc: null } },
+  weights: { Garchomp: 95, 'Alolan Ninetales': 19.9 },
+  natures: {
+    Jolly: { ko: '명랑', up: 'speed', down: 'special-attack' },
+    Bold: { ko: '대담', up: 'defense', down: 'attack' },
+    Modest: { ko: '조심', up: 'special-attack', down: 'attack' },
+    Adamant: { ko: '고집', up: 'attack', down: 'special-attack' },
+    Timid: { ko: '겁쟁이', up: 'speed', down: 'attack' },
+    Hardy: { ko: '노력', up: null, down: null },
+  },
+};
+
+/** 서버가 붙어 있고 랭킹만 꺼진 기본 상태. */
+const CONFIG = {
+  version: 'v1',
+  builds: { available: false, count: 0, updatedAt: null },
+  counters: {
+    Singles: { metagame: 'gen9championsbssregmb', months: ['2026-07'], battles: 97966, generatedAt: 'g1', targets: 1 },
+    Doubles: null,
+  },
+  ranking: { enabled: false },
+};
+
+/** 어떤 URL 이 무엇을 돌려줄지 한곳에서 정한다. 실패 시나리오는 테스트가 개별로 덮어쓴다. */
+function installFetch(overrides: Record<string, unknown | Error> = {}) {
+  const stub = vi.fn(async (input: string | URL) => {
+    const url = String(input);
+    const match = (needle: string) => url.includes(needle);
+
+    for (const [needle, value] of Object.entries(overrides)) {
+      if (match(needle)) {
+        if (value instanceof Error) throw value;
+        return new Response(JSON.stringify(value), { status: 200 });
+      }
+    }
+
+    if (match('/api/battle/')) return new Response(JSON.stringify(rawBattle), { status: 200 });
+    if (match('championsbattledata.com/api')) return new Response(JSON.stringify(rawIndex), { status: 200 });
+    if (match('api/config')) return new Response(JSON.stringify(CONFIG), { status: 200 });
+    if (match('api/counters/')) return new Response(JSON.stringify(COUNTERS), { status: 200 });
+    if (match('api/builds')) return new Response(JSON.stringify({ updatedAt: null, builds: [] }), { status: 200 });
+    if (match('moves.json')) return new Response(JSON.stringify(MOVES), { status: 200 });
+    if (match('terms.json')) return new Response(JSON.stringify(TERMS), { status: 200 });
+    if (match('locales.json')) return new Response(JSON.stringify(LOCALES), { status: 200 });
+    if (match('counters-')) return new Response(JSON.stringify(COUNTERS), { status: 200 });
+    if (match('builds.json')) return new Response(JSON.stringify([]), { status: 200 });
+    return new Response('not found', { status: 404 });
+  });
+  vi.stubGlobal('fetch', stub);
+  return stub;
+}
+
+/** main.ts 는 import 시점에 부팅한다. 모듈 캐시를 비워 매 테스트를 격리한다. */
+async function mountApp(hash: string) {
+  document.body.innerHTML = '<div id="app"></div>';
+  location.hash = hash;
+  vi.resetModules();
+  await import('../src/main');
+  // bootstrap() 의 Promise.allSettled 가 풀리고 뷰가 다시 그려질 때까지 기다린다.
+  await vi.waitFor(() => {
+    if (document.querySelector('.notice--loading')) throw new Error('아직 로딩 중');
+  });
+  // 테스트마다 새 모듈 인스턴스가 만들어지므로 폴링 타이머가 쌓이지 않게 끈다.
+  const store = await import('../src/store');
+  store.stopConfigPolling();
+  return store;
+}
+
+beforeEach(() => {
+  localStorage.clear();
+  installFetch();
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  document.body.innerHTML = '';
+});
+
+describe('셸', () => {
+  it('귀속 문구를 모든 화면에 노출한다 (설계 문서 6절)', async () => {
+    await mountApp('#/');
+    const footer = document.querySelector('.shell__footer')?.textContent ?? '';
+    expect(footer).toContain('Trademark and © of Nintendo 1996–2026');
+    expect(footer).toContain('not affiliated with or endorsed by Nintendo');
+  });
+
+  it('랭킹 flag 가 꺼져 있으면 탭 자체가 없다', async () => {
+    await mountApp('#/');
+    const labels = [...document.querySelectorAll('.nav__link')].map((n) => n.textContent);
+    expect(labels).toContain('검색');
+    expect(labels).toContain('출처');
+    expect(labels).not.toContain('랭킹');
+  });
+});
+
+describe('M1 검색', () => {
+  it('로케일 명칭으로 표시한다', async () => {
+    await mountApp('#/');
+    expect(document.body.textContent).toContain('한카리아스');
+  });
+
+  it('전체 목록을 잘라내지 않고 다 보여준다', async () => {
+    // 예전에는 60종에서 끊었는데 안내가 없어서 "종이 안 뜬다"로 읽혔다.
+    await mountApp('#/');
+    const total = (await import('../src/store')).state.index!.pokemon.length;
+    expect(document.querySelectorAll('.card').length).toBe(total);
+    expect(document.querySelector('.results__summary')?.textContent).toContain(`전체 ${total}종`);
+  });
+
+  it('기본 정렬이 사용률 순위이고 순위를 함께 보여준다', async () => {
+    await mountApp('#/');
+    const ranks = [...document.querySelectorAll('.card__rank')].map((n) => n.textContent);
+    // 픽스처 싱글 1위는 한카리아스.
+    expect(ranks[0]).toBe('1');
+    expect(document.querySelector('.card__name')?.textContent).toBe('한카리아스');
+
+    // 순위가 있는 것들은 오름차순이어야 한다.
+    const numeric = ranks.filter((r) => r !== '—').map(Number);
+    expect([...numeric].sort((a, b) => a - b)).toEqual(numeric);
+  });
+
+  it('순위 없는 종은 숫자를 지어내지 않고 맨 뒤로 보낸다', async () => {
+    await mountApp('#/');
+    const ranks = [...document.querySelectorAll('.card__rank')].map((n) => n.textContent);
+    const none = ranks.filter((r) => r === '—');
+    if (none.length > 0) {
+      expect(ranks.slice(-none.length).every((r) => r === '—')).toBe(true);
+    }
+  });
+
+  it('포맷을 바꾸면 순위도 그 포맷 것으로 바뀐다', async () => {
+    const store = await mountApp('#/');
+    const singles = [...document.querySelectorAll('.card__name')].map((n) => n.textContent);
+
+    store.setFormat('Doubles');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.card').length).toBeGreaterThan(0);
+    });
+    const doubles = [...document.querySelectorAll('.card__name')].map((n) => n.textContent);
+    // 픽스처의 싱글·더블 순위가 다르므로 정렬 결과도 달라야 한다.
+    expect(doubles).not.toEqual(singles);
+  });
+
+  it('이름순·실수치순으로 바꿀 수 있다', async () => {
+    await mountApp('#/');
+    const select = document.querySelector<HTMLSelectElement>('.search__sort')!;
+
+    select.value = 'stats';
+    select.dispatchEvent(new Event('change'));
+    const totals = [...document.querySelectorAll('.card__bst')].map((n) => Number(n.textContent));
+    expect([...totals].sort((a, b) => b - a)).toEqual(totals);
+    // 사용률 정렬이 아니면 순위 배지를 붙이지 않는다.
+    expect(document.querySelector('.card__rank')).toBeNull();
+
+    select.value = 'name';
+    select.dispatchEvent(new Event('change'));
+    const names = [...document.querySelectorAll('.card__name')].map((n) => n.textContent ?? '');
+    expect([...names].sort((a, b) => a.localeCompare(b, 'ko'))).toEqual(names);
+  });
+
+  it('한국어·영어·일본어가 같은 결과를 낸다', async () => {
+    await mountApp('#/');
+    const input = document.querySelector<HTMLInputElement>('.search__input')!;
+
+    const search = (value: string) => {
+      input.value = value;
+      input.dispatchEvent(new Event('input'));
+      return [...document.querySelectorAll('.card__name')].map((n) => n.textContent);
+    };
+
+    expect(search('한카리아스')).toEqual(['한카리아스']);
+    expect(search('garchomp')).toEqual(['한카리아스']);
+    expect(search('ガブリアス')).toEqual(['한카리아스']);
+  });
+
+  it('종 명칭으로도 폼을 찾는다 ("나인테일" → 알로라 나인테일)', async () => {
+    await mountApp('#/');
+    const input = document.querySelector<HTMLInputElement>('.search__input')!;
+    input.value = '나인테일';
+    input.dispatchEvent(new Event('input'));
+    expect(document.body.textContent).toContain('알로라 나인테일');
+  });
+});
+
+describe('M2 상세', () => {
+  it('사용률 카테고리를 전부 그린다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.bar').length).toBeGreaterThan(10);
+    });
+    const text = document.body.textContent ?? '';
+    for (const label of ['기술', '지닌 도구', '특성', '성격', '노력치 분배', '자주 함께 쓰인 포켓몬']) {
+      expect(text).toContain(label);
+    }
+  });
+
+  it('수치가 종족값이 아니라 실수치임을 명시하고 종족값을 함께 보여준다', async () => {
+    await mountApp('#/p/garchomp');
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('종족값이 아니라');
+    expect(text).toContain('레벨 50 · 개체값 31 · 노력치 0');
+    // 한카리아스: 실수치 합 775, 역산한 종족값 합 600 (본가 값)
+    expect(text).toContain('775');
+    expect(text).toContain('600');
+  });
+
+  it('기술을 한국어명과 제원으로 보여준다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.move')).not.toBeNull();
+    });
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('지진');
+    expect(text).toContain('위력 100');
+    expect(text).toContain('PP 10');
+    // 변화기술은 위력·명중률이 없다 — 0 으로 위조하지 않는다.
+    expect(text).toContain('스텔스록');
+    expect(text).toContain('위력 —');
+  });
+
+  it('도구·특성·성격·타입을 한국어로 보여준다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.move')).not.toBeNull();
+    });
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('기합의띠'); // 도구
+    expect(text).toContain('까칠한피부'); // 특성
+    expect(text).toContain('명랑'); // 성격
+    expect(text).toContain('+스피드 / −특수공격'); // 성격 보정 스탯
+    expect(text).toContain('드래곤'); // 타입 배지
+    // 영문명은 title 로 남겨 대조가 되게 한다.
+    expect(document.querySelector('.type[title="Dragon"]')).not.toBeNull();
+  });
+
+  it('"크게 올린다" 를 랭크 수치로 못박는다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('칼춤');
+    });
+    // 칼춤 행을 펼친다
+    const heads = [...document.querySelectorAll<HTMLButtonElement>('.move__head')];
+    const swordsDance = heads.find((h) => h.textContent?.includes('칼춤'))!;
+    swordsDance.click();
+
+    const body = swordsDance.parentElement!.querySelector('.move__body')!;
+    expect(body.textContent).toContain('공격 +2랭크');
+    // 공식 설명도 함께 남긴다 — 대체가 아니라 보강이다.
+    expect(body.textContent).toContain('크게 올린다');
+  });
+
+  it('기술 설명은 접혀 있다가 눌러야 펼쳐진다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.move__body')).not.toBeNull();
+    });
+    const body = document.querySelector('.move__body')!;
+    expect(body.hasAttribute('hidden')).toBe(true);
+
+    document.querySelector<HTMLButtonElement>('.move__head')!.click();
+    expect(body.hasAttribute('hidden')).toBe(false);
+    expect(body.textContent).toContain('지진의 충격으로');
+  });
+
+  it('기술 도감이 죽어도 영문명으로 사용률은 나온다', async () => {
+    installFetch({ 'moves.json': new Error('네트워크 실패') });
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.move')).not.toBeNull();
+    });
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('Earthquake');
+    expect(text).toContain('99.3%');
+  });
+
+  it('파트너는 비율 대신 안내를 보여준다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.bar__novalue')).not.toBeNull();
+    });
+  });
+
+  it('폼이 여럿이면 폼 선택기를 낸다', async () => {
+    await mountApp('#/p/garchomp');
+    expect(document.querySelector('.form-select')).not.toBeNull();
+  });
+
+  it('로스터에 없는 id 는 안내로 처리한다 (빈 화면이 아니라)', async () => {
+    await mountApp('#/p/miraidon');
+    expect(document.body.textContent).toContain('로스터에서 찾지 못했습니다');
+  });
+});
+
+describe('M3 카운터', () => {
+  it('경고 문구와 카운터 표를 함께 낸다', async () => {
+    await mountApp('#/p/garchomp');
+    document.querySelectorAll<HTMLButtonElement>('.tabs__tab')[1]!.click();
+    await vi.waitFor(() => {
+      expect(document.querySelector('.counters tbody tr')).not.toBeNull();
+    });
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('Nintendo Switch 랭크전과 표본·규칙·메타가 다르므로');
+    expect(text).toContain('gen9championsbssregmb');
+    expect(text).toContain('알로라 나인테일'); // Champions 폼으로 매칭된 카운터
+  });
+
+  it('매칭 실패한 카운터는 Showdown 표기로 남긴다', async () => {
+    await mountApp('#/p/garchomp');
+    document.querySelectorAll<HTMLButtonElement>('.tabs__tab')[1]!.click();
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('Floette-Eternal');
+    });
+    expect(document.querySelector('.counters__unmapped')).not.toBeNull();
+  });
+
+  it('카운터 소스가 죽어도 상세 화면은 산다', async () => {
+    installFetch({ 'api/counters/': new Error('네트워크 실패') });
+    await mountApp('#/p/garchomp');
+    document.querySelectorAll<HTMLButtonElement>('.tabs__tab')[1]!.click();
+    await vi.waitFor(() => {
+      expect(document.querySelector('.notice--error')).not.toBeNull();
+    });
+    // 헤더는 그대로 남아 있어야 한다.
+    expect(document.querySelector('.detail__name')?.textContent).toBe('한카리아스');
+  });
+});
+
+describe('M4 비교', () => {
+  it('두 마리를 고르면 수치·상성·스피드 판정을 낸다', async () => {
+    await mountApp('#/compare?a=garchomp&b=ninetalesalola');
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('실수치');
+    expect(text).toContain('역산한 종족값');
+    expect(text).toContain('타입 상성');
+    expect(text).toMatch(/스피드 \d+ 만큼 빠릅니다/);
+    // 실수치 옆에 종족값이 함께 나온다 (한카리아스 합계 775 / 600)
+    expect(text).toContain('775');
+    expect(text).toContain('600');
+  });
+
+  it('한 쪽만 고르면 안내한다', async () => {
+    await mountApp('#/compare?a=garchomp');
+    expect(document.body.textContent).toContain('비교할 포켓몬 두 마리를 선택하세요');
+  });
+});
+
+describe('대미지 계산기', () => {
+  it('두 포켓몬을 고르면 대미지와 확정/난수를 낸다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    const damage = document.querySelector('.calc__damage')!.textContent ?? '';
+    // "69 ~ 82 (23.0% ~ 27.3%)" 꼴
+    expect(damage).toMatch(/\d+ ~ \d+/);
+    expect(damage).toMatch(/%\s*~/);
+    expect(document.querySelector('.calc__ko')?.textContent).toMatch(/확정 \d타|난수 \d타/);
+  });
+
+  it('기술 슬롯이 4개이고 사용률 상위로 채워진다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
+    expect(slots).toHaveLength(4);
+    // 픽스처 사용률 1·2위는 Earthquake, Stealth Rock
+    expect(slots[0]!.value).toBe('Earthquake');
+    expect(slots[1]!.value).toBe('Stealth Rock');
+  });
+
+  it('선택한 기술마다 결과를 따로 낸다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    // 공격기 + 변화기가 섞여 있어도 각각 한 덩어리씩 나온다.
+    expect(document.querySelectorAll('.calc__move-result').length).toBeGreaterThan(1);
+    // 변화기술은 대미지 대신 안내를 낸다.
+    expect(document.body.textContent).toContain('변화기술 — 대미지 없음');
+  });
+
+  it('사용률 1위 노력치와 성격을 자동으로 채운다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    // 픽스처의 한카리아스 1위 배분은 HP2 / 공격32 / 스피드32, 성격 Jolly(명랑)
+    const points = [...document.querySelectorAll<HTMLInputElement>('.calc__points')].map(
+      (i) => i.value,
+    );
+    expect(points.slice(0, 6)).toEqual(['2', '32', '0', '0', '0', '32']);
+    expect(document.querySelector<HTMLSelectElement>('.calc__nature-select')?.value).toBe('Jolly');
+  });
+
+  it('성격을 이름으로 고르고 보정을 색으로 표시한다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__nature-select')).not.toBeNull();
+    });
+
+    const select = document.querySelector<HTMLSelectElement>('.calc__nature-select')!;
+    // 도감에 있는 성격이 전부 선택지로 나온다 (실데이터는 25종).
+    expect(select.options.length).toBe(Object.keys(TERMS.natures).length);
+    const labels = [...select.options].map((o) => o.textContent ?? '');
+    expect(labels.some((l) => l.includes('대담'))).toBe(true);
+    expect(labels.some((l) => l.includes('조심'))).toBe(true);
+    // 보정 내용을 함께 적어 무엇이 오르내리는지 바로 보이게 한다.
+    expect(labels.some((l) => l.includes('명랑 (+스피드 / −특수공격)'))).toBe(true);
+    // 무보정 성격은 뒤로 밀린다.
+    expect(labels[labels.length - 1]).toContain('무보정');
+
+    // 명랑 = +스피드 / −특수공격 → 상승·하락 표시가 하나씩
+    expect(document.querySelector('.calc__nature-mark--up')?.textContent).toBe('▲');
+    expect(document.querySelector('.calc__nature-mark--down')?.textContent).toBe('▼');
+  });
+
+  it('스탯마다 랭크를 따로 조절할 수 있다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    // HP 를 뺀 5개 스탯 × 양쪽 = 10개
+    const stages = [...document.querySelectorAll<HTMLSelectElement>('.calc__stage')];
+    expect(stages).toHaveLength(10);
+    // −6 ~ +6 의 13단계
+    expect(stages[0]!.options.length).toBe(13);
+
+    const before = document.querySelector('.calc__damage')!.textContent!;
+    // 공격측 공격 랭크를 +2 로 올린다 (0번째가 공격)
+    stages[0]!.value = '2';
+    stages[0]!.dispatchEvent(new Event('change'));
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')!.textContent).not.toBe(before);
+    });
+    expect(document.querySelector('.calc__stage--up')).not.toBeNull();
+  });
+
+  it('적용된 보정을 숨기지 않고 나열한다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__applied')).not.toBeNull();
+    });
+    // 지진(땅) × 한카리아스(땅/드래곤) → 자속이 결과 줄에 표기된다
+    expect(document.querySelector('.calc__breakdown')?.textContent).toContain('자속');
+  });
+
+  it('한쪽만 고르면 안내한다', async () => {
+    await mountApp('#/calc?a=garchomp');
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('공격·방어 포켓몬을 각각 선택하세요');
+    });
+  });
+
+  it('미지원 요소를 조용히 넘기지 않고 밝힌다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__note')).not.toBeNull();
+    });
+    expect(document.querySelector('.calc__note')?.textContent).toContain('반영되지 않습니다');
+    expect(document.querySelector('.calc__applied')).not.toBeNull();
+  });
+
+  it('「기타 배율」 입력은 없앴다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    expect(document.body.textContent).not.toContain('기타 배율');
+    expect(document.querySelector('.calc__other')).toBeNull();
+  });
+
+  it('「나중에 행동」은 그 값을 쓰는 특성·기술을 골랐을 때만 나온다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    // 한카리아스에게는 애널라이즈가 없고 보복도 안 골랐으므로 입력이 없어야 한다.
+    expect(document.body.textContent).not.toContain('나중에 행동');
+  });
+
+  it('기술마다 광역 범위와 접촉 여부를 표기한다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__traits')).not.toBeNull();
+    });
+
+    const rows = [...document.querySelectorAll('.calc__move-result')];
+    const rowFor = (name: string) => rows.find((r) => r.textContent?.includes(name))!;
+
+    // 지진은 자신을 뺀 전원을 때린다 — 아군도 맞는다.
+    expect(rowFor('지진').querySelector('.calc__trait--spread')?.textContent).toBe('광역 · 아군 포함');
+    // 접촉 여부는 있을 때만이 아니라 없을 때도 적는다.
+    expect(rowFor('지진').querySelector('.calc__trait--contact')?.textContent).toBe('비접촉');
+  });
+
+  it('같은 광역이어도 상대 전체와 아군 포함을 구분한다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__traits')).not.toBeNull();
+    });
+
+    const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
+    slots[1]!.value = 'Rock Slide';
+    slots[1]!.dispatchEvent(new Event('change'));
+    slots[2]!.value = 'Iron Head';
+    slots[2]!.dispatchEvent(new Event('change'));
+
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('아이언헤드');
+    });
+    const rows = [...document.querySelectorAll('.calc__move-result')];
+    const rowFor = (name: string) => rows.find((r) => r.textContent?.includes(name))!;
+
+    expect(rowFor('스톤에지').querySelector('.calc__trait--spread')?.textContent).toBe(
+      '광역 · 상대 전체',
+    );
+    // 단일 대상 기술에는 광역 표기가 붙지 않는다.
+    expect(rowFor('아이언헤드').querySelector('.calc__trait--spread')).toBeNull();
+    expect(rowFor('아이언헤드').querySelector('.calc__trait--contact')?.textContent).toBe('접촉');
+  });
+
+  it('포켓몬을 바꾸면 기술 목록도 새 포켓몬 것으로 바뀐다', async () => {
+    // 실제로 있었던 버그: 사용률을 처음 한 번만 받아서 포켓몬을 바꿔도
+    // 「사용률 상위」 기술이 이전 포켓몬 것 그대로 남았다.
+    const ninetalesUsage = {
+      rows: [
+        { category: 'move', name: 'Blizzard', percent: 90 },
+        { category: 'move', name: 'Freeze-Dry', percent: 80 },
+      ],
+    };
+    installFetch({ 'battle/Singles/ninetalesalola': ninetalesUsage });
+
+    await mountApp('#/calc?a=garchomp&b=garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector<HTMLSelectElement>('.calc__move')?.value).toBe('Earthquake');
+    });
+
+    // 공격측 검색창에서 다른 포켓몬을 고른다.
+    const input = document.querySelector<HTMLInputElement>('.calc__side .picker__input')!;
+    input.value = '나인테일';
+    input.dispatchEvent(new Event('input'));
+    const option = document.querySelector<HTMLButtonElement>('.calc__side .picker__option')!;
+    expect(option.textContent).toContain('나인테일');
+    option.click();
+
+    await vi.waitFor(() => {
+      const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
+      expect(slots[0]!.value).toBe('Blizzard');
+    });
+
+    const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
+    expect(slots[1]!.value).toBe('Freeze-Dry');
+    // 이전 포켓몬의 기술이 목록에 남아 있으면 안 된다.
+    const labels = [...slots[0]!.options].map((o) => o.value);
+    expect(labels).not.toContain('Stealth Rock');
+  });
+
+  it('폼이 여럿이면 사용률이 종 단위라는 것을 밝힌다', async () => {
+    // 상류가 종당 배틀 데이터 CSV 하나만 낸다 (메가 라이츄 X·Y 가 같은 Raichu.csv).
+    // 그래서 폼을 바꿔도 성격·노력치·기술 기본값이 같다 — 이걸 안 적으면 버그로 읽힌다.
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    const panels = [...document.querySelectorAll('.calc__side')];
+    for (const panel of panels) {
+      // 폼 선택이 있는 쪽에만 안내가 붙는다.
+      const hasForms = panel.querySelector('.form-select') !== null;
+      const note = panel.querySelector('.calc__form-note');
+      expect(Boolean(note), hasForms ? '폼이 여럿인데 안내가 없다' : '폼이 하나인데 안내가 있다').toBe(
+        hasForms,
+      );
+      if (note) expect(note.textContent).toContain('종 단위');
+    }
+  });
+
+  it('포켓몬 선택이 패널 맨 위에 온다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__picker')).not.toBeNull();
+    });
+    const panel = document.querySelector('.calc__side')!;
+    // 제목 다음이 곧바로 검색창이어야 한다 (스탯표보다 앞).
+    const order = [...panel.children].map((n) => n.className);
+    expect(order.indexOf('calc__picker')).toBeLessThan(order.indexOf('calc__stats'));
+  });
+
+  it('양쪽 모두 남은 HP 를 슬라이더로 조절한다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    const sliders = [...document.querySelectorAll<HTMLInputElement>('.calc__hp-range')];
+    expect(sliders).toHaveLength(2);
+    expect(sliders[0]!.type).toBe('range');
+    expect(sliders[0]!.value).toBe('100');
+
+    const before = document.querySelector('.calc__ko')!.textContent!;
+    // 방어측을 반피로 끈다 — 확정/난수 판정이 남은 HP 기준으로 바뀐다.
+    sliders[1]!.value = '50';
+    sliders[1]!.dispatchEvent(new Event('input'));
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__ko')!.textContent).not.toBe(before);
+    });
+    // 비율(%)은 최대 HP 기준 그대로다.
+    expect(document.querySelector('.calc__matchup-hp')?.textContent).toMatch(/남은 HP \d+ \/ \d+/);
+  });
+
+  it('상태이상을 양쪽에서 목록으로 고른다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    const labels = [...document.querySelectorAll('.calc__side .calc__field')].filter((f) =>
+      f.textContent?.startsWith('상태이상'),
+    );
+    expect(labels).toHaveLength(2);
+    const options = [...labels[0]!.querySelectorAll('option')].map((o) => o.textContent);
+    expect(options).toEqual(['없음', '화상', '독', '맹독', '마비', '잠듦', '얼음']);
+
+    // 예전의 체크박스는 사라졌다.
+    expect(document.body.textContent).not.toContain('공격측 화상');
+    expect(document.body.textContent).not.toContain('방어측 상태이상');
+  });
+
+  it('특성 목록에 「대미지 영향 없음」을 붙이지 않는다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__ability')).not.toBeNull();
+    });
+    expect(document.body.textContent).not.toContain('대미지 영향 없음');
+  });
+
+  it('총대장·투쟁심 입력은 그 특성을 골랐을 때만 나온다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    // 한카리아스에게는 두 특성이 없으므로 입력도 없어야 한다.
+    expect(document.body.textContent).not.toContain('쓰러진 아군');
+    expect(document.body.textContent).not.toContain('성별 관계');
+  });
+
+  it('입력을 바꿔도 화면을 통째로 다시 그리지 않는다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    // 같은 DOM 노드가 살아 있어야 스크롤·포커스가 튀지 않는다.
+    const slider = document.querySelector<HTMLInputElement>('.calc__hp-range')!;
+    const natureSelect = document.querySelector<HTMLSelectElement>('.calc__nature-select')!;
+    const readout = document.querySelector('.calc__hp-value')!;
+    const before = readout.textContent!;
+
+    slider.value = '40';
+    slider.dispatchEvent(new Event('input'));
+    await vi.waitFor(() => {
+      expect(readout.textContent).not.toBe(before);
+    });
+    expect(readout.textContent).toContain('40%');
+
+    expect(document.querySelector('.calc__hp-range')).toBe(slider);
+    expect(document.querySelector('.calc__nature-select')).toBe(natureSelect);
+  });
+});
+
+describe('M5 구축', () => {
+  it('데이터가 비면 안내로 degrade 한다', async () => {
+    await mountApp('#/builds');
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('출처가 확인된 동결 시즌 구축이 아직 없습니다');
+    });
+  });
+
+  it('출처 없는 항목은 화면에 오르지 못한다', async () => {
+    installFetch({
+      'api/builds': [
+        { title: '출처 없는 구축', season: 'M4', format: 'Singles', pokemon: ['Garchomp'] },
+        {
+          title: '출처 있는 구축',
+          season: 'M4',
+          format: 'Singles',
+          pokemon: ['Garchomp'],
+          sourceUrl: 'https://note.com/a/b',
+        },
+      ],
+    });
+    await mountApp('#/builds');
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('출처 있는 구축');
+    });
+    expect(document.body.textContent).not.toContain('출처 없는 구축');
+    expect(document.querySelector('.build__source a')?.getAttribute('href')).toBe(
+      'https://note.com/a/b',
+    );
+  });
+});
+
+describe('M6 랭킹', () => {
+  it('랭킹이 연결되지 않았으면 안내만 낸다', async () => {
+    await mountApp('#/ranking');
+    expect(document.body.textContent).toContain('랭킹 데이터가 아직 연결되지 않았습니다');
+    // 메뉴에도 노출되지 않는다.
+    expect([...document.querySelectorAll('.nav__link')].map((n) => n.textContent)).not.toContain('랭킹');
+  });
+
+  it('랭킹이 꺼져 있어도 M1~M5 는 완전히 동작한다 (설계 문서 M6)', async () => {
+    await mountApp('#/');
+    expect(document.querySelector('.card__name')).not.toBeNull();
+    await mountApp('#/compare?a=garchomp&b=ninetalesalola');
+    expect(document.body.textContent).toContain('타입 상성');
+  });
+
+  it('서버가 랭킹을 켜면 재빌드 없이 탭과 표가 나타난다', async () => {
+    installFetch({
+      'api/config': { ...CONFIG, version: 'v2', ranking: { enabled: true } },
+      'api/ranking': {
+        enabled: true,
+        stale: false,
+        fetchedAt: '2026-08-13T00:00:00.000Z',
+        payload: {
+          result: {
+            ranking: [
+              { rank: 1, trainerName: 'ハルカ', rating: '1,980', wins: 120, losses: 30, winStreak: 9, country: 'JP' },
+              { rank: 2, trainerName: 'Jin', rating: 1955, wins: 98, losses: 40, country: 'KR' },
+            ],
+          },
+        },
+      },
+    });
+    await mountApp('#/ranking');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.ranking__table tbody tr')).not.toBeNull();
+    });
+
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('ハルカ');
+    expect(text).toContain('1980'); // "1,980" 문자열이 숫자로 정규화된다
+    expect(text).toContain('80.0%'); // 120승 30패 → 승률 계산
+    expect(text).toContain('상위 2위까지'); // 공개 범위 명시
+    // config 가 켜졌다고 하면 탭도 함께 나타나야 한다.
+    expect([...document.querySelectorAll('.nav__link')].map((n) => n.textContent)).toContain('랭킹');
+  });
+
+  it('서버가 없으면(정적 배포) 서버 실행 안내를 낸다', async () => {
+    installFetch({ 'api/config': new Error('서버 없음') });
+    await mountApp('#/ranking');
+    expect(document.body.textContent).toContain('서버가 있어야 동작합니다');
+  });
+});
+
+describe('정적 호스팅 (서버 없이 배포)', () => {
+  /** /api/* 를 전부 없애고 번들 파일만 남긴다 — 정적 호스트에 올린 상태. */
+  function installStaticOnlyFetch() {
+    return installFetch({
+      'api/config': new Error('정적 호스팅 — 서버 없음'),
+      'api/counters/': new Error('정적 호스팅 — 서버 없음'),
+      'api/builds': new Error('정적 호스팅 — 서버 없음'),
+      'api/ranking': new Error('정적 호스팅 — 서버 없음'),
+    });
+  }
+
+  it('서버가 없어도 검색·목록이 정상 동작한다', async () => {
+    installStaticOnlyFetch();
+    await mountApp('#/');
+    expect(document.body.textContent).toContain('한카리아스');
+    expect(document.querySelectorAll('.card').length).toBeGreaterThan(0);
+    expect(document.querySelector('.notice--error')).toBeNull();
+  });
+
+  it('서버가 없어도 계산기가 대미지를 낸다', async () => {
+    installStaticOnlyFetch();
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    expect(document.querySelector('.calc__damage')?.textContent).toMatch(/\d+ ~ \d+/);
+  });
+
+  it('서버가 없어도 카운터는 동봉된 정적 파일로 나온다', async () => {
+    installStaticOnlyFetch();
+    await mountApp('#/p/garchomp');
+    document.querySelectorAll<HTMLButtonElement>('.tabs__tab')[1]!.click();
+    // /api/counters 가 죽어도 번들에 동봉된 counters-*.json 으로 표가 채워진다.
+    await vi.waitFor(() => {
+      expect(document.querySelector('.counters tbody tr')).not.toBeNull();
+    });
+  });
+
+  it('자동 갱신이 없다는 사실을 숨기지 않는다', async () => {
+    // 정적 배포는 데이터가 빌드 시점에 굳는다. 이걸 밝히지 않으면
+    // 사용자는 최신 집계를 보고 있다고 오해한다.
+    installStaticOnlyFetch();
+    await mountApp('#/sources');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.sources')).not.toBeNull();
+    });
+  });
+});
+
+describe('런타임 데이터 감지', () => {
+  it('config 버전이 바뀌면 새로고침 없이 화면을 다시 그린다', async () => {
+    // 처음엔 구축 자료가 없다.
+    installFetch();
+    const store = await mountApp('#/builds');
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('출처가 확인된 동결 시즌 구축이 아직 없습니다');
+    });
+
+    // 서버에 자료가 등록된 상황으로 바꾼다.
+    installFetch({
+      'api/config': {
+        ...CONFIG,
+        version: 'v2',
+        builds: { available: true, count: 1, updatedAt: '2026-08-13T10:00:00.000Z' },
+      },
+      'api/builds': {
+        updatedAt: '2026-08-13T10:00:00.000Z',
+        builds: [
+          {
+            title: '새로 등록된 구축',
+            season: 'M4',
+            format: 'Singles',
+            pokemon: ['Garchomp'],
+            sourceUrl: 'https://note.com/a/b',
+          },
+        ],
+      },
+    });
+
+    // 폴링 1회분을 수동으로 돌린다(테스트에서 60초를 기다릴 수는 없다).
+    store.startConfigPolling(1);
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('새로 등록된 구축');
+    });
+    store.stopConfigPolling();
+
+    // 갱신 시각도 함께 안내된다.
+    expect(document.body.textContent).toContain('자동으로 반영됩니다');
+  });
+
+  it('카운터 URL 에 버전이 실려 캐시가 자연히 무효화된다', async () => {
+    const stub = installFetch();
+    await mountApp('#/p/garchomp');
+    document.querySelectorAll<HTMLButtonElement>('.tabs__tab')[1]!.click();
+    await vi.waitFor(() => {
+      expect(document.querySelector('.counters tbody tr')).not.toBeNull();
+    });
+
+    const counterCall = stub.mock.calls
+      .map((c) => String(c[0]))
+      .find((u) => u.includes('api/counters/'));
+    expect(counterCall).toContain('api/counters/singles');
+    expect(counterCall).toContain('v=g1'); // config 의 generatedAt 이 버전으로 붙는다
+  });
+});
+
+describe('출처 페이지', () => {
+  it('매트릭스의 소스와 등급을 모두 싣는다', async () => {
+    await mountApp('#/sources');
+    const text = document.body.textContent ?? '';
+    for (const source of ['championsbattledata.com', 'PokéAPI', 'Smogon', 'champs.pokedb.tokyo']) {
+      expect(text).toContain(source);
+    }
+    expect(document.querySelectorAll('.badge--a').length).toBeGreaterThan(0);
+    expect(document.querySelectorAll('.badge--c').length).toBeGreaterThan(0);
+  });
+});
+
+describe('열화 동작', () => {
+  it('로케일이 죽어도 영문으로 검색이 된다', async () => {
+    installFetch({ 'locales.json': new Error('레이트리밋') });
+    await mountApp('#/');
+    expect(document.body.textContent).toContain('영문 검색만 동작합니다');
+    const input = document.querySelector<HTMLInputElement>('.search__input')!;
+    input.value = 'garchomp';
+    input.dispatchEvent(new Event('input'));
+    expect(document.querySelector('.card__name')?.textContent).toBe('Garchomp');
+  });
+
+  it('인덱스가 죽으면 전면 안내를 낸다', async () => {
+    installFetch({ 'championsbattledata.com/api': new Error('상류 장애') });
+    await mountApp('#/');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.notice--error')?.textContent).toContain(
+        '포켓몬 인덱스를 불러오지 못했습니다',
+      );
+    });
+  });
+});

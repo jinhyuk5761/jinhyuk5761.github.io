@@ -291,13 +291,11 @@ function usageSections(
   );
 
   for (const block of report.blocks) {
+    // 파트너 목록은 비율 없이 이름만 나열돼 판단에 쓸 수 없어서 화면에서 뺐다.
+    if (block.category === 'teammate') continue;
+
     const section = el('section', { class: 'section' });
-    section.appendChild(
-      sectionTitle(
-        CATEGORY_LABEL[block.category] ?? block.category,
-        block.category === 'teammate' ? 'championsbattledata 는 파트너 비율을 제공하지 않습니다' : undefined,
-      ),
-    );
+    section.appendChild(sectionTitle(CATEGORY_LABEL[block.category] ?? block.category));
 
     for (const entry of block.entries) {
       if (block.category === 'move' && entry.name) {
@@ -339,20 +337,6 @@ function usageSections(
         section.appendChild(usageBar(label, entry.percentage, entry.percentageValue));
         continue;
       }
-      if (block.category === 'teammate' && entry.name) {
-        const mate = findByName(entry.name);
-        const row = usageBar(entry.name, entry.percentage, entry.percentageValue);
-        if (mate) {
-          const link = el(
-            'a',
-            { class: 'bar__link', href: href(`/p/${encodeURIComponent(mate.showdownId)}`) },
-            entry.name,
-          );
-          row.replaceChild(link, row.firstChild as Node);
-        }
-        section.appendChild(row);
-        continue;
-      }
       section.appendChild(usageBar(entry.name, entry.percentage, entry.percentageValue));
     }
 
@@ -360,12 +344,6 @@ function usageSections(
   }
 
   return frag;
-}
-
-/** 파트너 이름(영문 표시명)으로 로스터를 되짚는다. 못 찾으면 링크 없이 텍스트로 둔다. */
-function findByName(name: string): Pokemon | null {
-  const list = state.index?.pokemon ?? [];
-  return list.find((mon) => mon.name === name) ?? null;
 }
 
 function renderCountersPanel(panel: HTMLElement, mon: Pokemon, form: PokemonForm): void {

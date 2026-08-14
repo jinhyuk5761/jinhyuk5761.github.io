@@ -295,7 +295,7 @@ describe('M2 상세', () => {
       expect(document.querySelectorAll('.bar').length).toBeGreaterThan(10);
     });
     const text = document.body.textContent ?? '';
-    for (const label of ['기술', '지닌 도구', '특성', '성격', '노력치 분배', '자주 함께 쓰인 포켓몬']) {
+    for (const label of ['기술', '지닌 도구', '특성', '성격', '노력치 분배']) {
       expect(text).toContain(label);
     }
   });
@@ -390,11 +390,13 @@ describe('M2 상세', () => {
     expect(text).toContain('99.3%');
   });
 
-  it('파트너는 비율 대신 안내를 보여준다', async () => {
+  it('파트너 목록은 화면에 넣지 않는다', async () => {
+    // 비율 없이 이름만 나열돼 판단에 쓸 수 없다.
     await mountApp('#/p/garchomp');
     await vi.waitFor(() => {
-      expect(document.querySelector('.bar__novalue')).not.toBeNull();
+      expect(document.querySelectorAll('.bar').length).toBeGreaterThan(10);
     });
+    expect(document.body.textContent).not.toContain('자주 함께 쓰인 포켓몬');
   });
 
   it('폼이 여럿이면 폼 선택기를 낸다', async () => {

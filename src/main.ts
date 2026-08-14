@@ -83,7 +83,6 @@ function shellHeader(route: Route): HTMLElement {
       // 랭킹 탭은 서버가 "데이터 있음"이라고 알려줄 때만 나타난다.
       // config 를 주기적으로 다시 확인하므로, 랭킹이 붙으면 새로고침 없이 탭이 생긴다.
       state.config.ranking.enabled ? navLink('/ranking', '랭킹', route) : null,
-      navLink('/sources', '출처', route),
     ),
     el('div', { class: 'shell__controls' }, formatToggle()),
   );

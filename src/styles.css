@@ -514,7 +514,7 @@ h4 { font-size: 15px; margin: 0; }
 .calc__stats { display: grid; gap: 3px; margin: 10px 0; }
 .calc__stat {
   display: grid;
-  grid-template-columns: 54px 42px 1fr 16px 56px;
+  grid-template-columns: 46px 38px 1fr 30px 52px;
   gap: 5px;
   align-items: center;
   font-size: 12px;
@@ -782,7 +782,7 @@ h4 { font-size: 15px; margin: 0; }
   scrollbar-width: none;
 }
 .calc__pager::-webkit-scrollbar { display: none; }
-.calc__page { scroll-snap-align: start; min-width: 0; }
+.calc__page { scroll-snap-align: start; scroll-snap-stop: always; min-width: 0; }
 
 /*
  * 넓은 화면에서는 넘길 이유가 없다. 스냅을 끄고 세 장을 그대로 펼친다.
@@ -847,4 +847,10 @@ h4 { font-size: 15px; margin: 0; }
   justify-content: space-between;
   gap: 12px;
   width: 100%;
+}
+
+/* 계산기 좁은 화면 — 성격 열이 '성격' 두 글자를 한 줄에 담아야 한다. */
+@media (max-width: 480px) {
+  .calc__stat { grid-template-columns: 42px 34px 1fr 28px 48px; gap: 4px; font-size: 11px; }
+  .calc__stat--head { font-size: 10px; }
 }

@@ -178,7 +178,8 @@ describe('셸', () => {
     await mountApp('#/');
     const labels = [...document.querySelectorAll('.nav__link')].map((n) => n.textContent);
     expect(labels).toContain('검색');
-    expect(labels).toContain('출처');
+    // 출처는 탭에서 빼고 푸터 링크로만 남겼다 — 귀속 문구 자체는 계속 노출된다.
+    expect(labels).not.toContain('출처');
     expect(labels).not.toContain('랭킹');
   });
 });
@@ -706,24 +707,15 @@ describe('대미지 계산기', () => {
     expect(labels).not.toContain('Stealth Rock');
   });
 
-  it('폼이 여럿이면 사용률이 종 단위라는 것을 밝힌다', async () => {
-    // 상류가 종당 배틀 데이터 CSV 하나만 낸다 (메가 라이츄 X·Y 가 같은 Raichu.csv).
-    // 그래서 폼을 바꿔도 성격·노력치·기술 기본값이 같다 — 이걸 안 적으면 버그로 읽힌다.
+  it('계산기에서 안내 문구를 걷어냈다', async () => {
     await mountApp('#/calc?a=garchomp&b=ninetalesalola');
     await vi.waitFor(() => {
       expect(document.querySelector('.calc__damage')).not.toBeNull();
     });
-
-    const panels = [...document.querySelectorAll('.calc__side')];
-    for (const panel of panels) {
-      // 폼 선택이 있는 쪽에만 안내가 붙는다.
-      const hasForms = panel.querySelector('.form-select') !== null;
-      const note = panel.querySelector('.calc__form-note');
-      expect(Boolean(note), hasForms ? '폼이 여럿인데 안내가 없다' : '폼이 하나인데 안내가 있다').toBe(
-        hasForms,
-      );
-      if (note) expect(note.textContent).toContain('종 단위');
-    }
+    // 한 화면에 더 담기 위해 제목·설명을 전부 없앴다.
+    expect(document.querySelector('.calc__intro')).toBeNull();
+    expect(document.querySelector('.calc__form-note')).toBeNull();
+    expect(document.body.textContent).not.toContain('4개까지');
   });
 
   it('포켓몬 선택이 패널 맨 위에 온다', async () => {
@@ -1164,5 +1156,18 @@ describe('화이트 모드는 끝까지 화이트여야 한다', () => {
   it('기기 설정을 따라가는 theme-color 가 남아 있지 않다', () => {
     const html = readFileSync(path.join(import.meta.dirname, '..', 'index.html'), 'utf8');
     expect(html).not.toContain('prefers-color-scheme');
+  });
+});
+
+describe('출처 화면', () => {
+  it('탭에는 없지만 푸터 링크로 닿는다', async () => {
+    await mountApp('#/');
+    const footerLink = document.querySelector('.shell__footer a[href*="sources"]');
+    expect(footerLink).not.toBeNull();
+
+    // 링크가 실제로 살아 있는 경로여야 한다.
+    await mountApp('#/sources');
+    expect(document.querySelector('.notice--empty')).toBeNull();
+    expect(document.body.textContent).toContain('상표');
   });
 });

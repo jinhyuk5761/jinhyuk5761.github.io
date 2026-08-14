@@ -66,12 +66,17 @@ type BattleStat = (typeof BATTLE_STATS)[number];
 const ALL_STATS = ['hp', ...BATTLE_STATS] as const;
 type StatKey = (typeof ALL_STATS)[number];
 
+/**
+ * 계산기의 스탯 이름은 축약형을 쓴다.
+ * '특수공격' 은 좁은 열에서 두 줄로 쪼개진다 — 대전에서 통용되는 '특공' 이 낫다.
+ * (상세 화면은 읽는 용도라 전체 이름을 그대로 둔다.)
+ */
 const STAT_LABELS: Record<StatKey, string> = {
   hp: 'HP',
   atk: '공격',
   def: '방어',
-  spa: '특수공격',
-  spd: '특수방어',
+  spa: '특공',
+  spd: '특방',
   spe: '스피드',
 };
 
@@ -331,12 +336,6 @@ export function renderCalculator(container: HTMLElement, route: Route): void {
   const page = el(
     'section',
     { class: 'calc' },
-    el('h2', {}, '대미지 계산기'),
-    el(
-      'p',
-      { class: 'calc__intro' },
-      '레벨 50 기준입니다. 노력치·성격·특성·기술은 사용률 상위 값으로 자동으로 채워집니다.',
-    ),
   );
   container.appendChild(page);
 
@@ -587,16 +586,6 @@ function sidePanel(
     });
     frag.appendChild(select);
 
-    // 실수치·타입·특성은 폼마다 다르지만 사용률은 종 단위로만 집계된다.
-    // 상류가 종당 CSV 하나만 내기 때문이다 (메가 라이츄 X·Y 가 같은 Raichu.csv 를 쓴다).
-    // 밝히지 않으면 "X 와 Y 의 성격·노력치가 왜 같냐"는 오해가 생긴다.
-    frag.appendChild(
-      el(
-        'p',
-        { class: 'calc__form-note' },
-        '성격·노력치·기술 기본값은 종 단위 집계라 폼을 바꿔도 같습니다.',
-      ),
-    );
   }
 
   frag.appendChild(hpSlider(side, form, title, handlers.onInput));
@@ -962,7 +951,7 @@ function moveSection(
   onInput: () => void,
 ): HTMLElement {
   const section = el('section', { class: 'section' });
-  section.appendChild(sectionTitle('기술', `${MOVE_SLOTS}개까지`));
+  section.appendChild(sectionTitle('기술'));
 
   const topMoves = (usage?.blocks.find((b) => b.category === 'move')?.entries ?? [])
     .map((e) => e.name)

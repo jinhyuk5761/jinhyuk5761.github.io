@@ -91,17 +91,18 @@ const STAT_SLUG_TO_KEY: Record<string, BattleStat> = {
 
 const MOVE_SLOTS = 4;
 
-/** 상태이상. 대미지 계산에 영향을 주는 것만 둔다. */
-type Status = 'none' | 'burn' | 'poison' | 'toxic' | 'paralysis' | 'sleep' | 'freeze';
+/**
+ * 상태이상은 화상만 둔다.
+ *
+ * 대미지가 달라지는 것은 화상(물리 ×0.5)뿐이다. 나머지는 "상태이상이기만 하면"
+ * 되는 판정(객기·이상한비늘·근성)이라 화상으로 똑같이 켜진다. 독을 따로 보는
+ * 베놈쇼크 계열은 Champions 기술 목록에 없어 고를 이유가 없다.
+ */
+type Status = 'none' | 'burn';
 
 const STATUS_OPTIONS: [Status, string][] = [
   ['none', '없음'],
   ['burn', '화상'],
-  ['poison', '독'],
-  ['toxic', '맹독'],
-  ['paralysis', '마비'],
-  ['sleep', '잠듦'],
-  ['freeze', '얼음'],
 ];
 
 const WEATHER_OPTIONS: [Weather, string][] = [
@@ -253,8 +254,6 @@ function formOf(mon: Pokemon, slug: string | null): PokemonForm {
 function anySideHasAbility(name: string): boolean {
   return attacker.ability === name || defender.ability === name;
 }
-
-const isPoisoned = (status: Status) => status === 'poison' || status === 'toxic';
 
 /** null 이면 아무것도 붙이지 않는다. */
 function appendIf(parent: HTMLElement, child: HTMLElement | null): void {
@@ -887,9 +886,12 @@ function abilitySelect(
 ): HTMLElement {
   const owned = abilitiesOf(form);
 
-  // 특성이 하나뿐인 포켓몬은 그 특성으로 고정한다.
-  // 고를 여지가 없는데 '없음' 을 두면 실제로 불가능한 조합을 계산하게 된다.
-  if (owned.length === 1) side.ability = owned[0]!;
+  // '없음' 은 두지 않는다. 특성 없는 포켓몬은 대전에 나오지 않으므로
+  // 그것을 고를 수 있게 두면 실재하지 않는 조합을 계산하게 된다.
+  // 아직 안 정했거나 다른 폼의 특성이 남아 있으면 첫 번째 것으로 맞춘다.
+  if (owned.length > 0 && (!side.ability || !owned.includes(side.ability))) {
+    side.ability = owned[0]!;
+  }
 
   // 이름만 둔다. 효과 설명은 「특성」 탭에서 본다 — 계산기에서는 목록만 시끄러워진다.
   const options: SearchOption[] = owned.map((name) => ({
@@ -897,7 +899,6 @@ function abilitySelect(
     label: abilityName(state.terms, name),
     haystack: [abilityName(state.terms, name), name],
   }));
-  if (owned.length !== 1) options.unshift({ value: '', label: '— 없음 —' });
 
   return el(
     'label',
@@ -906,7 +907,8 @@ function abilitySelect(
     searchSelect({
       options,
       value: side.ability ?? '',
-      placeholder: '— 없음 —',
+      // 도감에 특성이 하나도 없는 폼일 때만 보인다.
+      placeholder: '정보 없음',
       ariaLabel: `${title} 특성`,
       className: 'calc__ability',
       onPick: (name) => {
@@ -1297,7 +1299,8 @@ function moveResult(
     attackerFormName: attackerForm.formName,
     attackerHpRatio: attacker.hpPercent / 100,
     defenderHpRatio: defender.hpPercent / 100,
-    defenderPoisoned: isPoisoned(defender.status),
+    // 독 상태를 따로 보는 기술(베놈쇼크 계열)이 Champions 에 없어 고를 수단을 두지 않았다.
+    defenderPoisoned: false,
   };
 
   const moveType =

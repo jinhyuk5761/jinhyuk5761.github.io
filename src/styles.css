@@ -973,6 +973,19 @@ select optgroup {
  * 명시적으로 다시 숨긴다.
  */
 .sselect__panel[hidden] { display: none; }
+/*
+ * 위로 펼치기.
+ *
+ * 검색창에 포커스가 가면 키보드가 화면 아래를 덮어 아래로 편 패널을 가린다.
+ * 자리가 있으면 위로 펴고, 검색창은 버튼 쪽(아래)에 붙여 손가락 이동을 줄인다.
+ * 높이는 스크립트가 남은 공간에 맞춰 max-height 로 덮어쓴다.
+ */
+.sselect--up .sselect__panel {
+  top: auto;
+  bottom: calc(100% + 2px);
+  flex-direction: column-reverse;
+}
+.sselect--up .sselect__search { margin-bottom: 0; margin-top: 4px; }
 .sselect__search {
   width: 100%;
   padding: 6px 8px;

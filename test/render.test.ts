@@ -803,7 +803,8 @@ describe('대미지 계산기', () => {
     expect(labels).toHaveLength(2);
     labels[0]!.querySelector<HTMLButtonElement>('.sselect__button')!.click();
     const options = [...labels[0]!.querySelectorAll('.sselect__option')].map((o) => o.textContent);
-    expect(options).toEqual(['없음', '화상', '독', '맹독', '마비', '잠듦', '얼음']);
+    // 대미지가 달라지는 것은 화상뿐이라 나머지는 고를 수단을 두지 않는다.
+    expect(options).toEqual(['없음', '화상']);
 
     // 예전의 체크박스는 사라졌다.
     expect(document.body.textContent).not.toContain('공격측 화상');
@@ -816,6 +817,21 @@ describe('대미지 계산기', () => {
       expect(document.querySelector('.calc__ability')).not.toBeNull();
     });
     expect(document.body.textContent).not.toContain('대미지 영향 없음');
+  });
+
+  it('특성 목록에 「없음」을 두지 않는다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__ability')).not.toBeNull();
+    });
+    const picker = document.querySelector('.calc__ability')!;
+    picker.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    const options = [...picker.querySelectorAll('.sselect__option')].map((o) => o.textContent);
+    // 한카리아스는 모래숨기·까칠한피부(숨겨진 특성) 둘뿐.
+    // 특성 없는 포켓몬은 대전에 나오지 않으므로 '없음' 을 둘 이유가 없다.
+    expect(options).toEqual(['모래숨기', '까칠한피부']);
+    // 고르지 않아도 사용률이 많은 쪽이 잡혀 있어야 한다.
+    expect(picker.querySelector('.sselect__value')!.textContent).toBe('까칠한피부');
   });
 
   it('총대장·투쟁심 입력은 그 특성을 골랐을 때만 나온다', async () => {

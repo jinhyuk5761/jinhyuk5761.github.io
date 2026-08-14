@@ -10,7 +10,7 @@
 
 import { fetchMoveDex, type MoveDex, type MoveInfo } from '../adapters/moveDex';
 import { abilityName } from '../adapters/termDex';
-import { clear, el, notice } from '../core/dom';
+import { clear, el, focusIfKeyboardLikely, notice } from '../core/dom';
 import { matchesQuery } from '../core/names';
 import { buildReverseIndex, type FormRef, type ReverseIndex } from '../core/reverseIndex';
 import { moveEffectLines } from '../core/moveEffect';
@@ -125,7 +125,7 @@ function renderMoveList(host: HTMLElement, dex: MoveDex): void {
   host.appendChild(el('div', { class: 'search__toolbar' }, summary));
   host.appendChild(list);
   draw();
-  input.focus();
+  focusIfKeyboardLikely(input);
 }
 
 function renderMoveDetail(host: HTMLElement, dex: MoveDex, englishName: string): void {
@@ -233,14 +233,15 @@ function renderAbilityList(host: HTMLElement): void {
     }
 
     for (const entry of matches) {
-      const count = index.abilityUsers.get(entry.name)?.length ?? 0;
+      const description = state.terms?.abilities.get(entry.name)?.description ?? null;
       list.appendChild(
         el(
           'a',
-          { class: 'dexrow', href: href(`/abilities?a=${encodeURIComponent(entry.name)}`) },
+          // 특성 행은 타입 배지가 없어 열 구성이 기술 행과 다르다.
+          // 기술용 격자를 그대로 쓰면 이름이 62px 배지 칸에 들어가 잘린다.
+          { class: 'dexrow dexrow--ability', href: href(`/abilities?a=${encodeURIComponent(entry.name)}`) },
           el('span', { class: 'dexrow__name' }, entry.korean),
-          el('span', { class: 'dexrow__meta' }, entry.korean === entry.name ? '' : entry.name),
-          el('span', { class: 'dexrow__count' }, `${count}종`),
+          description ? el('span', { class: 'dexrow__desc' }, description) : null,
         ),
       );
     }
@@ -255,7 +256,7 @@ function renderAbilityList(host: HTMLElement): void {
   host.appendChild(el('div', { class: 'search__toolbar' }, summary));
   host.appendChild(list);
   draw();
-  input.focus();
+  focusIfKeyboardLikely(input);
 }
 
 function renderAbilityDetail(host: HTMLElement, englishName: string): void {

@@ -65,3 +65,17 @@ export function fragment(...children: Child[]): DocumentFragment {
 export function notice(kind: 'loading' | 'empty' | 'error', message: string): HTMLElement {
   return el('p', { class: `notice notice--${kind}`, role: kind === 'error' ? 'alert' : undefined }, message);
 }
+
+/**
+ * 검색창에 자동으로 커서를 둔다 — **물리 키보드가 있을 때만**.
+ *
+ * 폰에서 자동 포커스하면 화면에 들어올 때마다 소프트 키보드가 올라온다.
+ * 특성 하나를 보고 뒤로 나오면 목록이 다시 그려지면서 키보드가 또 튀어나와,
+ * 읽으려는 목록의 절반을 가린다.
+ *
+ * 마우스·트랙패드 같은 정밀 포인터가 있으면 데스크톱으로 보고 포커스한다.
+ */
+export function focusIfKeyboardLikely(input: HTMLInputElement): void {
+  if (typeof matchMedia !== 'function') return;
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) input.focus();
+}

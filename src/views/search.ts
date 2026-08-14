@@ -6,7 +6,7 @@
  */
 
 import { matchesQuery } from '../core/names';
-import { clear, el, notice } from '../core/dom';
+import { clear, el, focusIfKeyboardLikely, notice } from '../core/dom';
 import { searchHaystack } from '../adapters/pokeApi';
 import { navigate } from '../router';
 import { state } from '../store';
@@ -150,7 +150,7 @@ export function renderSearch(container: HTMLElement): void {
   );
 
   draw();
-  input.focus();
+  focusIfKeyboardLikely(input);
 }
 
 export function filterPokemon(rawQuery: string): Pokemon[] {

@@ -973,3 +973,45 @@ describe('열화 동작', () => {
     });
   });
 });
+
+describe('모바일 배려', () => {
+  it('터치 기기에서는 검색창에 자동으로 커서를 두지 않는다', async () => {
+    // 자동 포커스하면 목록에 들어올 때마다 소프트 키보드가 올라와
+    // 읽으려는 목록의 절반을 가린다. 특성 하나 보고 뒤로 나올 때마다 반복된다.
+    vi.stubGlobal('matchMedia', (q: string) => ({
+      matches: false, // 정밀 포인터 없음 = 터치 기기
+      media: q,
+      addEventListener() {},
+      removeEventListener() {},
+    }));
+    await mountApp('#/abilities');
+    expect(document.activeElement).not.toBe(document.querySelector('.search__input'));
+  });
+
+  it('마우스가 있는 기기에서는 그대로 커서를 둔다', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({
+      matches: true, // (hover: hover) and (pointer: fine)
+      media: q,
+      addEventListener() {},
+      removeEventListener() {},
+    }));
+    await mountApp('#/abilities');
+    expect(document.activeElement).toBe(document.querySelector('.search__input'));
+  });
+});
+
+describe('특성 목록', () => {
+  it('이름을 줄여 쓰지 않고 설명을 함께 보여준다', async () => {
+    await mountApp('#/abilities');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.dexrow--ability').length).toBeGreaterThan(0);
+    });
+    const row = [...document.querySelectorAll('.dexrow--ability')].find((r) =>
+      r.querySelector('.dexrow__name')?.textContent === '까칠한피부',
+    )!;
+    expect(row.querySelector('.dexrow__desc')?.textContent).toContain('접촉한 상대에게');
+    // 영문명과 '몇 종' 표기는 뺐다.
+    expect(row.textContent).not.toContain('Rough Skin');
+    expect(row.querySelector('.dexrow__count')).toBeNull();
+  });
+});

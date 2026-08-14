@@ -729,3 +729,12 @@ h4 { font-size: 15px; margin: 0; }
   /* 좁은 화면에서는 제원을 이름 아래로 내린다 */
   .dexrow__meta { grid-column: 2 / -1; grid-row: 2; }
 }
+
+/* 특성 행 — 타입 배지가 없고 설명이 붙는다. 이름은 길어도 줄여 쓰지 않는다. */
+.dexrow--ability { grid-template-columns: 1fr; row-gap: 2px; }
+.dexrow--ability .dexrow__name { white-space: normal; overflow: visible; }
+.dexrow__desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+@media (max-width: 720px) {
+  .dexrow--ability { grid-template-columns: 1fr; }
+}

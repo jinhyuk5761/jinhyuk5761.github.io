@@ -321,9 +321,9 @@ describe('그 밖의 대미지 특성', () => {
 });
 
 describe('Champions 에서 풀린 CAP 특성', () => {
-  it('파이어메인은 불꽃 기술의 공격을 1.5배로', () => {
-    expect(resolve('Fire Mane', null, ctx({ moveType: 'Fire' })).attacker.attackMultiplier).toBe(1.5);
-    expect(resolve('Fire Mane', null, ctx({ moveType: 'Water' })).attacker.attackMultiplier).toBe(1);
+  it('파이어메인은 불꽃 기술의 위력을 1.5배로', () => {
+    expect(resolve('Fire Mane', null, ctx({ moveType: 'Fire' })).attacker.powerMultiplier).toBe(1.5);
+    expect(resolve('Fire Mane', null, ctx({ moveType: 'Water' })).attacker.powerMultiplier).toBe(1);
   });
 
   it('메가솔라는 날씨를 쾌청으로 취급한다', () => {
@@ -425,5 +425,36 @@ describe('조회 함수', () => {
     expect(affectsDamage('Multiscale')).toBe(true);
     // 대미지와 무관한 특성
     expect(affectsDamage('Frisk')).toBe(false);
+  });
+});
+
+describe('사용자가 게임에서 확인해 준 Champions 특성', () => {
+  it('불꽃의갈기는 공격이 아니라 위력을 1.5배 한다', () => {
+    // 게임 내 설명이 "위력이 1.5배" 다. 공격 실수치에 곱하면 반올림 시점이 달라진다.
+    const out = resolveAbilities('Fire Mane', null, ctx({ moveType: 'Fire' }));
+    expect(out.attacker.powerMultiplier).toBe(1.5);
+    expect(out.attacker.attackMultiplier).toBe(1);
+  });
+
+  it('불꽃의갈기는 불꽃 기술에만 붙는다', () => {
+    const out = resolveAbilities('Fire Mane', null, ctx({ moveType: 'Water' }));
+    expect(out.attacker.powerMultiplier).toBe(1);
+  });
+
+  it('메가솔라는 날씨를 쾌청으로 취급한다', () => {
+    // "기술을 사용할 때 쾌청 상태일 때와 동일한 효과를 얻는다"
+    const out = resolveAbilities('Mega Sol', null, ctx({ moveType: 'Fire', weather: 'none' }));
+    expect(out.attacker.weatherOverride).toBe('sun');
+  });
+
+  it('Eelevate 는 부유와 같이 땅 기술을 무효로 한다', () => {
+    const out = resolveAbilities(null, 'Eelevate', ctx({ moveType: 'Ground' }));
+    expect(out.defender.immune).toBe(true);
+  });
+
+  it('드래곤스킨은 노말 기술을 드래곤으로 바꾸고 위력을 올린다', () => {
+    const out = resolveAbilities('Dragonize', null, ctx({ moveType: 'Normal' }));
+    expect(out.attacker.moveTypeOverride).toBe('Dragon');
+    expect(out.attacker.powerMultiplier).toBeGreaterThan(1);
   });
 });

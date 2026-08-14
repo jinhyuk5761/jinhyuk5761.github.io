@@ -6,6 +6,8 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import {
   abilityName,
   itemName,
@@ -127,5 +129,32 @@ describe('statText — 배틀 데이터의 스탯 표기를 한국어로', () =>
 
   it('모르는 표기는 원문을 둔다', () => {
     expect(statText('Wat')).toBe('Wat');
+  });
+});
+
+describe('Champions 오리지널 특성의 한국어', () => {
+  const raw = JSON.parse(
+    readFileSync(path.join(import.meta.dirname, '..', 'public', 'data', 'terms.json'), 'utf8'),
+  ) as { abilities: Record<string, { ko: string | null; desc: string | null }> };
+
+  it('이름이 영문으로 남는 특성이 없다', () => {
+    const missing = Object.entries(raw.abilities)
+      .filter(([, v]) => !v.ko)
+      .map(([k]) => k);
+    expect(missing, `한국어명이 없는 특성: ${missing.join(', ')}`).toEqual([]);
+  });
+
+  it('PokéAPI 가 안 주는 특성은 사용자가 확인해 준 문구로 채운다', () => {
+    // 번역하거나 추측하지 않는다 — 게임에서 확인된 문구만 넣는다.
+    expect(raw.abilities['Eelevate']?.ko).toBe('부유');
+    expect(raw.abilities['Fire Mane']?.ko).toBe('불꽃의갈기');
+    expect(raw.abilities['Mega Sol']?.desc).toContain('쾌청');
+    expect(raw.abilities['Piercing Drill']?.desc).toContain('방어 효과를 무시');
+  });
+
+  it('설명이 한국어다 (영문이 그대로 남지 않았다)', () => {
+    for (const key of ['Supersweet Syrup', 'Toxic Debris', 'Dragonize', 'Armor Tail']) {
+      expect(/[가-힣]/.test(raw.abilities[key]?.desc ?? ''), key).toBe(true);
+    }
   });
 });

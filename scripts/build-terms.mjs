@@ -189,19 +189,67 @@ async function main() {
   const abilityIndex = await loadSlugIndex('ability');
   const abilities = {};
   const abilityMissing = [];
+
+  /**
+   * PokéAPI 가 한국어 설명을 주지 않는 특성.
+   *
+   * Champions 오리지널이거나 9세대 신규라 아직 한국어 텍스트가 없다.
+   * **사용자가 게임에서 확인해 알려준 문구만** 넣는다 — 번역하거나 추측하지 않는다.
+   * ko 가 비어 있으면 이름도 여기서 채운다.
+   */
+  const ABILITY_KO_OVERRIDE = {
+    'Supersweet Syrup': { desc: '등장 시 상대의 회피율을 1단계 떨어트린다. 배틀 중 한 번만 발동한다.' },
+    'Piercing Drill': {
+      desc: '접촉 기술을 사용할 때 상대의 방어 효과를 무시하고 본래 데미지의 1/4만큼 데미지를 준다. 상대의 방어 효과 이외에는 발동된다.',
+    },
+    Hospitality: { desc: '등장했을 때 같은 편을 대접해서 HP를 조금 회복시킨다.' },
+    'Toxic Debris': { desc: '물리 기술로 데미지를 받으면 상대의 발밑에 독압정을 뿌린다.' },
+    Dragonize: { desc: '노말타입의 기술이 드래곤타입이 된다. 위력이 조금 올라간다.' },
+    'Cud Chew': {
+      desc: '한 번에 한하여 나무열매를 먹으면 다음 턴이 끝날 때 위에서 꺼내서 또 먹는다.',
+    },
+    'Zero to Hero': { desc: '지닌 포켓몬으로 돌아오면 마이티폼으로 변한다.' },
+    'Mega Sol': { desc: '기술을 사용할 때 쾌청 상태일 때와 동일한 효과를 얻는다.' },
+    Sharpness: { desc: '상대를 베는 기술의 위력이 올라간다.' },
+    Electromorphosis: { desc: '공격을 받을 시 충전 상태가 되어 전기 타입 기술의 위력을 높인다.' },
+    'Purifying Salt': { desc: '상태 이상에 걸리지 않으며 고스트 타입 기술의 데미지를 절반만 받는다.' },
+    'Supreme Overlord': {
+      desc: '전투에 등장했을 때 지금까지 쓰러진 같은 편의 수가 많을수록 조금씩 공격과 특수공격이 상승한다.',
+    },
+    'Armor Tail': { desc: '상대 포켓몬이 선제공격기술을 사용할 수 없게 된다.' },
+    Opportunist: { desc: '상대의 능력이 올라가면 자신도 편승해서 똑같이 자신도 올린다.' },
+    'Spicy Spray': { desc: '기술로 데미지를 입으면 상대를 화상 상태로 만든다.' },
+    // 아래 둘은 Champions 오리지널이라 한국어 이름도 없다.
+    Eelevate: { ko: '부유', desc: '땅타입의 기술을 받지 않는다.' },
+    'Fire Mane': { ko: '불꽃의갈기', desc: '불꽃타입 기술의 위력이 1.5배 오른다.' },
+  };
+
+  /** override 를 적용한다. PokéAPI 가 준 값이 있으면 그쪽을 우선한다. */
+  const withOverride = (name, entry) => {
+    const extra = ABILITY_KO_OVERRIDE[name];
+    if (!extra) return entry;
+    return {
+      ko: entry?.ko ?? extra.ko ?? null,
+      desc: entry?.desc ?? extra.desc ?? null,
+      descEn: entry?.descEn ?? null,
+    };
+  };
   await mapLimit([...abilityNames].sort(), CONCURRENCY, async (name) => {
     const slug = abilityIndex.get(toId(name));
     if (!slug) {
       abilityMissing.push(name);
+      // PokéAPI 에 없는 Champions 오리지널 특성도 override 가 있으면 살린다.
+      const only = withOverride(name, null);
+      if (only.ko || only.desc) abilities[name] = only;
       return;
     }
     try {
       const a = await cachedJson(CACHE_DIR, `ability-${slug}`, `https://pokeapi.co/api/v2/ability/${slug}`);
-      abilities[name] = {
+      abilities[name] = withOverride(name, {
         ko: pickName(a.names, ['ko']),
         desc: pickFlavor(a.flavor_text_entries, 'ko', 'version_group'),
         descEn: pickFlavor(a.flavor_text_entries, 'en', 'version_group'),
-      };
+      });
     } catch {
       abilityMissing.push(name);
     }

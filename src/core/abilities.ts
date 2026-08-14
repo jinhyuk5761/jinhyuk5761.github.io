@@ -277,8 +277,10 @@ const ATTACKER_LIST: AbilityDef[] = [
   // --- Champions 에서 풀린 CAP 특성 (Showdown 정의 기준) ---
   {
     name: 'Fire Mane',
-    note: '불꽃 기술의 공격 ×1.5',
-    effect: (c, o) => { if (c.moveType === 'Fire') o.attackMultiplier *= 1.5; },
+    // 게임 내 설명은 "불꽃타입 기술의 **위력**이 1.5배" 다.
+    // 공격 실수치에 곱하면 반올림 시점이 달라 결과가 어긋난다.
+    note: '불꽃 기술 위력 ×1.5',
+    effect: (c, o) => { if (c.moveType === 'Fire') o.powerMultiplier *= 1.5; },
   },
   {
     name: 'Mega Sol',

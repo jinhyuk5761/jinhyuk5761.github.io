@@ -16,8 +16,6 @@ import { fetchMoveDex, type MoveDex, type MoveInfo } from '../adapters/moveDex';
 import { searchHaystack } from '../adapters/pokeApi';
 import { abilityName, itemName, weightOf } from '../adapters/termDex';
 import {
-  attackerAbility,
-  defenderAbility,
   resolveAbilities,
   type AbilityContext,
 } from '../core/abilities';
@@ -156,6 +154,16 @@ let fallenAllies = 0;
 let genderRelation: 'same' | 'different' | 'unknown' = 'unknown';
 const hitChoices = new Map<string, number>();
 const manualPower = new Map<string, number>();
+/**
+ * 변환자재·리베로의 자속을 적용할 기술.
+ *
+ * 이 특성은 등장 후 **한 번만** 타입을 바꾼다. 그 턴에 쓴 기술에만 자속이 붙으므로
+ * 어느 기술에 걸 것인지는 사람이 정해야 한다 — 계산기가 알 수 없다.
+ */
+const proteanStab = new Set<string>();
+
+/** 타입을 바꿔 자속을 얻는 특성. */
+const CONVERTING_ABILITIES = new Set(['Protean', 'Libero']);
 
 function defaultHits(range: [number, number]): number {
   const [min, max] = range;
@@ -239,11 +247,6 @@ function anySideHasAbility(name: string): boolean {
 }
 
 const isPoisoned = (status: Status) => status === 'poison' || status === 'toxic';
-
-/** "적용된 보정" 줄에 넣을 도구 표기. 안 들었으면 null. */
-function itemLabel(item: ItemEffect | null): string | null {
-  return item ? `${itemName(state.terms, item.name)} (${item.note})` : null;
-}
 
 /** null 이면 아무것도 붙이지 않는다. */
 function appendIf(parent: HTMLElement, child: HTMLElement | null): void {
@@ -1137,36 +1140,6 @@ function renderResults(
     );
   }
 
-  const abilityLabel = (name: string | null, isAttacker: boolean) => {
-    if (!name) return null;
-    const def = isAttacker ? attackerAbility(name) : defenderAbility(name);
-    return def ? `${abilityName(state.terms, name)} (${def.note})` : null;
-  };
-  const statusLabel = (side: Side, who: string) =>
-    side.status === 'none' ? null : `${who} ${STATUS_OPTIONS.find(([s]) => s === side.status)?.[1]}`;
-
-  const applied = [
-    abilityLabel(attacker.ability, true),
-    abilityLabel(defender.ability, false),
-    itemLabel(attackerItem),
-    itemLabel(defenderItem),
-    statusLabel(attacker, '공격측'),
-    statusLabel(defender, '방어측'),
-    weather !== 'none' ? `날씨: ${WEATHER_OPTIONS.find(([w]) => w === weather)?.[1]}` : null,
-    terrain !== 'none' ? `필드: ${TERRAIN_OPTIONS.find(([t]) => t === terrain)?.[1]}` : null,
-    screen ? (critical ? '스크린 (급소로 무시됨)' : '스크린') : null,
-    critical ? '급소 ×1.5' : null,
-    state.format === 'Doubles' ? '더블 규칙' : null,
-  ].filter(Boolean) as string[];
-
-  section.appendChild(
-    el(
-      'p',
-      { class: 'calc__applied' },
-      applied.length > 0 ? `적용된 보정: ${applied.join(' · ')}` : '적용된 보정 없음',
-    ),
-  );
-
   return section;
 }
 
@@ -1324,8 +1297,8 @@ function moveResult(
     clear(header);
     header.appendChild(typeBadge(moveType));
     header.appendChild(el('span', {}, move.displayName));
-    header.appendChild(el('span', { class: 'calc__type-changed' }, `(${move.type} → ${moveType})`));
   }
+
   row.appendChild(header);
   appendIf(row, traitRow(move));
 
@@ -1333,6 +1306,42 @@ function moveResult(
   const hits = hitsFor(move, skillLink);
   const computedPower = resolvePower(move, powerContext);
   const effectivePower = computedPower ?? manualPower.get(move.englishName) ?? move.power ?? 0;
+  const hasConvertingAbility = attacker.ability !== null && CONVERTING_ABILITIES.has(attacker.ability);
+
+  // 위력·분류를 기술 이름 옆에 붙인다. 계산식 줄을 없앤 대신 여기서 바로 보이게 한다.
+  const shownPower = isEscalating(move)
+    ? escalatingPowers(move, hits).reduce((a, b) => a + b, 0)
+    : effectivePower;
+  header.appendChild(
+    el(
+      'span',
+      { class: 'calc__move-spec' },
+      `${category === 'physical' ? '물리' : '특수'} ${shownPower}`,
+    ),
+  );
+
+  // 변환자재·리베로는 **한 번만** 타입이 바뀐다. 그 턴에 쓴 기술에만 자속이 붙으므로
+  // 어느 기술에 걸 것인지 사용자가 정해야 한다.
+  if (hasConvertingAbility) {
+    const on = proteanStab.has(move.englishName);
+    const toggle = el(
+      'button',
+      {
+        class: `calc__stabtoggle${on ? ' calc__stabtoggle--on' : ''}`,
+        type: 'button',
+        title: '변환자재 자속 적용 여부',
+      },
+      on ? '자속 ON' : '자속 OFF',
+    );
+    toggle.addEventListener('click', () => {
+      if (on) proteanStab.delete(move.englishName);
+      else proteanStab.add(move.englishName);
+      hp.onChange();
+    });
+    header.appendChild(toggle);
+  }
+
+
 
   if (move.variablePower) {
     const line = el('div', { class: 'calc__varpow' });
@@ -1438,7 +1447,18 @@ function moveResult(
     ? Array.from({ length: hits }, (_, i) => defenseAtStage(baseDefenseStage + i))
     : undefined;
 
-  const stab = resolved.attacker.stabOverride ?? stabMultiplier(moveType, attackerForm.types);
+  /*
+   * 자속.
+   *
+   * 변환자재·리베로는 특성 자체가 stabOverride(1.5)를 주지만, 실제로는 등장 후
+   * **한 번만** 타입이 바뀐다. 그러니 네 기술 전부에 자속을 붙이면 과대평가가 된다.
+   * 사용자가 켠 기술에만 적용하고, 끈 기술은 원래 타입 기준으로 되돌린다.
+   */
+  const stab = hasConvertingAbility
+    ? proteanStab.has(move.englishName)
+      ? (resolved.attacker.stabOverride ?? 1.5)
+      : stabMultiplier(moveType, attackerForm.types)
+    : (resolved.attacker.stabOverride ?? stabMultiplier(moveType, attackerForm.types));
 
   const attackerGrounded = isGrounded(attackerForm.types, attacker.ability);
   const defenderGrounded = isGrounded(defenderForm.types, defender.ability);
@@ -1506,20 +1526,5 @@ function moveResult(
       ),
     );
   }
-  row.appendChild(
-    el(
-      'p',
-      { class: 'calc__breakdown' },
-      `${category === 'physical' ? '물리' : '특수'} 위력 ${
-        // 타격마다 커지는 기술은 첫 타 위력이 아니라 합계를 보여야 한다.
-        isEscalating(move) ? escalatingPowers(move, hits).reduce((a, b) => a + b, 0) : effectivePower
-      } · ` +
-        `공격 ${attackStat} / 방어 ${
-          perHitDefenses ? perHitDefenses.join('→') : defenseStat
-        } · ` +
-        `상성 ×${result.typeEffectiveness}${stab !== 1 ? ` · 자속 ×${stab}` : ''}`,
-    ),
-  );
-
   return row;
 }

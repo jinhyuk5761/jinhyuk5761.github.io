@@ -16,6 +16,8 @@ import type { Format } from './types';
 
 export interface AppState {
   format: Format;
+  /** 화면 테마. 기본은 화이트. */
+  theme: Theme;
   index: ChampionsIndex | null;
   locales: LocaleMap;
   /** 타입·도구·특성·성격의 한국어 명칭. 없으면 영문으로 열화한다. */
@@ -32,21 +34,52 @@ const STORAGE_KEY = 'pcm:prefs';
 /** 새 데이터가 붙었는지 확인하는 주기. */
 const CONFIG_POLL_MS = 60_000;
 
-function loadFormat(): Format {
+export type Theme = 'light' | 'dark';
+
+/** 저장된 설정 전체. 포맷과 테마를 한 키에 같이 둔다. */
+function loadPrefs(): { format: Format; theme: Theme } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as { format?: string };
-      return parsed.format === 'Doubles' ? 'Doubles' : 'Singles';
+      const parsed = JSON.parse(raw) as { format?: string; theme?: string };
+      return {
+        format: parsed.format === 'Doubles' ? 'Doubles' : 'Singles',
+        // 기기 설정을 따라가지 않는다. 고르지 않았으면 화이트가 기본이다.
+        theme: parsed.theme === 'dark' ? 'dark' : 'light',
+      };
     }
   } catch {
     // 저장값이 깨졌으면 기본값으로 간다.
   }
-  return 'Singles';
+  return { format: 'Singles', theme: 'light' };
+}
+
+/** <html data-theme> 에 반영한다. CSS 가 이 속성으로 색을 바꾼다. */
+export function applyTheme(theme: Theme): void {
+  if (typeof document === 'undefined') return;
+  if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+}
+
+export function setTheme(theme: Theme): void {
+  if (state.theme === theme) return;
+  state.theme = theme;
+  applyTheme(theme);
+  savePrefs();
+  emit();
+}
+
+function savePrefs(): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ format: state.format, theme: state.theme }));
+  } catch {
+    // 저장 실패는 기능에 영향 없다.
+  }
 }
 
 export const state: AppState = {
-  format: loadFormat(),
+  format: loadPrefs().format,
+  theme: loadPrefs().theme,
   index: null,
   locales: new Map(),
   terms: null,
@@ -71,11 +104,7 @@ function emit(): void {
 export function setFormat(format: Format): void {
   if (state.format === format) return;
   state.format = format;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ format }));
-  } catch {
-    // 저장 실패는 기능에 영향 없다.
-  }
+  savePrefs();
   emit();
 }
 

@@ -1,8 +1,14 @@
 /* Pokémon Champions 메타 뷰어 — 단일 스타일시트.
    프레임워크 없이 가는 규모라 CSS 도 한 파일로 유지한다. */
 
+/*
+ * 테마는 **사용자가 고른 값**이 기준이다. 기본은 화이트.
+ * 기기 설정(prefers-color-scheme)을 따라가지 않는다 — 폰이 다크 모드면
+ * 고르지도 않았는데 어두워져서, 고른 값과 어긋난다.
+ * <html data-theme="dark"> 가 붙으면 아래 블록이 값을 덮어쓴다.
+ */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 
   --bg: #f6f7fb;
   --surface: #ffffff;
@@ -21,23 +27,22 @@
   --radius: 10px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #101318;
-    --surface: #181c23;
-    --surface-alt: #21262f;
-    --text: #e8ebf2;
-    --text-dim: #99a1b3;
-    --border: #2c323d;
-    --accent: #7aa2f7;
-    --accent-soft: #23304d;
-    --good: #4ecb7c;
-    --bad: #f07167;
-    --warn: #e0a458;
-    /* 어두운 배경에서도 읽히도록 밝게 */
-    --stat-up: #ff7a70;
-    --stat-down: #7ab0ff;
-  }
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #101318;
+  --surface: #181c23;
+  --surface-alt: #21262f;
+  --text: #e8ebf2;
+  --text-dim: #99a1b3;
+  --border: #2c323d;
+  --accent: #7aa2f7;
+  --accent-soft: #23304d;
+  --good: #4ecb7c;
+  --bad: #f07167;
+  --warn: #e0a458;
+  /* 어두운 배경에서도 읽히도록 밝게 */
+  --stat-up: #ff7a70;
+  --stat-down: #7ab0ff;
 }
 
 * { box-sizing: border-box; }
@@ -794,3 +799,43 @@ h4 { font-size: 15px; margin: 0; }
   }
   .calc__page:last-child { grid-column: 1 / -1; }
 }
+
+/* 테마 전환 — 오른쪽 맨 위. */
+.themebtn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.themebtn:hover { background: var(--surface-alt); }
+
+/* 결과창 — 한 화면에 많이 들어가도록 여백과 글자를 줄인다. */
+.calc__move-result { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.calc__move-result:last-child { border-bottom: 0; }
+.calc__move-name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 0 2px; font-weight: 600; }
+.calc__move-spec { font-size: 11px; font-weight: 400; color: var(--text-dim); }
+.calc__damage { margin: 0; font-size: 18px; font-weight: 700; }
+.calc__percent { font-size: 13px; font-weight: 400; color: var(--text-dim); }
+.calc__ko { margin: 0; font-size: 13px; color: var(--accent); font-weight: 600; }
+.calc__perhit { margin: 0; font-size: 11px; color: var(--text-dim); }
+.calc__move-note { margin: 0; font-size: 12px; color: var(--text-dim); }
+.calc__matchup { margin: 0 0 6px; font-size: 13px; font-weight: 600; }
+.calc__matchup-hp { font-weight: 400; color: var(--text-dim); }
+
+/* 변환자재 자속 on/off — 한 번만 발동하는 특성이라 기술마다 사람이 정한다. */
+.calc__stabtoggle {
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.calc__stabtoggle--on { background: var(--accent); border-color: var(--accent); color: #fff; }

@@ -6,7 +6,7 @@
 
 import { clear, el } from './core/dom';
 import { currentRoute, href, onRouteChange, type Route } from './router';
-import { bootstrap, setFormat, state, subscribe } from './store';
+import { applyTheme, bootstrap, setFormat, setTheme, state, subscribe } from './store';
 import type { Format } from './types';
 import { renderCalculator } from './views/calculator';
 import { renderAbilityDexView, renderMoveDexView } from './views/dex';
@@ -45,6 +45,23 @@ function formatToggle(): HTMLElement {
   return group;
 }
 
+/** 화이트 / 다크 전환. 오른쪽 맨 위에 둔다. */
+function themeToggle(): HTMLElement {
+  const dark = state.theme === 'dark';
+  const button = el(
+    'button',
+    {
+      class: 'themebtn',
+      type: 'button',
+      title: dark ? '화이트 모드로' : '다크 모드로',
+      'aria-label': dark ? '화이트 모드로 전환' : '다크 모드로 전환',
+    },
+    dark ? '☀' : '☾',
+  );
+  button.addEventListener('click', () => setTheme(dark ? 'light' : 'dark'));
+  return button;
+}
+
 function shellHeader(route: Route): HTMLElement {
   return el(
     'header',
@@ -66,7 +83,7 @@ function shellHeader(route: Route): HTMLElement {
       state.config.ranking.enabled ? navLink('/ranking', '랭킹', route) : null,
       navLink('/sources', '출처', route),
     ),
-    el('div', { class: 'shell__controls' }, formatToggle()),
+    el('div', { class: 'shell__controls' }, formatToggle(), themeToggle()),
   );
 }
 
@@ -137,6 +154,9 @@ renderShell();
 // 포맷 토글과 config 갱신은 셸과 현재 뷰를 모두 다시 그려야 한다.
 subscribe(renderShell);
 onRouteChange(renderShell);
+
+// 저장된 테마를 화면에 먼저 반영한다. 부팅을 기다리면 잠깐 흰 화면이 번쩍인다.
+applyTheme(state.theme);
 
 void bootstrap();
 

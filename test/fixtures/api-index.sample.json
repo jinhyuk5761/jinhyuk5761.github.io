@@ -314,7 +314,7 @@
       "Ghost"
      ],
      "types_raw": "Steel/Ghost",
-     "abilities": "Stance Change",
+     "abilities": "Stance Change|Protean",
      "hidden_ability": "",
      "hp": 135,
      "attack": 70,
@@ -340,7 +340,7 @@
        "Ghost"
       ],
       "types_raw": "Steel/Ghost",
-      "abilities": "Stance Change",
+      "abilities": "Stance Change|Protean",
       "hidden_ability": "",
       "hp": 135,
       "attack": 70,

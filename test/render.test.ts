@@ -573,13 +573,14 @@ describe('대미지 계산기', () => {
     expect(document.querySelector('.calc__stage--up')).not.toBeNull();
   });
 
-  it('적용된 보정을 숨기지 않고 나열한다', async () => {
+  it('기술 이름 옆에 위력과 분류를 적는다', async () => {
     await mountApp('#/calc?a=garchomp&b=ninetalesalola');
     await vi.waitFor(() => {
-      expect(document.querySelector('.calc__applied')).not.toBeNull();
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
     });
-    // 지진(땅) × 한카리아스(땅/드래곤) → 자속이 결과 줄에 표기된다
-    expect(document.querySelector('.calc__breakdown')?.textContent).toContain('자속');
+    // 계산식 줄을 없앤 대신 제원을 기술 이름 옆에서 바로 보여준다.
+    const spec = document.querySelector('.calc__move-spec')?.textContent ?? '';
+    expect(spec).toMatch(/^(물리|특수) [0-9]+$/);
   });
 
   it('한쪽만 고르면 안내한다', async () => {
@@ -589,14 +590,14 @@ describe('대미지 계산기', () => {
     });
   });
 
-  it('무엇이 적용됐는지는 결과에 그대로 적는다', async () => {
+  it('계산식과 적용된 보정 줄을 없앴다', async () => {
     await mountApp('#/calc?a=garchomp&b=ninetalesalola');
     await vi.waitFor(() => {
-      expect(document.querySelector('.calc__applied')).not.toBeNull();
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
     });
-    // 계산기에서는 설명을 걷어냈다 — 특성·도구 효과는 「특성」 탭에서 본다.
-    expect(document.body.textContent).not.toContain('반영되지 않습니다');
-    expect(document.body.textContent).not.toContain('Champions 에 실제로 존재하는');
+    // 한 화면에 더 많이 담기 위해 걷어낸 줄들이다.
+    expect(document.querySelector('.calc__breakdown')).toBeNull();
+    expect(document.querySelector('.calc__applied')).toBeNull();
   });
 
   it('특성 선택지에 효과 설명을 붙이지 않는다', async () => {
@@ -1059,5 +1060,75 @@ describe('계산기 장 넘기기', () => {
     );
     expect(options).toContain('메가 한카리아스');
     expect(options).not.toContain('Mega Garchomp');
+  });
+});
+
+describe('테마', () => {
+  it('기본은 화이트 모드다', async () => {
+    await mountApp('#/');
+    // 기기 설정을 따라가지 않는다 — 고르지 않았으면 화이트다.
+    expect(document.documentElement.getAttribute('data-theme')).toBeNull();
+  });
+
+  it('오른쪽 맨 위 버튼으로 다크 모드를 켜고 끈다', async () => {
+    await mountApp('#/');
+    const button = document.querySelector<HTMLButtonElement>('.themebtn')!;
+    // 포맷 토글보다 뒤, 즉 오른쪽 끝에 있다.
+    const controls = [...document.querySelector('.shell__controls')!.children];
+    expect(controls[controls.length - 1]).toBe(button);
+
+    button.click();
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+
+    document.querySelector<HTMLButtonElement>('.themebtn')!.click();
+    expect(document.documentElement.getAttribute('data-theme')).toBeNull();
+  });
+
+  it('고른 테마가 다시 열었을 때도 유지된다', async () => {
+    await mountApp('#/');
+    document.querySelector<HTMLButtonElement>('.themebtn')!.click();
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+
+    // 저장된 값을 읽어 다시 부팅한다.
+    await mountApp('#/');
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
+});
+
+describe('변환자재 자속 토글', () => {
+  it('그 특성이 없으면 토글이 나오지 않는다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    expect(document.querySelector('.calc__stabtoggle')).toBeNull();
+  });
+
+  it('변환자재면 기술마다 자속을 껐다 켤 수 있다', async () => {
+    await mountApp('#/calc?a=aegislash&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__ability')).not.toBeNull();
+    });
+
+    // 변환자재를 고른다.
+    const ability = document.querySelector<HTMLSelectElement>('.calc__ability')!;
+    ability.value = 'Protean';
+    ability.dispatchEvent(new Event('change'));
+
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__stabtoggle')).not.toBeNull();
+    });
+
+    const toggle = document.querySelector<HTMLButtonElement>('.calc__stabtoggle')!;
+    // 한 번만 발동하는 특성이라 기본은 꺼짐 — 네 기술 전부에 자속이 붙으면 과대평가다.
+    expect(toggle.textContent).toBe('자속 OFF');
+
+    const before = document.querySelector('.calc__damage')!.textContent!;
+    toggle.click();
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__stabtoggle')!.textContent).toBe('자속 ON');
+    });
+    // 자속이 붙으면 대미지가 커진다.
+    expect(document.querySelector('.calc__damage')!.textContent).not.toBe(before);
   });
 });

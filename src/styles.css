@@ -185,6 +185,14 @@ h4 { font-size: 15px; margin: 0; }
   background: #777;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  /*
+   * 그리드 칸 안에 놓이면 배지가 칸 너비만큼 늘어난다(도감 목록의 62px 열).
+   * 그때 글자가 왼쪽에 붙어 보이므로 가운데로 맞춘다.
+   * letter-spacing 이 마지막 글자 뒤에도 붙어서 살짝 왼쪽으로 밀리는 것도
+   * 왼쪽 패딩을 그만큼 깎아 상쇄한다.
+   */
+  text-align: center;
+  padding-left: calc(9px - 0.03em);
 }
 .type--normal { background: #9FA19F; color: #fff; }
 .type--fire { background: #E62829; color: #fff; }

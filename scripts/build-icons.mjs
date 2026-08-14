@@ -1,23 +1,27 @@
 /**
- * PWA 아이콘 생성 — 의존성 없이 PNG 를 직접 인코딩한다.
+ * PWA · Android 아이콘 생성 — 의존성 없이 PNG 를 직접 읽고 쓴다.
  *
  * sharp/canvas 같은 이미지 라이브러리를 넣지 않는 이유: 아이콘 몇 장 만들자고
- * 네이티브 빌드가 필요한 무거운 의존성을 추가할 이유가 없다. PNG 는
- * (IHDR + zlib deflate 한 IDAT + IEND) 구조라 직접 쓰는 편이 오히려 짧다.
+ * 네이티브 빌드가 필요한 무거운 의존성을 들이면 설치가 환경을 탄다.
+ * PNG 는 zlib 만 있으면 읽고 쓸 수 있다.
  *
- * 도안: 앱의 핵심 화면인 '사용률 막대'를 그대로 마크로 쓴다.
- * 포켓볼 같은 상표 요소는 쓰지 않는다(설계 문서 6절 비제휴 원칙).
+ * 원본: assets/app-icon-source.png (검은 도형 + 흰 배경)
+ * 산출: public/icon-192.png, icon-512.png, icon-maskable-512.png, favicon.png
  *
- * 실행: npm run data:icons
- * 출력: public/icon-192.png, icon-512.png, icon-maskable-512.png, favicon.png
+ * 원본을 도형의 경계까지 잘라낸 뒤 정사각형 가운데에 다시 앉힌다.
+ * 원본의 여백이 제각각이라 그대로 줄이면 아이콘마다 크기가 달라 보인다.
  */
 
-import { deflateSync } from 'node:zlib';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { deflateSync, inflateSync } from 'node:zlib';
+import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const OUT_DIR = path.join(ROOT, 'public');
+const SOURCE = path.join(ROOT, 'assets', 'app-icon-source.png');
+
+/** 도형 뒤에 깔 배경. 원본이 흰 배경이라 그대로 흰색을 쓴다. */
+const BACKGROUND = [255, 255, 255];
 
 const CRC_TABLE = (() => {
   const table = new Int32Array(256);
@@ -51,7 +55,6 @@ function encodePng(size, rgba) {
   ihdr.writeUInt32BE(size, 4);
   ihdr[8] = 8; // bit depth
   ihdr[9] = 6; // color type: RGBA
-  // 10~12 = compression/filter/interlace, 전부 0
 
   // 스캔라인마다 필터 바이트(0 = None)를 앞에 붙인다.
   const raw = Buffer.alloc(size * (size * 4 + 1));
@@ -69,98 +72,211 @@ function encodePng(size, rgba) {
   ]);
 }
 
-function createCanvas(size) {
-  const rgba = Buffer.alloc(size * size * 4);
-  const put = (x, y, [r, g, b], a = 255) => {
-    if (x < 0 || y < 0 || x >= size || y >= size) return;
-    const i = (y * size + x) * 4;
-    // 단순 알파 합성. 배경 위에 도형을 얹는 정도라 이 이상은 필요 없다.
-    const src = a / 255;
-    const dst = rgba[i + 3] / 255;
-    const out = src + dst * (1 - src);
-    if (out === 0) return;
-    rgba[i] = Math.round((r * src + rgba[i] * dst * (1 - src)) / out);
-    rgba[i + 1] = Math.round((g * src + rgba[i + 1] * dst * (1 - src)) / out);
-    rgba[i + 2] = Math.round((b * src + rgba[i + 2] * dst * (1 - src)) / out);
-    rgba[i + 3] = Math.round(out * 255);
-  };
-  return { rgba, put };
-}
+/**
+ * PNG 디코더. 8비트 RGB/RGBA 무인터레이스만 다룬다 — 원본이 그 형식이고,
+ * 아닌 파일이 들어오면 조용히 이상한 그림을 내는 대신 에러를 던진다.
+ */
+function decodePng(buffer) {
+  if (buffer.readUInt32BE(0) !== 0x89504e47) throw new Error('PNG 가 아닙니다.');
 
-/** 안티에일리어싱된 둥근 사각형. 가장자리 1px 를 부분 알파로 채운다. */
-function roundedRect(canvas, x0, y0, w, h, radius, color) {
-  const x1 = x0 + w;
-  const y1 = y0 + h;
-  for (let y = Math.floor(y0) - 1; y <= Math.ceil(y1); y += 1) {
-    for (let x = Math.floor(x0) - 1; x <= Math.ceil(x1); x += 1) {
-      // 사각형 안쪽까지의 거리(모서리는 원호로 처리)
-      const dx = Math.max(x0 + radius - x, 0, x - (x1 - radius));
-      const dy = Math.max(y0 + radius - y, 0, y - (y1 - radius));
-      const dist = Math.hypot(dx, dy);
-      const coverage = Math.max(0, Math.min(1, radius + 0.5 - dist));
-      const inside = x >= x0 - 1 && x <= x1 && y >= y0 - 1 && y <= y1;
-      if (inside && coverage > 0) canvas.put(x, y, color, Math.round(coverage * 255));
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  let colorType = 6;
+  const idat = [];
+
+  while (offset < buffer.length) {
+    const length = buffer.readUInt32BE(offset);
+    const type = buffer.slice(offset + 4, offset + 8).toString('ascii');
+    const data = buffer.slice(offset + 8, offset + 8 + length);
+
+    if (type === 'IHDR') {
+      width = data.readUInt32BE(0);
+      height = data.readUInt32BE(4);
+      if (data[8] !== 8) throw new Error(`8비트 채널만 지원합니다 (현재 ${data[8]}비트).`);
+      colorType = data[9];
+      if (colorType !== 2 && colorType !== 6) {
+        throw new Error(`RGB/RGBA 만 지원합니다 (color type ${colorType}).`);
+      }
+      if (data[12] !== 0) throw new Error('인터레이스 PNG 는 지원하지 않습니다.');
+    } else if (type === 'IDAT') {
+      idat.push(data);
+    } else if (type === 'IEND') {
+      break;
+    }
+    offset += 12 + length;
+  }
+
+  const channels = colorType === 6 ? 4 : 3;
+  const raw = inflateSync(Buffer.concat(idat));
+  const stride = width * channels;
+  const out = Buffer.alloc(width * height * 4);
+  const line = Buffer.alloc(stride);
+  const prev = Buffer.alloc(stride);
+  let p = 0;
+
+  for (let y = 0; y < height; y += 1) {
+    const filter = raw[p];
+    p += 1;
+    raw.copy(line, 0, p, p + stride);
+    p += stride;
+
+    // 필터 해제. 사양 그대로다 (0 None, 1 Sub, 2 Up, 3 Average, 4 Paeth).
+    for (let x = 0; x < stride; x += 1) {
+      const a = x >= channels ? line[x - channels] : 0;
+      const b = prev[x];
+      const c = x >= channels ? prev[x - channels] : 0;
+      let value = line[x];
+      if (filter === 1) value += a;
+      else if (filter === 2) value += b;
+      else if (filter === 3) value += (a + b) >> 1;
+      else if (filter === 4) {
+        const pa = Math.abs(b - c);
+        const pb = Math.abs(a - c);
+        const pc = Math.abs(a + b - 2 * c);
+        value += pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+      }
+      line[x] = value & 0xff;
+    }
+    line.copy(prev);
+
+    for (let x = 0; x < width; x += 1) {
+      const s = x * channels;
+      const d = (y * width + x) * 4;
+      out[d] = line[s];
+      out[d + 1] = line[s + 1];
+      out[d + 2] = line[s + 2];
+      out[d + 3] = channels === 4 ? line[s + 3] : 255;
     }
   }
-}
 
-const BG = [24, 28, 35]; // styles.css 의 --surface(다크)와 같은 계열
-const TRACK = [45, 52, 64];
-const BARS = [
-  { ratio: 1.0, color: [122, 162, 247] }, // --accent
-  { ratio: 0.72, color: [92, 132, 220] },
-  { ratio: 0.46, color: [70, 104, 180] },
-];
+  return { width, height, rgba: out };
+}
 
 /**
- * @param size 한 변 픽셀
- * @param padRatio 아이콘 가장자리 여백 비율. maskable 은 크게 잡아야 잘려도 안전하다.
- * @param cornerRatio 모서리 반경 비율. maskable 은 배경을 꽉 채운다.
+ * 도형이 실제로 차지하는 범위를 찾는다.
+ *
+ * 배경보다 뚜렷하게 어둡거나 반투명한 픽셀만 내용으로 친다.
+ * JPEG 로 한 번 저장됐던 그림은 배경이 완전한 흰색이 아니라 249 근처라
+ * 임계값을 넉넉히 잡아야 테두리의 압축 잡티를 내용으로 오인하지 않는다.
  */
-function drawIcon(size, { padRatio, cornerRatio }) {
-  const canvas = createCanvas(size);
+function contentBounds(image) {
+  const { width, height, rgba } = image;
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
 
-  // 배경
-  roundedRect(canvas, 0, 0, size, size, size * cornerRatio, BG);
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const i = (y * width + x) * 4;
+      const alpha = rgba[i + 3];
+      const luma = (rgba[i] * 299 + rgba[i + 1] * 587 + rgba[i + 2] * 114) / 1000;
+      const isContent = alpha > 32 && luma < 200;
+      if (!isContent) continue;
+      if (x < minX) minX = x;
+      if (y < minY) minY = y;
+      if (x > maxX) maxX = x;
+      if (y > maxY) maxY = y;
+    }
+  }
 
-  // 사용률 막대 3줄
-  const pad = size * padRatio;
-  const inner = size - pad * 2;
-  const gap = inner * 0.14;
-  const barH = (inner - gap * 2) / 3;
-  const radius = barH / 2;
-
-  BARS.forEach((bar, i) => {
-    const y = pad + i * (barH + gap);
-    // 막대가 놓이는 트랙 — styles.css 의 --surface-alt 계열
-    roundedRect(canvas, pad, y, inner, barH, radius, TRACK);
-    // 채워진 값 부분
-    roundedRect(canvas, pad, y, Math.max(barH, inner * bar.ratio), barH, radius, bar.color);
-  });
-
-  return encodePng(size, canvas.rgba);
+  if (maxX < 0) throw new Error('내용을 찾지 못했습니다 — 원본이 비어 있나요?');
+  return { minX, minY, maxX, maxY, width: maxX - minX + 1, height: maxY - minY + 1 };
 }
 
-async function main() {
-  await mkdir(OUT_DIR, { recursive: true });
+/**
+ * 잘라낸 도형을 정사각형 한가운데에 앉힌다.
+ *
+ * 축소는 면적 평균(box filter)으로 한다. 최근접으로 줄이면 가는 선이 끊겨
+ * 작은 크기에서 도형이 부서진다.
+ */
+function render(image, bounds, size, padRatio) {
+  const canvas = Buffer.alloc(size * size * 4);
+  for (let i = 0; i < size * size; i += 1) {
+    canvas[i * 4] = BACKGROUND[0];
+    canvas[i * 4 + 1] = BACKGROUND[1];
+    canvas[i * 4 + 2] = BACKGROUND[2];
+    canvas[i * 4 + 3] = 255;
+  }
+
+  const box = Math.round(size * (1 - padRatio * 2));
+  // 가로세로 비율을 지킨다. 늘리면 도형이 찌그러진다.
+  const scale = Math.min(box / bounds.width, box / bounds.height);
+  const drawW = Math.max(1, Math.round(bounds.width * scale));
+  const drawH = Math.max(1, Math.round(bounds.height * scale));
+  const offsetX = Math.round((size - drawW) / 2);
+  const offsetY = Math.round((size - drawH) / 2);
+
+  for (let y = 0; y < drawH; y += 1) {
+    for (let x = 0; x < drawW; x += 1) {
+      // 목적지 픽셀 하나가 원본에서 덮는 사각형을 평균낸다.
+      const sx0 = bounds.minX + (x * bounds.width) / drawW;
+      const sx1 = bounds.minX + ((x + 1) * bounds.width) / drawW;
+      const sy0 = bounds.minY + (y * bounds.height) / drawH;
+      const sy1 = bounds.minY + ((y + 1) * bounds.height) / drawH;
+
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let a = 0;
+      let n = 0;
+      for (let sy = Math.floor(sy0); sy < Math.max(Math.ceil(sy1), Math.floor(sy0) + 1); sy += 1) {
+        for (let sx = Math.floor(sx0); sx < Math.max(Math.ceil(sx1), Math.floor(sx0) + 1); sx += 1) {
+          if (sx < 0 || sy < 0 || sx >= image.width || sy >= image.height) continue;
+          const i = (sy * image.width + sx) * 4;
+          r += image.rgba[i];
+          g += image.rgba[i + 1];
+          b += image.rgba[i + 2];
+          a += image.rgba[i + 3];
+          n += 1;
+        }
+      }
+      if (n === 0) continue;
+
+      const src = a / n / 255;
+      const dx = offsetX + x;
+      const dy = offsetY + y;
+      if (dx < 0 || dy < 0 || dx >= size || dy >= size) continue;
+      const d = (dy * size + dx) * 4;
+      // 배경 위에 얹는다. 원본이 불투명이면 그대로 덮어쓰는 것과 같다.
+      canvas[d] = Math.round((r / n) * src + canvas[d] * (1 - src));
+      canvas[d + 1] = Math.round((g / n) * src + canvas[d + 1] * (1 - src));
+      canvas[d + 2] = Math.round((b / n) * src + canvas[d + 2] * (1 - src));
+      canvas[d + 3] = 255;
+    }
+  }
+
+  return canvas;
+}
+
+function main() {
+  const image = decodePng(readFileSync(SOURCE));
+  const bounds = contentBounds(image);
+  console.log(`원본 ${image.width}×${image.height} · 도형 ${bounds.width}×${bounds.height}`);
 
   const targets = [
-    // 일반 아이콘: 모서리를 둥글게 깎고 여백은 좁게.
-    { file: 'icon-192.png', size: 192, padRatio: 0.22, cornerRatio: 0.22 },
-    { file: 'icon-512.png', size: 512, padRatio: 0.22, cornerRatio: 0.22 },
-    // maskable: 런처가 원형 등으로 잘라내므로 배경을 꽉 채우고 여백을 넉넉히.
-    { file: 'icon-maskable-512.png', size: 512, padRatio: 0.3, cornerRatio: 0 },
-    { file: 'favicon.png', size: 64, padRatio: 0.2, cornerRatio: 0.2 },
+    // 일반 아이콘은 여백을 좁게 — 런처가 그대로 보여준다.
+    { file: 'icon-512.png', size: 512, pad: 0.1 },
+    { file: 'icon-192.png', size: 192, pad: 0.1 },
+    { file: 'favicon.png', size: 64, pad: 0.06 },
+    // maskable 은 런처가 원/사각형으로 잘라낸다. 안전 영역(가운데 80%) 안에 넣어야 한다.
+    { file: 'icon-maskable-512.png', size: 512, pad: 0.22 },
   ];
 
-  for (const t of targets) {
-    const png = drawIcon(t.size, { padRatio: t.padRatio, cornerRatio: t.cornerRatio });
-    await writeFile(path.join(OUT_DIR, t.file), png);
-    process.stdout.write(`생성 public/${t.file} — ${t.size}px, ${(png.length / 1024).toFixed(1)}KB\n`);
+  for (const target of targets) {
+    const rgba = render(image, bounds, target.size, target.pad);
+    writeFileSync(path.join(OUT_DIR, target.file), encodePng(target.size, rgba));
+    console.log(`  ${target.file} (${target.size}×${target.size}, 여백 ${target.pad * 100}%)`);
   }
+
+  // Play 스토어 등록용 512×512 도 같은 그림으로 맞춘다.
+  const storeDir = path.join(ROOT, 'android');
+  writeFileSync(
+    path.join(storeDir, 'store_icon.png'),
+    encodePng(512, render(image, bounds, 512, 0.1)),
+  );
+  console.log('  android/store_icon.png (512×512)');
 }
 
-main().catch((err) => {
-  process.stderr.write(`실패: ${err.stack ?? err}\n`);
-  process.exitCode = 1;
-});
+main();

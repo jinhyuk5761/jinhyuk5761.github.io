@@ -17,7 +17,10 @@
     "data:counters": "node scripts/build-counters.mjs",
     "data:builds": "node scripts/build-frozen-season.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "store:assets": "node scripts/build-store-assets.mjs",
+    "store:shots": "node scripts/build-store-assets.mjs --shots",
+    "store:graphic": "node scripts/build-store-assets.mjs --graphic"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

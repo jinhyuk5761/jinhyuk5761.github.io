@@ -30,3 +30,6 @@ android/local.properties
 android/*.apk
 android/*.aab
 android/*.idsig
+
+# 스토어 등록용 이미지. 스크립트로 언제든 다시 만든다.
+android/store/

@@ -74,3 +74,16 @@ describe('그 밖의 캐시 정책', () => {
     expect(source).toContain('networkFirst(request, DATA_CACHE)');
   });
 });
+
+describe('배포 직후 반영', () => {
+  it('화면 이동 요청이 HTTP 캐시를 우회해 서버에 물어본다', () => {
+    // GitHub Pages 가 index.html 을 max-age=600 으로 준다.
+    // 그냥 fetch 하면 최대 10분간 옛 index.html 이 나오고,
+    // 그게 옛 번들 해시를 가리켜 배포한 변경이 안 보인다.
+    expect(navigateBranch()).toContain("cache: 'no-cache'");
+  });
+
+  it('버전을 올려 옛 캐시를 비운다', () => {
+    expect(source).toContain("const VERSION = 'v3'");
+  });
+});

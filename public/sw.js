@@ -15,7 +15,7 @@
 
 // 이 값을 올리면 activate 단계에서 예전 캐시가 통째로 버려진다.
 // index.html 이 갱신되지 않던 버그를 고쳤으므로, 그 버그로 굳어버린 캐시를 비우려면 올려야 한다.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `pcm-shell-${VERSION}`;
 const DATA_CACHE = `pcm-data-${VERSION}`;
 const IMAGE_CACHE = `pcm-img-${VERSION}`;
@@ -104,9 +104,14 @@ self.addEventListener('fetch', (event) => {
   // 성공했을 때 캐시를 **반드시 갱신**해야 한다. 예전에는 이걸 빼먹어서
   // install 때 저장된 최초 index.html 이 영원히 남았고, 오프라인이 되는 순간
   // 몇 번을 새로 배포하든 첫 배포 화면이 떴다(계산기 탭이 사라진 원인).
+  //
+  // `cache: 'no-cache'` 를 붙이는 이유: GitHub Pages 가 index.html 을
+  // `max-age=600` 으로 내려준다. 그냥 fetch 하면 브라우저 HTTP 캐시가 최대 10분간
+  // 옛 index.html 을 돌려주고, 그게 옛 번들 해시를 가리켜 배포한 변경이 안 보인다.
+  // no-cache 는 캐시를 끄는 게 아니라 **매번 서버에 물어보게** 한다(ETag 로 304 면 그대로 재사용).
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-cache' })
         .then((response) => {
           if (response.ok) {
             const copy = response.clone();

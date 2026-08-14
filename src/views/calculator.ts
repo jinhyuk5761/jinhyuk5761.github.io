@@ -60,6 +60,7 @@ import { href, type Route } from '../router';
 import { findPokemon, state } from '../store';
 import type { Pokemon, PokemonForm, UsageReport } from '../types';
 import { sectionTitle, sprite, typeBadge } from './components';
+import { searchSelect, type SearchOption } from './searchSelect';
 
 const BATTLE_STATS = ['atk', 'def', 'spa', 'spd', 'spe'] as const;
 type BattleStat = (typeof BATTLE_STATS)[number];
@@ -689,25 +690,34 @@ function natureSelect(side: Side, title: string, onInput: () => void): HTMLEleme
     return a[1].displayName.localeCompare(b[1].displayName, 'ko');
   });
 
-  const select = el('select', { class: 'calc__nature-select', 'aria-label': `${title} 성격` });
-  for (const [name, entry] of natures) {
+  const options: SearchOption[] = natures.map(([name, entry]) => {
     const up = entry.up ? STAT_SLUG_TO_KEY[entry.up] : null;
     const down = entry.down ? STAT_SLUG_TO_KEY[entry.down] : null;
-    const suffix =
-      up && down && up !== down ? ` (+${STAT_LABELS[up]} / −${STAT_LABELS[down]})` : ' (무보정)';
-    const option = el('option', { value: name }, `${entry.displayName}${suffix}`);
-    if (name === side.nature) option.setAttribute('selected', 'selected');
-    select.appendChild(option);
-  }
-
-  select.addEventListener('change', () => {
-    side.nature = select.value;
-    // 실수치 열만 다시 칠한다. 표를 통째로 새로 만들지 않는다.
-    repaintStats(select.closest('.calc__side'), side);
-    onInput();
+    return {
+      value: name,
+      label: entry.displayName,
+      hint: up && down && up !== down ? `+${STAT_LABELS[up]} / −${STAT_LABELS[down]}` : '무보정',
+      haystack: [entry.displayName, name],
+    };
   });
 
-  return el('label', { class: 'calc__field' }, el('span', {}, '성격'), select);
+  const field = el('label', { class: 'calc__field' }, el('span', {}, '성격'));
+  field.appendChild(
+    searchSelect({
+      options,
+      value: side.nature,
+      placeholder: '성격 선택',
+      ariaLabel: `${title} 성격`,
+      className: 'calc__nature-select',
+      onPick: (name) => {
+        side.nature = name;
+        // 실수치 열만 다시 칠한다. 표를 통째로 새로 만들지 않는다.
+        repaintStats(field.closest('.calc__side'), side);
+        onInput();
+      },
+    }),
+  );
+  return field;
 }
 
 function monPicker(side: Side, mon: Pokemon | null, title: string, onPick: () => void): HTMLElement {
@@ -930,36 +940,36 @@ function itemSelect(
   // 메가에서 일반 폼으로 돌아왔으면 들고 있던 돌을 내려놓는다.
   if (isMegaStoneName(side.itemName)) side.itemName = '';
 
-  const select = el('select', { class: 'calc__modifier', 'aria-label': '도구' });
-
-  const none = el('option', { value: '' }, '없음');
-  if (!side.itemName) none.setAttribute('selected', 'selected');
-  select.appendChild(none);
-
-  // 타입별 도구(강화 도구·반감 열매)는 개수가 많아서 따로 묶는다.
+  // 타입 강화 도구·반감 열매까지 합치면 40개가 넘는다. 검색으로 찾는다.
+  const toOption = (item: ItemEffect): SearchOption => ({
+    value: item.name,
+    label: itemName(state.terms, item.name),
+    hint: item.note,
+    haystack: [itemName(state.terms, item.name), item.name],
+  });
   const general = options.filter((o) => !o.boostsType && !o.resistsType);
   const byType = options.filter((o) => o.boostsType ?? o.resistsType);
 
-  const addOption = (item: ItemEffect, parent: HTMLElement) => {
-    const node = el('option', { value: item.name }, `${itemName(state.terms, item.name)} — ${item.note}`);
-    if (item.name === side.itemName) node.setAttribute('selected', 'selected');
-    parent.appendChild(node);
-  };
-
-  for (const item of general) addOption(item, select);
-  if (byType.length > 0) {
-    const group = el('optgroup');
-    group.label = side === attacker ? '타입 강화 도구' : '반감 열매';
-    for (const item of byType) addOption(item, group);
-    select.appendChild(group);
-  }
-
-  select.addEventListener('change', () => {
-    side.itemName = select.value;
-    onInput();
-  });
-
-  return el('label', { class: 'calc__field' }, el('span', {}, '도구'), select);
+  return el(
+    'label',
+    { class: 'calc__field' },
+    el('span', {}, '도구'),
+    searchSelect({
+      options: [
+        { value: '', label: '없음' },
+        ...general.map(toOption),
+        ...byType.map(toOption),
+      ],
+      value: side.itemName,
+      placeholder: '없음',
+      ariaLabel: '도구',
+      className: 'calc__modifier',
+      onPick: (name) => {
+        side.itemName = name;
+        onInput();
+      },
+    }),
+  );
 }
 
 function moveSection(
@@ -978,40 +988,36 @@ function moveSection(
 
   const grid = el('div', { class: 'calc__moves' });
 
-  for (let slot = 0; slot < MOVE_SLOTS; slot += 1) {
-    const select = el('select', { class: 'calc__move', 'aria-label': `기술 ${slot + 1}` });
-
-    const blank = el('option', { value: '' }, '— 비어 있음 —');
-    if (!moveNames[slot]) blank.setAttribute('selected', 'selected');
-    select.appendChild(blank);
-
-    const addOption = (name: string, parent: HTMLElement) => {
-      const move = dex?.get(name) ?? null;
-      const label = move
-        ? `${move.displayName}${move.power ? ` · 위력 ${move.power}` : ' · 변화'}`
-        : name;
-      const option = el('option', { value: name }, label);
-      if (name === moveNames[slot]) option.setAttribute('selected', 'selected');
-      parent.appendChild(option);
+  // 배울 수 있는 기술이 수백 개다. 사용률 상위를 앞에 두고, 나머지는 검색으로 찾는다.
+  const toOption = (name: string): SearchOption => {
+    const move = dex?.get(name) ?? null;
+    return {
+      value: name,
+      label: move?.displayName ?? name,
+      hint: move ? (move.power ? `위력 ${move.power}` : '변화') : '',
+      // 한국어·영어·일본어 어느 쪽으로 쳐도 찾히게 한다.
+      haystack: [move?.displayName ?? name, name, move?.koreanName ?? '', move?.japaneseName ?? ''],
     };
+  };
+  const moveOptions: SearchOption[] = [
+    { value: '', label: '— 비어 있음 —' },
+    ...topMoves.map(toOption),
+    ...rest.map(toOption),
+  ];
 
-    if (topMoves.length > 0) {
-      const group = el('optgroup');
-      group.label = '사용률 상위';
-      for (const name of topMoves) addOption(name, group);
-      select.appendChild(group);
-    }
-    const groupRest = el('optgroup');
-    groupRest.label = '배울 수 있는 기술';
-    for (const name of rest) addOption(name, groupRest);
-    select.appendChild(groupRest);
-
-    select.addEventListener('change', () => {
-      moveNames[slot] = select.value;
-      onInput();
+  for (let slot = 0; slot < MOVE_SLOTS; slot += 1) {
+    const picker = searchSelect({
+      options: moveOptions,
+      value: moveNames[slot] ?? '',
+      placeholder: '— 비어 있음 —',
+      ariaLabel: `기술 ${slot + 1}`,
+      className: 'calc__move',
+      onPick: (name) => {
+        moveNames[slot] = name;
+        onInput();
+      },
     });
-
-    grid.appendChild(el('div', { class: 'calc__move-slot' }, select));
+    grid.appendChild(el('div', { class: 'calc__move-slot' }, picker));
   }
 
   section.appendChild(grid);

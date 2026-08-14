@@ -156,6 +156,21 @@ async function mountApp(hash: string) {
   return store;
 }
 
+/** 검색 드롭다운의 현재 값. */
+function pickerValue(root: Element | null): string {
+  return root?.querySelector('.sselect__value')?.textContent ?? '';
+}
+
+/** 검색 드롭다운을 열어 라벨로 항목을 고른다. */
+function pickFrom(root: Element, label: string): void {
+  root.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+  const option = [...root.querySelectorAll<HTMLButtonElement>('.sselect__option')].find(
+    (o) => o.textContent?.startsWith(label),
+  );
+  if (!option) throw new Error(`'${label}' 항목을 찾지 못했습니다`);
+  option.click();
+}
+
 beforeEach(() => {
   localStorage.clear();
   installFetch();
@@ -498,11 +513,11 @@ describe('대미지 계산기', () => {
       expect(document.querySelector('.calc__damage')).not.toBeNull();
     });
 
-    const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
+    const slots = [...document.querySelectorAll('.calc__move')];
     expect(slots).toHaveLength(4);
-    // 픽스처 사용률 1·2위는 Earthquake, Stealth Rock
-    expect(slots[0]!.value).toBe('Earthquake');
-    expect(slots[1]!.value).toBe('Stealth Rock');
+    // 픽스처 사용률 1·2위는 지진, 스텔스록
+    expect(pickerValue(slots[0]!)).toBe('지진');
+    expect(pickerValue(slots[1]!)).toBe('스텔스록');
   });
 
   it('선택한 기술마다 결과를 따로 낸다', async () => {
@@ -526,7 +541,7 @@ describe('대미지 계산기', () => {
       (i) => i.value,
     );
     expect(points.slice(0, 6)).toEqual(['2', '32', '0', '0', '0', '32']);
-    expect(document.querySelector<HTMLSelectElement>('.calc__nature-select')?.value).toBe('Jolly');
+    expect(pickerValue(document.querySelector('.calc__nature-select'))).toBe('명랑');
   });
 
   it('성격을 이름으로 고르고 보정을 색으로 표시한다', async () => {
@@ -535,15 +550,17 @@ describe('대미지 계산기', () => {
       expect(document.querySelector('.calc__nature-select')).not.toBeNull();
     });
 
-    const select = document.querySelector<HTMLSelectElement>('.calc__nature-select')!;
+    const picker = document.querySelector('.calc__nature-select')!;
+    picker.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+
+    const labels = [...picker.querySelectorAll('.sselect__option')].map((o) => o.textContent ?? '');
     // 도감에 있는 성격이 전부 선택지로 나온다 (실데이터는 25종).
-    expect(select.options.length).toBe(Object.keys(TERMS.natures).length);
-    const labels = [...select.options].map((o) => o.textContent ?? '');
+    expect(labels.length).toBe(Object.keys(TERMS.natures).length);
     expect(labels.some((l) => l.includes('대담'))).toBe(true);
     expect(labels.some((l) => l.includes('조심'))).toBe(true);
     // 보정 내용을 함께 적어 무엇이 오르내리는지 바로 보이게 한다.
     // 계산기는 축약형(특공·특방)을 쓴다 — 좁은 열에서 줄이 쪼개지지 않게.
-    expect(labels.some((l) => l.includes('명랑 (+스피드 / −특공)'))).toBe(true);
+    expect(labels.some((l) => l.includes('명랑') && l.includes('+스피드 / −특공'))).toBe(true);
     // 무보정 성격은 뒤로 밀린다.
     expect(labels[labels.length - 1]).toContain('무보정');
 
@@ -652,11 +669,9 @@ describe('대미지 계산기', () => {
       expect(document.querySelector('.calc__traits')).not.toBeNull();
     });
 
-    const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
-    slots[1]!.value = 'Rock Slide';
-    slots[1]!.dispatchEvent(new Event('change'));
-    slots[2]!.value = 'Iron Head';
-    slots[2]!.dispatchEvent(new Event('change'));
+    const slots = [...document.querySelectorAll('.calc__move')];
+    pickFrom(slots[1]!, '스톤에지');
+    pickFrom(slots[2]!, '아이언헤드');
 
     await vi.waitFor(() => {
       expect(document.body.textContent).toContain('아이언헤드');
@@ -685,7 +700,7 @@ describe('대미지 계산기', () => {
 
     await mountApp('#/calc?a=garchomp&b=garchomp');
     await vi.waitFor(() => {
-      expect(document.querySelector<HTMLSelectElement>('.calc__move')?.value).toBe('Earthquake');
+      expect(pickerValue(document.querySelector('.calc__move'))).toBe('지진');
     });
 
     // 공격측 검색창에서 다른 포켓몬을 고른다.
@@ -696,16 +711,18 @@ describe('대미지 계산기', () => {
     expect(option.textContent).toContain('나인테일');
     option.click();
 
+    // 픽스처 기술 도감에 없는 이름이라 영문 그대로 나온다.
     await vi.waitFor(() => {
-      const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
-      expect(slots[0]!.value).toBe('Blizzard');
+      expect(pickerValue(document.querySelectorAll('.calc__move')[0]!)).toBe('Blizzard');
     });
 
-    const slots = [...document.querySelectorAll<HTMLSelectElement>('.calc__move')];
-    expect(slots[1]!.value).toBe('Freeze-Dry');
+    const slots = [...document.querySelectorAll('.calc__move')];
+    expect(pickerValue(slots[1]!)).toBe('Freeze-Dry');
+
     // 이전 포켓몬의 기술이 목록에 남아 있으면 안 된다.
-    const labels = [...slots[0]!.options].map((o) => o.value);
-    expect(labels).not.toContain('Stealth Rock');
+    slots[0]!.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    const labels = [...slots[0]!.querySelectorAll('.sselect__option')].map((o) => o.textContent ?? '');
+    expect(labels.some((l) => l.includes('스텔스록'))).toBe(false);
   });
 
   it('계산기에서 안내 문구를 걷어냈다', async () => {
@@ -1330,5 +1347,109 @@ describe('앱 바로가기로 팝업 계산기 열기', () => {
     // '#' 이 들어가면 런처가 무시하고 기본 주소로 앱만 열린다.
     expect(calc.url).not.toContain('#');
     expect(calc.url).toContain('view=mini');
+  });
+});
+
+describe('검색되는 드롭다운', () => {
+  it('기술 목록 위에 검색창이 있고 걸러진다', async () => {
+    // 배울 수 있는 기술이 수백 개라 스크롤로는 못 찾는다.
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__move')).not.toBeNull();
+    });
+
+    const slot = document.querySelector('.calc__move')!;
+    slot.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+
+    const search = slot.querySelector<HTMLInputElement>('.sselect__search')!;
+    expect(search.hidden).toBe(false);
+
+    const before = slot.querySelectorAll('.sselect__option').length;
+    search.value = '지진';
+    search.dispatchEvent(new Event('input'));
+    const after = [...slot.querySelectorAll('.sselect__option')].map((o) => o.textContent ?? '');
+    expect(after.length).toBeLessThan(before);
+    expect(after.some((l) => l.includes('지진'))).toBe(true);
+  });
+
+  it('영문·일본어로 쳐도 찾힌다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__move')).not.toBeNull();
+    });
+    const slot = document.querySelector('.calc__move')!;
+    slot.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    const search = slot.querySelector<HTMLInputElement>('.sselect__search')!;
+
+    search.value = 'earthquake';
+    search.dispatchEvent(new Event('input'));
+    expect(
+      [...slot.querySelectorAll('.sselect__option')].some((o) => o.textContent?.includes('지진')),
+    ).toBe(true);
+  });
+
+  it('짧은 목록에는 검색창을 띄우지 않는다', async () => {
+    // 특성은 2~3개뿐이라 검색창이 방해만 된다.
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__modifier')).not.toBeNull();
+    });
+    // 도구는 40개가 넘으므로 검색창이 있어야 한다.
+    const item = document.querySelector('.calc__modifier')!;
+    item.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    expect(item.querySelector<HTMLInputElement>('.sselect__search')!.hidden).toBe(false);
+  });
+
+  it('바깥을 누르면 닫힌다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__move')).not.toBeNull();
+    });
+    const slot = document.querySelector('.calc__move')!;
+    const panel = slot.querySelector<HTMLElement>('.sselect__panel')!;
+
+    slot.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    expect(panel.hidden).toBe(false);
+
+    document.body.click();
+    expect(panel.hidden).toBe(true);
+  });
+
+  it('드롭다운 목록 색을 못박아 다크 모드에서도 읽힌다', () => {
+    // <option> 은 select 색을 물려받지 않아, 안드로이드 시스템 팝업에서 글자가 사라졌다.
+    const css = readFileSync(path.join(import.meta.dirname, '..', 'src', 'styles.css'), 'utf8');
+    expect(css).toContain('select option');
+  });
+});
+
+describe('드롭다운은 한 번에 하나만', () => {
+  it('처음에는 모두 닫혀 있다', async () => {
+    // hidden 속성은 CSS display 로 덮이면 무력해진다. 실제로 닫혀 있는지 본다.
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.sselect__panel')).not.toBeNull();
+    });
+    const panels = [...document.querySelectorAll<HTMLElement>('.sselect__panel')];
+    expect(panels.length).toBeGreaterThan(3);
+    expect(panels.every((p) => p.hidden)).toBe(true);
+  });
+
+  it('새로 열면 앞서 열린 것이 닫힌다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelectorAll('.calc__move').length).toBe(4);
+    });
+    const slots = [...document.querySelectorAll('.calc__move')];
+
+    slots[0]!.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    slots[1]!.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+
+    expect(slots[0]!.querySelector<HTMLElement>('.sselect__panel')!.hidden).toBe(true);
+    expect(slots[1]!.querySelector<HTMLElement>('.sselect__panel')!.hidden).toBe(false);
+  });
+
+  it('CSS 가 hidden 을 되살려 둔다', () => {
+    const css = readFileSync(path.join(import.meta.dirname, '..', 'src', 'styles.css'), 'utf8');
+    expect(css).toContain('.sselect__panel[hidden]');
   });
 });

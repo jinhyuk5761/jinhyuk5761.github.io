@@ -7,8 +7,13 @@
  * 고르지도 않았는데 어두워져서, 고른 값과 어긋난다.
  * <html data-theme="dark"> 가 붙으면 아래 블록이 값을 덮어쓴다.
  */
+/*
+ * `only` 가 핵심이다. 폰이 다크 모드면 브라우저가 페이지를 **자동으로 어둡게 칠하는**
+ * 기능(force-dark)이 있는데, 그냥 `light` 만 쓰면 그 대상이 된다.
+ * `only` 가 그 자동 변환을 거부한다.
+ */
 :root {
-  color-scheme: light;
+  color-scheme: only light;
 
   --bg: #f6f7fb;
   --surface: #ffffff;

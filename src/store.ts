@@ -64,6 +64,11 @@ export function applyTheme(theme: Theme): void {
   // 이걸 안 하면 화면은 흰데 위아래 바만 검게 남아 '여전히 어둡다' 로 보인다.
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute('content', theme === 'dark' ? '#181c23' : '#f6f7fb');
+
+  // 브라우저의 강제 어둡게 기능도 테마를 따라가게 한다.
+  // 'only light' 의 only 가 자동 변환을 거부하는 부분이다.
+  const scheme = document.querySelector('meta[name="color-scheme"]');
+  if (scheme) scheme.setAttribute('content', theme === 'dark' ? 'dark' : 'only light');
 }
 
 export function setTheme(theme: Theme): void {

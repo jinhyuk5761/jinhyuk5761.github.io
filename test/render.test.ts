@@ -1216,3 +1216,29 @@ describe('장을 바꿔도 화면이 세로로 움직이지 않는다', () => {
     expect(moves).toHaveLength(1);
   });
 });
+
+describe('폰이 다크 모드여도 화이트를 유지한다', () => {
+  it('브라우저의 강제 어둡게를 거부한다 (only light)', () => {
+    // 'light' 만 쓰면 폰이 다크 모드일 때 브라우저가 페이지를 자동으로 어둡게 칠한다.
+    // 'only' 가 그 자동 변환을 거부하는 부분이다.
+    const css = readFileSync(path.join(import.meta.dirname, '..', 'src', 'styles.css'), 'utf8');
+    expect(css).toContain('color-scheme: only light');
+
+    const html = readFileSync(path.join(import.meta.dirname, '..', 'index.html'), 'utf8');
+    expect(html).toContain('name="color-scheme"');
+  });
+
+  it('테마를 바꾸면 color-scheme 도 따라간다', async () => {
+    document.head.querySelector('meta[name="color-scheme"]')?.remove();
+    const seed = document.createElement('meta');
+    seed.setAttribute('name', 'color-scheme');
+    seed.setAttribute('content', 'only light');
+    document.head.appendChild(seed);
+
+    await mountApp('#/');
+    expect(seed.getAttribute('content')).toBe('only light');
+
+    document.querySelector<HTMLButtonElement>('.themebtn')!.click();
+    expect(seed.getAttribute('content')).toBe('dark');
+  });
+});

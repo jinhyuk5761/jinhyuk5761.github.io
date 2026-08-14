@@ -163,11 +163,19 @@ export interface DamageInput {
    * 난수 분포를 횟수만큼 합성해야 확정/난수 판정이 맞는다.
    */
   hits?: number;
+  /**
+   * 타격마다 위력이 다른 연속기(트리플악셀 20/40/60).
+   * 주어지면 hits 대신 이 배열의 길이만큼 때리고, 각 타격을 그 위력으로 계산한다.
+   * 같은 위력을 n번 곱하면 안 된다 — 난수도 타격마다 따로 뽑히므로 분포가 달라진다.
+   */
+  perHitPowers?: number[];
 }
 
 export interface DamageResult {
-  /** 1회 타격의 16개 난수 (오름차순) */
+  /** 1회 타격의 16개 난수 (오름차순). 타격별 위력이 다르면 첫 타 기준. */
   rolls: number[];
+  /** 타격별 [최소, 최대]. 위력이 같으면 모두 같은 값이다. */
+  perHitRanges: [number, number][];
   /** 연속 타격 수 */
   hits: number;
   /** 기술 1회 사용의 합계 대미지 (연속기면 전체 타격 합) */
@@ -232,6 +240,7 @@ export function calculateDamage(input: DamageInput): DamageResult {
     hits: rawHits = 1,
     typeEffectivenessOverride,
     defenderCurrentHp,
+    perHitPowers,
   } = input;
   const hits = Math.max(1, Math.round(rawHits));
 
@@ -244,6 +253,7 @@ export function calculateDamage(input: DamageInput): DamageResult {
   if (power <= 0 || typeEff === 0) {
     return {
       rolls: new Array(16).fill(0),
+      perHitRanges: [],
       hits,
       min: 0,
       max: 0,
@@ -255,13 +265,15 @@ export function calculateDamage(input: DamageInput): DamageResult {
     };
   }
 
+  /** 위력 하나에 대한 16개 난수. 타격마다 위력이 다르면 타격마다 부른다. */
+  const rollsForPower = (hitPower: number): number[] => {
   // 1. 기본 대미지
   const base =
     Math.floor(
-      Math.floor((Math.floor((2 * LEVEL) / 5) + 2) * power * attack / defense) / 50,
+      Math.floor((Math.floor((2 * LEVEL) / 5) + 2) * hitPower * attack / defense) / 50,
     ) + 2;
 
-  const rolls = ROLLS.map((roll) => {
+  return ROLLS.map((roll) => {
     let damage = base;
 
     // 2. 광범위 기술 (더블)
@@ -298,17 +310,28 @@ export function calculateDamage(input: DamageInput): DamageResult {
     if (enduresAtFullHp && hits === 1 && damage >= defenderHp) damage = defenderHp - 1;
     return Math.max(1, damage);
   });
+  };
+
+  // 타격별 위력. 주어지지 않으면 같은 위력을 hits 번 때린다.
+  const powers =
+    perHitPowers && perHitPowers.length > 0
+      ? perHitPowers.map((p) => Math.max(1, pokeRound(p * powerModifier)))
+      : new Array(hits).fill(power);
+  const perHitRolls = powers.map(rollsForPower);
+  const rolls = perHitRolls[0] ?? new Array(16).fill(0);
 
   // 기술 1회 사용의 대미지 분포. 연속기는 타격마다 난수를 따로 뽑으므로 분포를 합성한다.
-  const perUse = convolveRolls(rolls, hits);
-  const min = (rolls[0] ?? 0) * hits;
-  const max = (rolls[rolls.length - 1] ?? 0) * hits;
+  const perUse = convolveRolls(perHitRolls);
+  const min = perHitRolls.reduce((sum, r) => sum + (r[0] ?? 0), 0);
+  const max = perHitRolls.reduce((sum, r) => sum + (r[r.length - 1] ?? 0), 0);
+  const perHitRanges: [number, number][] = perHitRolls.map((r) => [r[0] ?? 0, r[r.length - 1] ?? 0]);
   // 남은 HP 가 주어지면 그 값으로 쓰러뜨릴 수 있는지 본다.
   const remainingHp = Math.max(1, Math.min(defenderHp, defenderCurrentHp ?? defenderHp));
   const koChances = knockOutChances(perUse, remainingHp);
 
   return {
     rolls,
+    perHitRanges,
     hits,
     min,
     max,
@@ -326,11 +349,11 @@ export function calculateDamage(input: DamageInput): DamageResult {
  * 최소×n ~ 최대×n 을 균등분포로 보면 안 된다. 여러 번 뽑으면 가운데로 몰리기 때문에
  * "확정 1타"인지 "난수 1타"인지가 달라진다.
  */
-function convolveRolls(rolls: number[], times: number): Map<number, number> {
-  const probability = 1 / rolls.length;
+function convolveRolls(perHitRolls: number[][]): Map<number, number> {
   let distribution = new Map<number, number>([[0, 1]]);
 
-  for (let i = 0; i < times; i += 1) {
+  for (const rolls of perHitRolls) {
+    const probability = 1 / rolls.length;
     const next = new Map<number, number>();
     for (const [sum, chance] of distribution) {
       for (const roll of rolls) {

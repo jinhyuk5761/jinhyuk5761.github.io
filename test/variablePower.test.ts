@@ -14,6 +14,8 @@ import {
   applyEffectivenessQuirk,
   needsManualPower,
   resolveMoveType,
+  escalatingPowers,
+  isEscalating,
   resolvePower,
   sumPositiveBoosts,
 } from '../src/core/variablePower';
@@ -377,10 +379,31 @@ describe('데이터 정합성', () => {
 
   it('자동 계산 대상은 직접 입력을 요구하지 않는다', () => {
     const auto = [...dex.values()].filter((m) => m.variablePower && m.variablePower !== 'manual');
-    expect(auto.length).toBe(29);
+    expect(auto.length).toBe(30); // 트리플악셀이 직접 입력에서 넘어왔다
     for (const m of auto) {
       expect(needsManualPower(m), m.englishName).toBe(false);
       expect(resolvePower(m, ctx()), m.englishName).not.toBeNull();
     }
+  });
+});
+
+describe('트리플악셀 — 타격마다 위력이 커진다', () => {
+  it('직접 입력이 아니라 자동 계산으로 바뀌었다', () => {
+    const m = move('Triple Axel');
+    expect(m.variablePower).toBe('escalating');
+    // 위력을 손으로 타이핑하게 두면 20/40/60 을 사용자가 매번 계산해야 한다.
+    expect(needsManualPower(m)).toBe(false);
+    expect(isEscalating(m)).toBe(true);
+  });
+
+  it('맞힌 타수만큼 20 / 40 / 60 을 만든다', () => {
+    const m = move('Triple Axel');
+    expect(escalatingPowers(m, 3)).toEqual([20, 40, 60]);
+    expect(escalatingPowers(m, 2)).toEqual([20, 40]);
+    expect(escalatingPowers(m, 1)).toEqual([20]);
+  });
+
+  it('타격 수를 0 이하로 줘도 최소 한 타는 만든다', () => {
+    expect(escalatingPowers(move('Triple Axel'), 0)).toEqual([20]);
   });
 });

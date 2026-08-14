@@ -397,3 +397,47 @@ describe('확정/난수 판정', () => {
     expect(result.koChances[0]).toBeCloseTo(1 / 16, 6);
   });
 });
+
+describe('타격마다 위력이 커지는 연속기 (트리플악셀)', () => {
+  const base = {
+    moveType: 'Ice' as const,
+    category: 'physical' as const,
+    attack: 150,
+    defense: 100,
+    defenderHp: 300,
+    attackerTypes: ['Ice' as const],
+    defenderTypes: ['Normal' as const],
+  };
+
+  it('타격별 위력이 20 / 40 / 60 으로 커진다', () => {
+    const result = calculateDamage({ ...base, power: 20, perHitPowers: [20, 40, 60] });
+    expect(result.perHitRanges).toHaveLength(3);
+    const [one, two, three] = result.perHitRanges;
+    // 2타는 1타의 약 2배, 3타는 약 3배. 반올림 때문에 정확히 배수는 아니다.
+    expect(two![0]).toBeGreaterThan(one![0] * 1.8);
+    expect(three![0]).toBeGreaterThan(one![0] * 2.6);
+  });
+
+  it('같은 위력 3회와 결과가 다르다', () => {
+    const flat = calculateDamage({ ...base, power: 20, hits: 3 });
+    const escalating = calculateDamage({ ...base, power: 20, perHitPowers: [20, 40, 60] });
+    // 20+40+60 = 120 이므로 20×3 = 60 보다 훨씬 크다.
+    expect(escalating.max).toBeGreaterThan(flat.max * 1.8);
+  });
+
+  it('맞은 타수만큼만 계산한다', () => {
+    const two = calculateDamage({ ...base, power: 20, perHitPowers: [20, 40] });
+    const three = calculateDamage({ ...base, power: 20, perHitPowers: [20, 40, 60] });
+    expect(two.perHitRanges).toHaveLength(2);
+    expect(two.max).toBeLessThan(three.max);
+  });
+
+  it('난수는 타격마다 따로 뽑는다 (분포가 가운데로 몰린다)', () => {
+    const result = calculateDamage({ ...base, power: 20, perHitPowers: [20, 40, 60] });
+    // 최소·최대를 균등분포로 보면 안 된다는 성질. 합성 결과가 단순 곱이 아니어야 한다.
+    const sumOfMins = result.perHitRanges.reduce((s, [lo]) => s + lo, 0);
+    const sumOfMaxes = result.perHitRanges.reduce((s, [, hi]) => s + hi, 0);
+    expect(result.min).toBe(sumOfMins);
+    expect(result.max).toBe(sumOfMaxes);
+  });
+});

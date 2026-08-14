@@ -165,7 +165,7 @@ const VARIABLE_POWER = {
   'Stomping Tantrum': { kind: 'manual', note: '직전 기술이 실패했으면 2배' },
   'Tera Blast': { kind: 'manual', note: '테라스탈 상태에 따라 달라짐' },
   'Spit Up': { kind: 'manual', note: '비축 횟수에 비례' },
-  'Triple Axel': { kind: 'manual', note: '타격마다 20 / 40 / 60 으로 증가' },
+  'Triple Axel': { kind: 'escalating', note: '타격마다 20 / 40 / 60 으로 증가' },
   'Beat Up': { kind: 'manual', note: '아군 각각의 공격 종족값으로 계산' },
   Round: { kind: 'manual', note: '아군이 이어서 쓰면 2배' },
   'Fire Pledge': { kind: 'manual', note: '다른 맹세 기술과 조합하면 달라짐' },

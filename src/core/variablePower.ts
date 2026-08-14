@@ -197,6 +197,11 @@ export function resolvePower(move: MoveInfo, ctx: PowerContext): number | null {
       // 베놈쇼크·독침천발 — 독 상태에만 붙는다 (다른 상태이상은 해당 없음)
       return ctx.defenderPoisoned ? base * 2 : base;
 
+    case 'escalating':
+      // 트리플악셀 — 첫 타의 위력만 돌려준다.
+      // 실제 계산은 escalatingPowers() 로 타격별 위력을 만들어 넘긴다.
+      return base;
+
     case 'manual':
       // 확정할 수 없다. 사용자 입력이 필요하다.
       return null;
@@ -284,4 +289,20 @@ export function applyEffectivenessQuirk(
 /** 랭크 중 올라간 것만 합산. 어시스트파워 계열이 쓴다. */
 export function sumPositiveBoosts(stages: Record<string, number>): number {
   return Object.values(stages).reduce((sum, stage) => sum + Math.max(0, stage), 0);
+}
+
+/**
+ * 타격마다 위력이 커지는 연속기의 타격별 위력.
+ *
+ * 트리플악셀은 20 / 40 / 60 으로 오른다. 같은 위력을 3번 곱하면 총합도,
+ * 난수 분포도 틀린다 — 그래서 타격별 위력 목록을 만들어 대미지 계산에 넘긴다.
+ */
+export function escalatingPowers(move: MoveInfo, hits: number): number[] {
+  const step = move.power ?? 0;
+  return Array.from({ length: Math.max(1, hits) }, (_, i) => step * (i + 1));
+}
+
+/** 타격마다 위력이 커지는 기술인가. */
+export function isEscalating(move: MoveInfo): boolean {
+  return move.variablePower === 'escalating';
 }

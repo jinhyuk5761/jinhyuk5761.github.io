@@ -52,6 +52,8 @@ import {
   applyEffectivenessQuirk,
   needsManualPower,
   resolveMoveType,
+  escalatingPowers,
+  isEscalating,
   resolvePower,
   sumPositiveBoosts,
   type PowerContext,
@@ -1362,7 +1364,11 @@ function moveResult(
     const control = el('div', { class: 'calc__hits' });
     control.appendChild(el('span', { class: 'calc__hits-label' }, '타격 수'));
 
-    if (skillLink || minHits === maxHits) {
+    // 트리플악셀은 3회 고정 기술이지만 빗나가면 거기서 끊긴다.
+    // 타격마다 위력이 20/40/60 으로 달라서, 몇 대 맞혔는지가 대미지를 크게 가른다.
+    const escalating = isEscalating(move);
+
+    if (!escalating && (skillLink || minHits === maxHits)) {
       control.appendChild(
         el(
           'span',
@@ -1373,7 +1379,7 @@ function moveResult(
       );
     } else {
       const select = el('select', { class: 'calc__select', 'aria-label': `${move.displayName} 타격 수` });
-      for (let n = minHits; n <= maxHits; n += 1) {
+      for (let n = escalating ? 1 : minHits; n <= maxHits; n += 1) {
         const option = el('option', { value: String(n) }, `${n}회`);
         if (n === hits) option.setAttribute('selected', 'selected');
         select.appendChild(option);
@@ -1437,6 +1443,8 @@ function moveResult(
     power: effectivePower,
     powerModifier,
     hits,
+    // 타격마다 위력이 커지는 기술은 타격별 위력을 넘긴다 (트리플악셀 20/40/60).
+    perHitPowers: isEscalating(move) ? escalatingPowers(move, hits) : undefined,
     moveType,
     category,
     attack: attackStat,
@@ -1474,7 +1482,10 @@ function moveResult(
       el(
         'p',
         { class: 'calc__perhit' },
-        `1회 타격 ${result.rolls[0] ?? 0} ~ ${result.rolls[result.rolls.length - 1] ?? 0} · ${hits}회 연속`,
+        // 타격마다 위력이 다르면 한 줄로 뭉뚱그릴 수 없다 — 타별로 적는다.
+        isEscalating(move)
+          ? result.perHitRanges.map(([lo, hi], i) => `${i + 1}타 ${lo}~${hi}`).join(' · ')
+          : `1회 타격 ${result.rolls[0] ?? 0} ~ ${result.rolls[result.rolls.length - 1] ?? 0} · ${hits}회 연속`,
       ),
     );
   }

@@ -646,4 +646,11 @@ h4 { font-size: 15px; margin: 0; }
   .movelist .move__head { grid-template-columns: auto 1fr; }
   .calc__sides { grid-template-columns: 1fr; }
   .calc__headline { font-size: 22px; }
+  /*
+   * 스프라이트 옆의 설명이 좁은 폰에서 가로로 삐져나가던 것을 고친다.
+   * flex:1 은 flex-basis 를 0 으로 만들어 줄바꿈 판정이 일어나지 않는데,
+   * min-width 가 260px 이라 줄어들지도 못해 그대로 화면 밖으로 나갔다.
+   * 폰에서는 스프라이트 아래 줄로 내린다.
+   */
+  .detail__meta { min-width: 100%; }
 }

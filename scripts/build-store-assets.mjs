@@ -22,9 +22,14 @@ const ROOT = path.resolve(import.meta.dirname, '..');
 const OUT = path.join(ROOT, 'android', 'store');
 const SITE = process.env.STORE_SITE_URL ?? 'https://jinhyuk5761.github.io';
 
-/** Play 최소 요건은 320px 이상이다. 흔한 폰 해상도로 찍는다. */
-const SHOT_WIDTH = 1080;
-const SHOT_HEIGHT = 1920;
+/**
+ * --window-size 는 **CSS 픽셀**이다. 여기에 1080 을 주면 폰이 아니라
+ * 데스크톱 레이아웃으로 렌더된다(가로로 넓은 2단 화면이 찍힌다).
+ * 폰의 CSS 너비를 주고, 배율로 실제 해상도를 키운다.
+ */
+const CSS_WIDTH = 412; // 흔한 안드로이드 폰의 CSS 너비
+const CSS_HEIGHT = 915;
+const SCALE = 3; // 결과 1236×2745 (Play 요건: 320~3840px)
 
 const SHOTS = [
   { name: 'screenshot-1-search', hash: '#/', wait: 3500 },
@@ -55,9 +60,9 @@ async function captureShots() {
         '--headless=new',
         '--disable-gpu',
         '--hide-scrollbars',
-        `--window-size=${SHOT_WIDTH},${SHOT_HEIGHT}`,
-        // 폰처럼 보이게 확대한다. 안 하면 글씨가 개미만 하게 나온다.
-        '--force-device-scale-factor=3',
+        `--window-size=${CSS_WIDTH},${CSS_HEIGHT}`,
+        // 레이아웃은 폰 그대로 두고 출력 해상도만 키운다.
+        `--force-device-scale-factor=${SCALE}`,
         `--virtual-time-budget=${shot.wait}`,
         `--screenshot=${file}`,
         `${SITE}/${shot.hash}`,
@@ -175,7 +180,7 @@ async function main() {
   }
 
   if (wantShots) {
-    console.log(`스크린샷 ${SHOT_WIDTH}×${SHOT_HEIGHT} (${SITE})`);
+    console.log(`스크린샷 ${CSS_WIDTH * SCALE}×${CSS_HEIGHT * SCALE} (CSS ${CSS_WIDTH}×${CSS_HEIGHT}, ${SITE})`);
     await captureShots();
   }
 

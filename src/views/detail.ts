@@ -11,7 +11,7 @@
 
 import { fetchUsage } from '../adapters/championsBattleData';
 import { fetchMoveDex, type DamageClass, type MoveDex } from '../adapters/moveDex';
-import { abilityName, natureName, statText, type TermDex } from '../adapters/termDex';
+import { abilityName, natureName, statText, typeName, type TermDex } from '../adapters/termDex';
 import { normalizeLearnset } from '../adapters/showdownLearnset';
 import { countersUrl } from '../adapters/appConfig';
 import { countersForSpecies, fetchCounters } from '../adapters/smogonCounters';
@@ -21,7 +21,7 @@ import { STAT_BASIS_LABEL, statRatio, toBaseStats } from '../core/stats';
 import { defensiveProfile } from '../core/typechart';
 import { href } from '../router';
 import { findPokemon, state } from '../store';
-import type { CounterBlock, Pokemon, PokemonForm, UsageReport } from '../types';
+import type { CounterBlock, Pokemon, PokemonForm, TypeName, UsageReport } from '../types';
 import {
   CATEGORY_LABEL,
   STAT_LABEL,
@@ -224,7 +224,8 @@ function weaknessSummary(profile: ReturnType<typeof defensiveProfile>): HTMLElem
             el(
               'span',
               { class: 'weak__item' },
-              `×${entry.multiplier} ${entry.types.join(', ')}`,
+              // 타입 배지는 한국어인데 여기만 영문이면 같은 화면에서 표기가 갈린다.
+              `×${entry.multiplier} ${entry.types.map((t) => typeName(state.terms, t as TypeName)).join(', ')}`,
             ),
           ),
         );
@@ -239,7 +240,11 @@ function weaknessSummary(profile: ReturnType<typeof defensiveProfile>): HTMLElem
           'div',
           { class: 'weak__group' },
           el('span', { class: 'weak__label' }, '무효'),
-          el('span', { class: 'weak__item' }, profile.immunities.join(', ')),
+          el(
+            'span',
+            { class: 'weak__item' },
+            profile.immunities.map((t) => typeName(state.terms, t as TypeName)).join(', '),
+          ),
         )
       : null,
   );

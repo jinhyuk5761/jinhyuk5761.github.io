@@ -589,21 +589,22 @@ function sidePanel(
   );
 
   if (mon.forms.length > 1) {
-    const select = el('select', { class: 'form-select', 'aria-label': `${title} 폼` });
-    for (const candidate of mon.forms) {
-      const option = el(
-        'option',
-        { value: candidate.slug },
-        formDisplayName(mon, candidate, state.index?.pokemon ?? []),
-      );
-      if (candidate.slug === form.slug) option.setAttribute('selected', 'selected');
-      select.appendChild(option);
-    }
-    select.addEventListener('change', () => {
-      side.formSlug = select.value;
-      handlers.onFormChange();
-    });
-    frag.appendChild(select);
+    frag.appendChild(
+      searchSelect({
+        options: mon.forms.map((candidate) => ({
+          value: candidate.slug,
+          label: formDisplayName(mon, candidate, state.index?.pokemon ?? []),
+        })),
+        value: form.slug,
+        placeholder: '폼 선택',
+        ariaLabel: `${title} 폼`,
+        className: 'form-select',
+        onPick: (slug) => {
+          side.formSlug = slug;
+          handlers.onFormChange();
+        },
+      }),
+    );
 
   }
 
@@ -659,17 +660,22 @@ function hpSlider(side: Side, form: PokemonForm, title: string, onInput: () => v
 }
 
 function statusSelect(side: Side, title: string, onInput: () => void): HTMLElement {
-  const select = el('select', { class: 'calc__select', 'aria-label': `${title} 상태이상` });
-  for (const [value, label] of STATUS_OPTIONS) {
-    const option = el('option', { value }, label);
-    if (value === side.status) option.setAttribute('selected', 'selected');
-    select.appendChild(option);
-  }
-  select.addEventListener('change', () => {
-    side.status = select.value as Status;
-    onInput();
-  });
-  return el('label', { class: 'calc__field' }, el('span', {}, '상태이상'), select);
+  return el(
+    'label',
+    { class: 'calc__field' },
+    el('span', {}, '상태이상'),
+    searchSelect({
+      options: STATUS_OPTIONS.map(([value, label]) => ({ value, label })),
+      value: side.status,
+      placeholder: '없음',
+      ariaLabel: `${title} 상태이상`,
+      className: 'calc__select',
+      onPick: (value) => {
+        side.status = value as Status;
+        onInput();
+      },
+    }),
+  );
 }
 
 function natureSelect(side: Side, title: string, onInput: () => void): HTMLElement {
@@ -830,22 +836,27 @@ function statInputs(side: Side, form: PokemonForm, onInput: () => void): HTMLEle
     const stageCell = isHp
       ? el('span', { class: 'calc__nature-mark' }, '—')
       : (() => {
-          const select = el('select', {
-            class: `calc__stage${side.stages[key] > 0 ? ' calc__stage--up' : side.stages[key] < 0 ? ' calc__stage--down' : ''}`,
-            'aria-label': `${STAT_LABELS[key]} 랭크`,
+          const stageClass = (stage: number) =>
+            `calc__stage${stage > 0 ? ' calc__stage--up' : stage < 0 ? ' calc__stage--down' : ''}`;
+          const picker = searchSelect({
+            options: Array.from({ length: 13 }, (_, i) => {
+              const v = 6 - i;
+              return { value: String(v), label: v > 0 ? `+${v}` : String(v) };
+            }),
+            value: String(side.stages[key]),
+            placeholder: '0',
+            ariaLabel: `${STAT_LABELS[key]} 랭크`,
+            className: stageClass(side.stages[key]),
+            onPick: (raw) => {
+              side.stages[key] = Number(raw);
+              picker.className = `sselect ${stageClass(side.stages[key])}`;
+              const label = picker.querySelector('.sselect__value');
+              if (label) label.textContent = side.stages[key] > 0 ? `+${side.stages[key]}` : String(side.stages[key]);
+              repaintStats(picker.closest('.calc__side'), side);
+              onInput();
+            },
           });
-          for (let v = 6; v >= -6; v -= 1) {
-            const option = el('option', { value: String(v) }, v > 0 ? `+${v}` : String(v));
-            if (v === side.stages[key]) option.setAttribute('selected', 'selected');
-            select.appendChild(option);
-          }
-          select.addEventListener('change', () => {
-            side.stages[key] = Number(select.value);
-            select.className = `calc__stage${side.stages[key] > 0 ? ' calc__stage--up' : side.stages[key] < 0 ? ' calc__stage--down' : ''}`;
-            repaintStats(select.closest('.calc__side'), side);
-            onInput();
-          });
-          return select;
+          return picker;
         })();
 
     table.appendChild(
@@ -876,33 +887,34 @@ function abilitySelect(
 ): HTMLElement {
   const owned = abilitiesOf(form);
 
-  const select = el('select', { class: 'calc__ability', 'aria-label': `${title} 특성` });
-
   // 특성이 하나뿐인 포켓몬은 그 특성으로 고정한다.
   // 고를 여지가 없는데 '없음' 을 두면 실제로 불가능한 조합을 계산하게 된다.
-  if (owned.length === 1) {
-    side.ability = owned[0]!;
-  } else {
-    const none = el('option', { value: '' }, '— 없음 —');
-    if (!side.ability) none.setAttribute('selected', 'selected');
-    select.appendChild(none);
-  }
+  if (owned.length === 1) side.ability = owned[0]!;
 
-  for (const name of owned) {
-    // 이름만 둔다. 효과 설명은 「특성」 탭에서 본다 — 계산기에서는 목록만 시끄러워진다.
-    const option = el('option', { value: name }, abilityName(state.terms, name));
-    if (name === side.ability) option.setAttribute('selected', 'selected');
-    select.appendChild(option);
-  }
+  // 이름만 둔다. 효과 설명은 「특성」 탭에서 본다 — 계산기에서는 목록만 시끄러워진다.
+  const options: SearchOption[] = owned.map((name) => ({
+    value: name,
+    label: abilityName(state.terms, name),
+    haystack: [abilityName(state.terms, name), name],
+  }));
+  if (owned.length !== 1) options.unshift({ value: '', label: '— 없음 —' });
 
-  select.addEventListener('change', () => {
-    side.ability = select.value || null;
-    onChange();
-  });
-
-  const field = el('label', { class: 'calc__field' }, el('span', {}, '특성'), select);
-
-  return field;
+  return el(
+    'label',
+    { class: 'calc__field' },
+    el('span', {}, '특성'),
+    searchSelect({
+      options,
+      value: side.ability ?? '',
+      placeholder: '— 없음 —',
+      ariaLabel: `${title} 특성`,
+      className: 'calc__ability',
+      onPick: (name) => {
+        side.ability = name || null;
+        onChange();
+      },
+    }),
+  );
 }
 
 /**
@@ -923,16 +935,12 @@ function itemSelect(
   const stone = requiredStone(mon, form);
   if (stone) {
     side.itemName = stone;
-    const locked = el('select', { class: 'calc__modifier', 'aria-label': '도구' });
-    const only = el('option', { value: stone }, itemName(state.terms, stone));
-    only.setAttribute('selected', 'selected');
-    locked.appendChild(only);
-    locked.disabled = true;
+    // 고를 수 없으므로 드롭다운이 아니라 값만 보여준다.
     return el(
       'label',
       { class: 'calc__field' },
       el('span', {}, '도구'),
-      locked,
+      el('span', { class: 'calc__locked-value' }, itemName(state.terms, stone)),
       el('span', { class: 'calc__item-locked' }, '메가진화에 필요해 고정됩니다 (대미지 배율 없음)'),
     );
   }
@@ -1036,17 +1044,22 @@ function fieldSection(dex: MoveDex | null, onInput: () => void): HTMLElement {
     current: T,
     onPick: (value: T) => void,
   ) => {
-    const select = el('select', { class: 'calc__select', 'aria-label': label });
-    for (const [value, text] of options) {
-      const option = el('option', { value }, text);
-      if (value === current) option.setAttribute('selected', 'selected');
-      select.appendChild(option);
-    }
-    select.addEventListener('change', () => {
-      onPick(select.value as T);
-      onInput();
-    });
-    return el('label', { class: 'calc__field' }, el('span', {}, label), select);
+    return el(
+      'label',
+      { class: 'calc__field' },
+      el('span', {}, label),
+      searchSelect({
+        options: options.map(([value, text]) => ({ value, label: text })),
+        value: current,
+        placeholder: '없음',
+        ariaLabel: label,
+        className: 'calc__select',
+        onPick: (value) => {
+          onPick(value as T);
+          onInput();
+        },
+      }),
+    );
   };
 
   grid.appendChild(dropdown('날씨', WEATHER_OPTIONS, weather, (v) => (weather = v)));
@@ -1080,18 +1093,23 @@ function fieldSection(dex: MoveDex | null, onInput: () => void): HTMLElement {
   }
 
   if (anySideHasAbility('Supreme Overlord')) {
-    const fallen = el('select', { class: 'calc__select', 'aria-label': '쓰러진 아군 수' });
-    for (let n = 0; n <= 5; n += 1) {
-      const option = el('option', { value: String(n) }, `${n}마리`);
-      if (n === fallenAllies) option.setAttribute('selected', 'selected');
-      fallen.appendChild(option);
-    }
-    fallen.addEventListener('change', () => {
-      fallenAllies = Number(fallen.value);
-      onInput();
-    });
     grid.appendChild(
-      el('label', { class: 'calc__field' }, el('span', {}, '쓰러진 아군 (총대장)'), fallen),
+      el(
+        'label',
+        { class: 'calc__field' },
+        el('span', {}, '쓰러진 아군 (총대장)'),
+        searchSelect({
+          options: Array.from({ length: 6 }, (_, n) => ({ value: String(n), label: `${n}마리` })),
+          value: String(fallenAllies),
+          placeholder: '0마리',
+          ariaLabel: '쓰러진 아군 수',
+          className: 'calc__select',
+          onPick: (raw) => {
+            fallenAllies = Number(raw);
+            onInput();
+          },
+        }),
+      ),
     );
   }
 
@@ -1408,17 +1426,23 @@ function moveResult(
         ),
       );
     } else {
-      const select = el('select', { class: 'calc__select', 'aria-label': `${move.displayName} 타격 수` });
-      for (let n = escalating ? 1 : minHits; n <= maxHits; n += 1) {
-        const option = el('option', { value: String(n) }, `${n}회`);
-        if (n === hits) option.setAttribute('selected', 'selected');
-        select.appendChild(option);
-      }
-      select.addEventListener('change', () => {
-        hitChoices.set(move.englishName, Number(select.value));
-        hp.onChange();
-      });
-      control.appendChild(select);
+      const first = escalating ? 1 : minHits;
+      control.appendChild(
+        searchSelect({
+          options: Array.from({ length: maxHits - first + 1 }, (_, i) => ({
+            value: String(first + i),
+            label: `${first + i}회`,
+          })),
+          value: String(hits),
+          placeholder: `${hits}회`,
+          ariaLabel: `${move.displayName} 타격 수`,
+          className: 'calc__select',
+          onPick: (raw) => {
+            hitChoices.set(move.englishName, Number(raw));
+            hp.onChange();
+          },
+        }),
+      );
     }
     row.appendChild(control);
   }

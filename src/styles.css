@@ -1008,3 +1008,22 @@ select optgroup {
 .mini .sselect__panel { max-height: min(60vh, 260px); padding: 4px; }
 .mini .sselect__option { padding: 6px; font-size: 12px; }
 .mini .sselect__search { font-size: 13px; padding: 5px 7px; }
+
+/* 랭크는 좁은 칸에 들어가므로 버튼을 조인다. 패널은 내용에 맞춰 넓힌다. */
+.calc__stage .sselect__button { padding: 2px 4px; font-size: 11px; gap: 2px; justify-content: center; }
+.calc__stage .sselect__value { flex: none; }
+.calc__stage .sselect__panel { left: auto; right: 0; min-width: 72px; }
+.calc__stage--up .sselect__value { color: var(--stat-up); font-weight: 700; }
+.calc__stage--down .sselect__value { color: var(--stat-down); font-weight: 700; }
+
+/* 고정된 값(메가스톤)은 드롭다운이 아니라 글자로 보여준다. */
+.calc__locked-value {
+  padding: 6px 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+/* 타격 수는 한 줄 안에서 폭을 차지하지 않게. */
+.calc__hits .sselect { min-width: 84px; }

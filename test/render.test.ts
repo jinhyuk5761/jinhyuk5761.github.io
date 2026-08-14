@@ -576,15 +576,16 @@ describe('대미지 계산기', () => {
     });
 
     // HP 를 뺀 5개 스탯 × 양쪽 = 10개
-    const stages = [...document.querySelectorAll<HTMLSelectElement>('.calc__stage')];
+    const stages = [...document.querySelectorAll('.calc__stage')];
     expect(stages).toHaveLength(10);
+
+    stages[0]!.querySelector<HTMLButtonElement>('.sselect__button')!.click();
     // −6 ~ +6 의 13단계
-    expect(stages[0]!.options.length).toBe(13);
+    expect(stages[0]!.querySelectorAll('.sselect__option')).toHaveLength(13);
 
     const before = document.querySelector('.calc__damage')!.textContent!;
     // 공격측 공격 랭크를 +2 로 올린다 (0번째가 공격)
-    stages[0]!.value = '2';
-    stages[0]!.dispatchEvent(new Event('change'));
+    pickFrom(stages[0]!, '+2');
 
     await vi.waitFor(() => {
       expect(document.querySelector('.calc__damage')!.textContent).not.toBe(before);
@@ -624,7 +625,10 @@ describe('대미지 계산기', () => {
     await vi.waitFor(() => {
       expect(document.querySelector('.calc__ability')).not.toBeNull();
     });
-    const options = [...document.querySelectorAll('.calc__ability option')].map((o) => o.textContent ?? '');
+    document.querySelector<HTMLButtonElement>('.calc__ability .sselect__button')!.click();
+    const options = [...document.querySelectorAll('.calc__ability .sselect__option')].map(
+      (o) => o.textContent ?? '',
+    );
     // '까칠한피부 — 접촉 시 …' 처럼 꼬리표가 붙으면 안 된다.
     expect(options.every((o) => !o.includes('—') || o === '— 없음 —')).toBe(true);
     expect(options).toContain('까칠한피부');
@@ -780,7 +784,8 @@ describe('대미지 계산기', () => {
       f.textContent?.startsWith('상태이상'),
     );
     expect(labels).toHaveLength(2);
-    const options = [...labels[0]!.querySelectorAll('option')].map((o) => o.textContent);
+    labels[0]!.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    const options = [...labels[0]!.querySelectorAll('.sselect__option')].map((o) => o.textContent);
     expect(options).toEqual(['없음', '화상', '독', '맹독', '마비', '잠듦', '얼음']);
 
     // 예전의 체크박스는 사라졌다.
@@ -1051,10 +1056,9 @@ describe('계산기 장 넘기기', () => {
     });
 
     // 공격 장의 입력이 결과 장의 값을 바꿔야 한다 (같은 노드를 계속 붙잡고 있어야 성립).
-    const stage = document.querySelectorAll<HTMLSelectElement>('.calc__stage')[0]!;
+    const stage = document.querySelectorAll('.calc__stage')[0]!;
     const before = document.querySelector('.calc__damage')!.textContent!;
-    stage.value = '2';
-    stage.dispatchEvent(new Event('change'));
+    pickFrom(stage, '+2');
     await vi.waitFor(() => {
       expect(document.querySelector('.calc__damage')!.textContent).not.toBe(before);
     });
@@ -1065,7 +1069,8 @@ describe('계산기 장 넘기기', () => {
     await vi.waitFor(() => {
       expect(document.querySelector('.form-select')).not.toBeNull();
     });
-    const options = [...document.querySelectorAll('.calc__side .form-select option')].map(
+    document.querySelector<HTMLButtonElement>('.calc__side .form-select .sselect__button')!.click();
+    const options = [...document.querySelectorAll('.calc__side .form-select .sselect__option')].map(
       (o) => o.textContent,
     );
     expect(options).toContain('메가 한카리아스');
@@ -1122,9 +1127,8 @@ describe('변환자재 자속 토글', () => {
     });
 
     // 변환자재를 고른다.
-    const ability = document.querySelector<HTMLSelectElement>('.calc__ability')!;
-    ability.value = 'Protean';
-    ability.dispatchEvent(new Event('change'));
+    // 픽스처 도감에 한국어명이 없어 영문 그대로 나온다.
+    pickFrom(document.querySelector('.calc__ability')!, 'Protean');
 
     await vi.waitFor(() => {
       expect(document.querySelector('.calc__stabtoggle')).not.toBeNull();
@@ -1451,5 +1455,32 @@ describe('드롭다운은 한 번에 하나만', () => {
   it('CSS 가 hidden 을 되살려 둔다', () => {
     const css = readFileSync(path.join(import.meta.dirname, '..', 'src', 'styles.css'), 'utf8');
     expect(css).toContain('.sselect__panel[hidden]');
+  });
+});
+
+describe('드롭다운 디자인 통일', () => {
+  it('계산기에 네이티브 select 가 하나도 없다', async () => {
+    // 자체 패널과 시스템 목록이 섞여 있으면 열었을 때 모양이 완전히 다르다.
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    expect(document.querySelectorAll('select')).toHaveLength(0);
+    expect(document.querySelectorAll('.sselect').length).toBeGreaterThan(8);
+  });
+
+  it('짧은 목록도 같은 패널을 쓰되 검색창만 감춘다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+
+    // 상태이상은 7개 — 검색창 없이 같은 패널이 뜬다.
+    const status = [...document.querySelectorAll('.calc__side .calc__field')].find((f) =>
+      f.textContent?.startsWith('상태이상'),
+    )!;
+    status.querySelector<HTMLButtonElement>('.sselect__button')!.click();
+    expect(status.querySelector<HTMLElement>('.sselect__panel')!.hidden).toBe(false);
+    expect(status.querySelector<HTMLInputElement>('.sselect__search')!.hidden).toBe(true);
   });
 });

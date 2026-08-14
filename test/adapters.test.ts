@@ -330,7 +330,7 @@ describe('typechart', () => {
     expect(effectiveness('Dragon', ['Fairy'])).toBe(0);
   });
 
-  it('약점/저항/무효를 나눠 정리한다', () => {
+  it('약점/내성/무효를 나눠 정리한다', () => {
     const profile = defensiveProfile(['Ground', 'Dragon']);
     expect(profile.weaknesses[0]).toEqual({ multiplier: 4, types: ['Ice'] });
     expect(profile.immunities).toEqual(['Electric']);

@@ -59,7 +59,7 @@ export interface DefensiveProfile {
   immunities: TypeName[];
 }
 
-/** 방어 타입 조합의 약점/저항/무효를 한 번에 정리한다. */
+/** 방어 타입 조합의 약점/내성/무효를 한 번에 정리한다. */
 export function defensiveProfile(defending: TypeName[]): DefensiveProfile {
   const byMultiplier = new Map<number, TypeName[]>();
   for (const attacking of ALL_TYPES) {

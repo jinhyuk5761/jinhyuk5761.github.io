@@ -12,7 +12,7 @@
 
 import { execFile } from 'node:child_process';
 import { deflateSync } from 'node:zlib';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
@@ -23,19 +23,22 @@ const OUT = path.join(ROOT, 'android', 'store');
 const SITE = process.env.STORE_SITE_URL ?? 'https://jinhyuk5761.github.io';
 
 /**
- * --window-size 는 **CSS 픽셀**이다. 여기에 1080 을 주면 폰이 아니라
- * 데스크톱 레이아웃으로 렌더된다(가로로 넓은 2단 화면이 찍힌다).
- * 폰의 CSS 너비를 주고, 배율로 실제 해상도를 키운다.
+ * --window-size 는 **CSS 픽셀**이다. 1080 을 주면 폰이 아니라 데스크톱 레이아웃이 찍힌다.
+ *
+ * 다만 Windows 헤드리스 크롬은 창을 대략 500px 아래로 줄이지 못한다.
+ * 그보다 좁게 주면 **더 넓게 레이아웃한 뒤 지정한 폭으로 잘라내서**,
+ * 앱은 멀쩡한데 글자만 오른쪽에서 잘린 그림이 나온다.
+ * 그래서 그 최소치 위(540)를 쓴다 — 720px 미만이라 폰 레이아웃은 그대로 적용된다.
  */
-const CSS_WIDTH = 412; // 흔한 안드로이드 폰의 CSS 너비
-const CSS_HEIGHT = 915;
-const SCALE = 3; // 결과 1236×2745 (Play 요건: 320~3840px)
+const CSS_WIDTH = 540;
+const CSS_HEIGHT = 1170;
+const SCALE = 2; // 결과 1080×2340 (Play 요건: 320~3840px)
 
 const SHOTS = [
-  { name: 'screenshot-1-search', hash: '#/', wait: 3500 },
-  { name: 'screenshot-2-detail', hash: '#/p/garchomp', wait: 4000 },
-  { name: 'screenshot-3-calc', hash: '#/calc?a=garchomp&b=ninetalesalola', wait: 5000 },
-  { name: 'screenshot-4-compare', hash: '#/compare', wait: 3500 },
+  { name: 'screenshot-1-search', hash: '#/', wait: 9000 },
+  { name: 'screenshot-2-detail', hash: '#/p/garchomp', wait: 10000 },
+  { name: 'screenshot-3-calc', hash: '#/calc?a=garchomp&b=ninetalesalola', wait: 12000 },
+  { name: 'screenshot-4-compare', hash: '#/compare', wait: 9000 },
 ];
 
 function findChrome() {
@@ -48,7 +51,23 @@ function findChrome() {
   return candidates.find((p) => existsSync(p)) ?? null;
 }
 
-async function captureShots() {
+/**
+ * 페이지를 **iframe 에 담아** 찍는다.
+ *
+ * `--window-size` 로 바로 찍으면 크롬이 다른 폭으로 레이아웃한 뒤 그 크기로 잘라내서,
+ * 글자가 오른쪽에서 잘린 그림이 나온다(실제 레이아웃은 멀쩡한데 사진만 잘린다).
+ * iframe 은 폭이 CSS 로 확정되므로 그 안의 레이아웃이 우리가 지정한 폰 크기와 정확히 같다.
+ */
+function wrapperHtml(hash) {
+  return `<!doctype html><html><head><meta charset="utf-8"><style>
+    html,body{margin:0;padding:0;background:#101318;overflow:hidden}
+    iframe{width:${CSS_WIDTH}px;height:${CSS_HEIGHT}px;border:0;display:block}
+  </style></head><body>
+  <iframe src="${hash}" scrolling="no"></iframe>
+  </body></html>`;
+}
+
+async function captureShots(siteRoot, writeTemp) {
   const chrome = findChrome();
   if (!chrome) throw new Error('Chrome 또는 Edge 를 찾지 못했습니다.');
 
@@ -61,7 +80,7 @@ async function captureShots() {
         '--disable-gpu',
         '--hide-scrollbars',
         `--window-size=${CSS_WIDTH},${CSS_HEIGHT}`,
-        // 레이아웃은 폰 그대로 두고 출력 해상도만 키운다.
+        // 레이아웃은 iframe 이 고정하므로, 배율은 출력 해상도만 키운다.
         `--force-device-scale-factor=${SCALE}`,
         `--virtual-time-budget=${shot.wait}`,
         `--screenshot=${file}`,
@@ -181,7 +200,19 @@ async function main() {
 
   if (wantShots) {
     console.log(`스크린샷 ${CSS_WIDTH * SCALE}×${CSS_HEIGHT * SCALE} (CSS ${CSS_WIDTH}×${CSS_HEIGHT}, ${SITE})`);
-    await captureShots();
+    // 감싸는 페이지는 임시 파일이다. 찍고 나면 지운다.
+    const temps = [];
+    const writeTemp = (name, html) => {
+      const file = path.join(OUT, name);
+      writeFileSync(file, html, 'utf8');
+      temps.push(file);
+      return `file:///${file.replace(/\\/g, '/')}`;
+    };
+    try {
+      await captureShots(SITE, writeTemp);
+    } finally {
+      for (const file of temps) rmSync(file, { force: true });
+    }
   }
 
   console.log(`\n저장 위치: ${path.relative(ROOT, OUT)}`);

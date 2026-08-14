@@ -234,7 +234,7 @@ function weaknessSummary(profile: ReturnType<typeof defensiveProfile>): HTMLElem
     'div',
     { class: 'weak' },
     group('약점', profile.weaknesses),
-    group('저항', profile.resistances),
+    group('내성', profile.resistances),
     profile.immunities.length > 0
       ? el(
           'div',

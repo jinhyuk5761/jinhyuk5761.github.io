@@ -240,6 +240,8 @@ async function main() {
     if (!extra) return entry;
     return {
       ko: entry?.ko ?? extra.ko ?? null,
+      // override 로 채운 특성은 PokéAPI 에 없어 일본어도 없다. 그대로 흘려보낸다.
+      ja: entry?.ja ?? null,
       desc: entry?.desc ?? extra.desc ?? null,
       descEn: entry?.descEn ?? null,
     };
@@ -257,6 +259,8 @@ async function main() {
       const a = await cachedJson(CACHE_DIR, `ability-${slug}`, `https://pokeapi.co/api/v2/ability/${slug}`);
       abilities[name] = withOverride(name, {
         ko: pickName(a.names, ['ko']),
+        // 구축글이 일본어로 적혀 있어 되짚을 표가 필요하다.
+        ja: pickName(a.names, ['ja', 'ja-Hrkt']),
         desc: pickFlavor(a.flavor_text_entries, 'ko', 'version_group'),
         descEn: pickFlavor(a.flavor_text_entries, 'en', 'version_group'),
       });
@@ -354,6 +358,7 @@ async function main() {
     if (!ko) natureMissing.push(englishName);
     natures[englishName] = {
       ko,
+      ja: pickName(n.names, ['ja', 'ja-Hrkt']) ?? null,
       up: n.increased_stat?.name ?? null,
       down: n.decreased_stat?.name ?? null,
     };

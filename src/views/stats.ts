@@ -9,8 +9,10 @@
  */
 
 import {
+  fetchBuildArticles,
   fetchRankedTeams,
   pokedbFormUrl,
+  type BuildArticle,
   type RankedSet,
   type RankedTeam,
 } from '../adapters/rankedTeams';
@@ -45,6 +47,20 @@ export function renderStats(container: HTMLElement): void {
    * `.catch` 는 `.then` 안에서 난 예외도 잡는다 — 화면을 그리다 터진 것과
    * 네트워크가 끊긴 것이 같은 문구로 보여서 어느 쪽인지 알 수 없었다.
    */
+  /*
+   * 구축글은 따로 담는다.
+   *
+   * 아래 `clear(page)` 가 먼저 도착한 것을 지워버리므로 같은 자리에 두면 안 된다.
+   * 둘은 출처도 수명도 다르니 자리를 나누는 편이 맞다.
+   */
+  const articleHost = el('div', { class: 'stats__articles' });
+  container.appendChild(articleHost);
+
+  // 로컬에만 있는 파일이다. 없으면 이 자리만 비고 나머지는 그대로 나온다.
+  fetchBuildArticles().then((articles) => {
+    if (articles.length > 0) articleHost.appendChild(articleSection(articles));
+  });
+
   fetchRankedTeams().then(
     (data) => {
       clear(page);
@@ -205,6 +221,80 @@ function teamList(set: RankedSet): HTMLElement {
     more,
   );
 }
+
+/**
+ * 구축글에서 읽어온 개체 정보.
+ *
+ * pokedb 공개 데이터에 없는 노력치·성격·특성·기술이 여기 있다.
+ * 남이 쓴 글에서 온 것이라 **반드시 원문 링크를 함께 둔다.**
+ */
+function articleSection(articles: BuildArticle[]): HTMLElement {
+  const list = el('div', { class: 'team__list' });
+  for (const article of articles) {
+    const members = el('div', { class: 'article__members' });
+    for (const m of article.members) {
+      const ev = m.stats
+        ? Object.entries(m.stats)
+            .filter(([, v]) => v.ev !== null)
+            .map(([key, v]) => `${STAT_SHORT[key] ?? key} ${v.ev}${v.nature ?? ''}`)
+            .join(' / ')
+        : '';
+      members.appendChild(
+        el(
+          'div',
+          { class: 'article__mon' },
+          el(
+            'span',
+            { class: 'article__head' },
+            el('b', {}, m.species),
+            m.item ? el('span', { class: 'team__item' }, `@ ${m.item}`) : null,
+          ),
+          el(
+            'span',
+            { class: 'article__meta' },
+            [m.ability, m.nature].filter(Boolean).join(' · ') || '—',
+          ),
+          // 노력치를 안 적은 개체도 있다. 없으면 없다고 두고 0 으로 채우지 않는다.
+          el('span', { class: 'article__ev' }, ev || '노력치 표기 없음'),
+          el('span', { class: 'article__moves' }, m.moves.join(' / ') || '—'),
+        ),
+      );
+    }
+    list.appendChild(
+      el(
+        'article',
+        { class: 'team' },
+        el(
+          'header',
+          { class: 'team__head' },
+          el(
+            'a',
+            { class: 'link', href: article.url, target: '_blank', rel: 'noopener noreferrer' },
+            article.title,
+          ),
+        ),
+        members,
+      ),
+    );
+  }
+
+  return el(
+    'section',
+    { class: 'stats__section' },
+    el('h3', {}, '구축글'),
+    el(
+      'p',
+      { class: 'stats__note' },
+      '작성자가 공개한 글에서 읽어온 개체 정보입니다. 제목을 누르면 원문으로 갑니다. 이 목록은 이 PC 에서만 보입니다.',
+    ),
+    list,
+  );
+}
+
+/** 노력치 줄에 쓸 짧은 스탯 이름. */
+const STAT_SHORT: Record<string, string> = {
+  hp: 'HP', atk: '공', def: '방', spa: '특공', spd: '특방', spe: '스피드',
+};
 
 function summary(set: RankedSet, source: string): HTMLElement {
   return el(

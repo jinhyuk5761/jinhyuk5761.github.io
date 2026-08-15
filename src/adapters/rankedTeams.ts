@@ -116,3 +116,47 @@ export function normalizeRankedTeams(data: RankedTeams | null | undefined): Rank
     })),
   };
 }
+
+/* ------------------------------------------------ 구축글에서 읽어온 개체 정보 */
+
+export interface ArticleStat {
+  value: number;
+  /** 글에 안 적혀 있으면 null. 0 으로 채우지 않는다. */
+  ev: number | null;
+  /** 성격 보정: '+' | '-' | null */
+  nature: string | null;
+}
+
+export interface ArticleMember {
+  species: string;
+  item: string | null;
+  ability: string | null;
+  nature: string | null;
+  stats: Record<string, ArticleStat> | null;
+  moves: string[];
+}
+
+export interface BuildArticle {
+  url: string;
+  title: string;
+  members: ArticleMember[];
+}
+
+/**
+ * 로컬에서 모은 구축글.
+ *
+ * `scripts/crawl-build-articles.mjs` 산출물이며 **커밋·배포되지 않는다**.
+ * 그래서 배포된 사이트에서는 404 가 나고, 그때는 조용히 빈 목록으로 둔다 —
+ * 없는 게 정상이므로 오류로 알리지 않는다.
+ */
+export async function fetchBuildArticles(): Promise<BuildArticle[]> {
+  try {
+    const { data } = await fetchJson<{ articles?: BuildArticle[] }>(
+      `${import.meta.env.BASE_URL}data/localTeams.json`,
+      { ttlMs: TTL.buildArtifact, timeoutMs: 15_000 },
+    );
+    return data?.articles ?? [];
+  } catch {
+    return [];
+  }
+}

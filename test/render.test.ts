@@ -666,6 +666,53 @@ describe('통계 — 예전 모양의 응답', () => {
   });
 });
 
+describe('구축글 (로컬 전용)', () => {
+  it('로컬 파일이 있으면 노력치·기술까지 보여준다', async () => {
+    installFetch({
+      'localTeams.json': {
+        articles: [
+          {
+            url: 'https://example.test/entry/1',
+            title: '【M-4 최종1위】 어떤 구축',
+            members: [
+              {
+                species: '더시마사리', item: '먹다남은음식', ability: '재생력', nature: '신중',
+                stats: {
+                  hp: { value: 157, ev: 32, nature: null },
+                  atk: { value: 83, ev: null, nature: null },
+                  spd: { value: 200, ev: 20, nature: '+' },
+                },
+                moves: ['아쿠아브레이크', '맹독'],
+              },
+            ],
+          },
+        ],
+      },
+    });
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.article__mon')).not.toBeNull();
+    });
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('재생력 · 신중');
+    expect(text).toContain('HP 32 / 특방 20+');
+    expect(text).toContain('아쿠아브레이크 / 맹독');
+    // 남의 글에서 온 것이라 원문 링크가 반드시 있어야 한다.
+    const link = document.querySelector<HTMLAnchorElement>('.team__head a')!;
+    expect(link.getAttribute('href')).toBe('https://example.test/entry/1');
+  });
+
+  it('로컬 파일이 없으면(배포된 사이트) 그 자리만 비고 나머지는 그대로다', async () => {
+    // installFetch 기본값은 알 수 없는 URL 에 404 를 준다 — 배포된 사이트와 같다.
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.team')).not.toBeNull();
+    });
+    expect(document.querySelector('.article__mon')).toBeNull();
+    expect(document.querySelector('.notice--error')).toBeNull();
+  });
+});
+
 describe('M3 카운터', () => {
   it('카운터 표를 낸다', async () => {
     await mountApp('#/p/garchomp');

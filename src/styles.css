@@ -1163,3 +1163,21 @@ select optgroup {
   text-decoration: none;
 }
 .team__more-link:hover { background: var(--accent-soft); }
+
+/* 구축글에서 읽어온 개체 정보 */
+
+.article__members { display: grid; gap: 8px; }
+.article__mon {
+  display: grid;
+  gap: 1px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.article__mon:last-child { border-bottom: 0; }
+.article__head { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.article__meta { font-size: 12px; color: var(--text-dim); }
+/* 노력치와 기술은 줄이 길다. 잘라내지 말고 접어서 전부 보여준다. */
+.article__ev,
+.article__moves { font-size: 12px; color: var(--text-dim); overflow-wrap: anywhere; }
+.article__ev { font-variant-numeric: tabular-nums; }

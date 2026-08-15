@@ -38,3 +38,8 @@ android/store/
 # 발행처가 배포하는 파일을 그대로 다시 퍼뜨리지 않는다 — 받아서 집계한
 # public/data/rankedTeams.json 만 커밋한다. 받는 법은 scripts/build-ranked-teams.mjs 참고.
 구축데이터/
+
+# 구축글 크롤링 — 입력 목록과 결과물 모두 로컬 전용.
+# 남이 쓴 글의 내용이라 공개 사이트에 싣지 않는다. 스크립트만 커밋한다.
+구축글목록.txt
+public/data/localTeams.json

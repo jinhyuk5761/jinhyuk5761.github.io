@@ -8,11 +8,15 @@
  * 시즌은 화면 안에서 고르고, 싱글·더블은 위쪽 공용 토글을 따른다.
  */
 
-import { fetchRankedTeams, type RankedSet } from '../adapters/rankedTeams';
+import { fetchRankedTeams, type RankedSet, type RankedTeam } from '../adapters/rankedTeams';
 import { clear, el, notice } from '../core/dom';
 import { href } from '../router';
-import { state } from '../store';
+import { findPokemon, state } from '../store';
+import { sprite, spriteFallbacks } from './components';
 import { searchSelect } from './searchSelect';
+
+/** 한 번에 보여줄 팀 수. 시즌에 따라 500팀이 넘어 전부 그리면 느리다. */
+const PAGE = 20;
 
 /** 마지막으로 본 시즌. 포맷을 바꿔도 보던 시즌은 유지한다. */
 let activeSeason: number | null = null;
@@ -59,6 +63,7 @@ function draw(page: HTMLElement, sets: RankedSet[], source: string): void {
       return;
     }
     body.appendChild(summary(set, source));
+    body.appendChild(teamList(set));
     body.appendChild(pokemonTable(set));
     body.appendChild(itemTable(set));
     body.appendChild(pairTable(set));
@@ -91,6 +96,68 @@ function draw(page: HTMLElement, sets: RankedSet[], source: string): void {
   paint();
   // 싱글·더블 토글은 store 가 셸을 통째로 다시 그리므로 여기서 따로 구독하지 않는다.
   // 시즌 선택은 모듈 변수에 남아 있어 포맷을 바꿔도 보던 시즌이 유지된다.
+}
+
+/** 팀 한 개. 순위·레이팅과 여섯 마리를 보여준다. */
+function teamCard(team: RankedTeam): HTMLElement {
+  const members = el('div', { class: 'team__members' });
+  for (const m of team.members) {
+    // 로스터에 있으면 스프라이트를 붙인다. 없으면 이름만 둔다.
+    const mon = m.id ? findPokemon(m.id) : null;
+    const cell = el('div', { class: 'team__mon' });
+    if (mon) cell.appendChild(sprite(mon.primary, 'sm', spriteFallbacks(mon, mon.primary)));
+    cell.appendChild(
+      el(
+        'span',
+        { class: 'team__name' },
+        m.id
+          ? el('a', { class: 'link', href: href(`/p/${encodeURIComponent(m.id)}`) }, m.name)
+          : document.createTextNode(m.name),
+      ),
+    );
+    cell.appendChild(el('span', { class: 'team__item' }, m.item ?? '—'));
+    members.appendChild(cell);
+  }
+
+  return el(
+    'article',
+    { class: 'team' },
+    el(
+      'header',
+      { class: 'team__head' },
+      el('span', { class: 'team__rank' }, `${team.rank}위`),
+      el('span', { class: 'team__rating' }, team.rating === null ? '' : `레이팅 ${team.rating}`),
+    ),
+    members,
+  );
+}
+
+function teamList(set: RankedSet): HTMLElement {
+  const list = el('div', { class: 'team__list' });
+  let shown = 0;
+
+  const more = el('button', { class: 'team__more', type: 'button' });
+  const step = (): void => {
+    const next = set.teams.slice(shown, shown + PAGE);
+    for (const team of next) list.appendChild(teamCard(team));
+    shown += next.length;
+    if (shown >= set.teams.length) {
+      more.remove();
+      return;
+    }
+    more.textContent = `더 보기 (${shown} / ${set.teams.length})`;
+  };
+  more.addEventListener('click', step);
+  step();
+
+  return el(
+    'section',
+    { class: 'stats__section' },
+    el('h3', {}, '구축'),
+    el('p', { class: 'stats__note' }, '시즌 상위 랭커가 실제로 쓴 팀. 순위가 높은 쪽부터.'),
+    list,
+    more,
+  );
 }
 
 function summary(set: RankedSet, source: string): HTMLElement {

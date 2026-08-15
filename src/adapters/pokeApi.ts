@@ -51,13 +51,20 @@ export function normalizeLocales(raw: Record<string, RawLocaleEntry>): LocaleMap
  *
  * 빌드 산출물이라 실패해도 앱은 산다 — 그때는 폼 이름이 영문으로 남을 뿐이다.
  */
+interface RawFormNames {
+  /** Champions 폼 slug → 한국어 폼 표기. */
+  forms?: Record<string, string>;
+  /** 일본어 폼 표기 → 한국어. 빌드 스크립트가 쓰는 표라 화면에서는 안 본다. */
+  jaLabels?: Record<string, string>;
+}
+
 export async function fetchFormNames(): Promise<FormNameMap> {
-  const { data } = await fetchJson<Record<string, string>>(
+  const { data } = await fetchJson<RawFormNames>(
     `${import.meta.env.BASE_URL}data/formNames.json`,
     { ttlMs: TTL.buildArtifact, timeoutMs: 15_000, persist: true },
   );
   const map: FormNameMap = new Map();
-  for (const [slug, korean] of Object.entries(data ?? {})) {
+  for (const [slug, korean] of Object.entries(data?.forms ?? {})) {
     if (slug && korean) map.set(slug, korean);
   }
   return map;

@@ -106,20 +106,32 @@ async function main() {
   }
 
   const out = {};
+  const jaLabels = {};
   const noKorean = [];
   await mapLimit(matched, CONCURRENCY, async ([slug, apiSlug]) => {
     const form = await cachedJson(`form-${apiSlug}`, `https://pokeapi.co/api/v2/pokemon-form/${apiSlug}`);
-    const ko = (form?.form_names ?? []).find((n) => n?.language?.name === 'ko')?.name;
+    const pick = (lang) => (form?.form_names ?? []).find((n) => n?.language?.name === lang)?.name;
+    const ko = pick('ko');
     // 한국어가 없으면 비워 둔다. 영문 폼 이름이 그대로 남는다.
     if (ko) out[slug] = ko;
     else noKorean.push(slug);
+    /*
+     * 일본어 표기도 함께 남긴다. 랭커 구축 데이터(pokedb)가 폼을 일본어로 적어 오는데
+     * ('ウォッシュロトム'), 그걸 되짚을 표가 달리 없다.
+     */
+    const ja = pick('ja');
+    if (ja && ko && !jaLabels[ja]) jaLabels[ja] = ko;
   });
 
   const sorted = Object.fromEntries(Object.entries(out).sort(([a], [b]) => a.localeCompare(b)));
-  await writeFile(path.join(OUT_DIR, 'formNames.json'), JSON.stringify(sorted));
+  const sortedJa = Object.fromEntries(Object.entries(jaLabels).sort(([a], [b]) => a.localeCompare(b)));
+  await writeFile(
+    path.join(OUT_DIR, 'formNames.json'),
+    JSON.stringify({ forms: sorted, jaLabels: sortedJa }),
+  );
 
   console.log(`Champions 폼 ${slugs.length}개`);
-  console.log(`  한국어 확보 ${Object.keys(sorted).length}개`);
+  console.log(`  한국어 확보 ${Object.keys(sorted).length}개 (일본어 표기 ${Object.keys(sortedJa).length}개)`);
   console.log(`  PokéAPI 에 폼이 없음 ${unmatched.length}개: ${unmatched.join(', ') || '-'}`);
   console.log(`  폼은 있으나 한국어 없음 ${noKorean.length}개: ${noKorean.sort().join(', ') || '-'}`);
 }

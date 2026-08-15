@@ -33,6 +33,22 @@ export interface RankedPair {
   share: number;
 }
 
+/** 팀에 들어간 한 마리. */
+export interface TeamMember {
+  name: string;
+  /** 상세 화면으로 넘어갈 키. 로스터에 없으면 null. */
+  id: string | null;
+  /** 지닌 도구. 없으면 null. */
+  item: string | null;
+}
+
+export interface RankedTeam {
+  rank: number;
+  /** 최종 레이팅. 원본이 안 주면 null. */
+  rating: number | null;
+  members: TeamMember[];
+}
+
 export interface RankedSet {
   /** 'M-4' 처럼 시즌 표기. */
   season: string;
@@ -42,6 +58,8 @@ export interface RankedSet {
   updatedAt: string;
   teamCount: number;
   slotCount: number;
+  /** 순위대로 정렬된 팀 목록. */
+  teams: RankedTeam[];
   pokemon: RankedPokemon[];
   items: TeamCount[];
   pairs: RankedPair[];

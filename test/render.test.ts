@@ -102,8 +102,8 @@ const TERMS = {
 
 /** 폼 slug → 공식 한국어 폼 표기. 빌드 산출물의 일부만 흉내낸다. */
 const FORM_NAMES = {
-  'rotom-wash': '워시로토무',
-  'furfrou-heart-trim': '하트컷',
+  forms: { 'rotom-wash': '워시로토무', 'furfrou-heart-trim': '하트컷' },
+  jaLabels: { 'ウォッシュロトム': '워시로토무' },
 };
 
 /** 상위 랭커 구축 집계. 빌드 산출물의 모양만 흉내낸다. */
@@ -113,6 +113,13 @@ const RANKED_TEAMS = {
     {
       season: 'M-4', seasonNumber: 4, format: 'Singles', updatedAt: '2026-08-13 16:54:21',
       teamCount: 2, slotCount: 4,
+      teams: [
+        { rank: 1, rating: 2100, members: [
+          { name: '한카리아스', id: 'garchomp', item: '기합의띠' },
+          { name: '알로라 나인테일', id: 'ninetalesalola', item: null },
+        ] },
+        { rank: 2, rating: 2050, members: [{ name: '한카리아스', id: 'garchomp', item: '기합의띠' }] },
+      ],
       pokemon: [
         { name: '한카리아스', showdownId: 'garchomp', teams: 2, share: 100, items: [{ name: '기합의띠', count: 2, share: 100 }] },
         { name: '알로라 나인테일', showdownId: 'ninetalesalola', teams: 1, share: 50, items: [] },
@@ -123,6 +130,7 @@ const RANKED_TEAMS = {
     {
       season: 'M-3', seasonNumber: 3, format: 'Singles', updatedAt: '2026-08-10 11:34:36',
       teamCount: 1, slotCount: 1,
+      teams: [{ rank: 1, rating: null, members: [{ name: '따라큐', id: null, item: null }] }],
       pokemon: [{ name: '따라큐', showdownId: null, teams: 1, share: 100, items: [] }],
       items: [], pairs: [],
     },
@@ -519,6 +527,35 @@ describe('통계 (상위 랭커 구축)', () => {
     // 우리가 받은 시각이 아니라 원본 집계 시각을 밝힌다.
     expect(text).toContain('2026-08-13 16:54:21');
     expect(text).toContain('champs.pokedb.tokyo');
+  });
+
+  it('상위 랭커의 팀을 그대로 보여준다', async () => {
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.team')).not.toBeNull();
+    });
+    const cards = [...document.querySelectorAll('.team')];
+    expect(cards).toHaveLength(2);
+
+    const first = cards[0]!;
+    expect(first.querySelector('.team__rank')!.textContent).toBe('1위');
+    expect(first.querySelector('.team__rating')!.textContent).toBe('레이팅 2100');
+    // 여섯 마리와 각자의 도구가 함께 보여야 팀을 읽을 수 있다.
+    const mons = [...first.querySelectorAll('.team__mon')];
+    expect(mons.map((m) => m.querySelector('.team__name')!.textContent)).toEqual([
+      '한카리아스',
+      '알로라 나인테일',
+    ]);
+    expect(mons.map((m) => m.querySelector('.team__item')!.textContent)).toEqual(['기합의띠', '—']);
+  });
+
+  it('레이팅이 없으면 숫자를 지어내지 않는다', async () => {
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.stats__season')).not.toBeNull();
+    });
+    pickFrom(document.querySelector('.stats__season')!, '시즌 M-3');
+    expect(document.querySelector('.team__rating')!.textContent).toBe('');
   });
 
   it('로스터에 있는 종은 상세로 이어진다', async () => {

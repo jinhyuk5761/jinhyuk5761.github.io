@@ -1097,3 +1097,58 @@ select optgroup {
 @media (max-width: 480px) {
   .stats__row { grid-template-columns: 24px minmax(0, 1fr) minmax(80px, 1fr); }
 }
+
+/* 구축 — 상위 랭커의 팀 한 개 */
+
+.team__list { display: grid; gap: 10px; }
+.team {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+.team__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.team__rank { font-weight: 700; }
+.team__rating { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+/* 여섯 마리를 한 줄에. 좁아지면 3열 두 줄이 된다. */
+.team__members {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+.team__mon {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  text-align: center;
+  min-width: 0;
+}
+.team__mon .sprite { width: 48px; height: 48px; }
+.team__name { font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; }
+/* 도구는 보조 정보다. 이름보다 작게 두되 잘리지는 않게. */
+.team__item { font-size: 11px; color: var(--text-dim); line-height: 1.3; overflow-wrap: anywhere; }
+
+.team__more {
+  margin-top: 10px;
+  width: 100%;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+.team__more:hover { background: var(--surface-alt); }
+
+@media (max-width: 720px) {
+  .team__members { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .team__mon .sprite { width: 44px; height: 44px; }
+}

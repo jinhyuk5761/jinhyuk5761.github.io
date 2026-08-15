@@ -11,9 +11,11 @@ import { readFileSync } from 'node:fs';
 import { formDisplayName, type FormNameMap } from '../src/core/formNames';
 import type { Pokemon, PokemonForm, StatLine } from '../src/types';
 
-const raw: Record<string, string> = JSON.parse(
-  readFileSync('public/data/formNames.json', 'utf8'),
-);
+const file = JSON.parse(readFileSync('public/data/formNames.json', 'utf8')) as {
+  forms: Record<string, string>;
+  jaLabels: Record<string, string>;
+};
+const raw = file.forms;
 const FORM_NAMES: FormNameMap = new Map(Object.entries(raw));
 
 const STATS: StatLine = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0, total: 0 };

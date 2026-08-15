@@ -84,8 +84,16 @@ function shellHeader(route: Route): HTMLElement {
       // config 를 주기적으로 다시 확인하므로, 랭킹이 붙으면 새로고침 없이 탭이 생긴다.
       state.config.ranking.enabled ? navLink('/ranking', '랭킹', route) : null,
     ),
-    el('div', { class: 'shell__controls' }, formatToggle()),
+    // 싱글·더블은 사용률이 갈리는 화면에서만 뜻이 있다. 기술·특성 탭은
+    // "이 기술을 누가 배우나" 를 보는 곳이라 포맷과 무관하고, 눌러도 아무 일이
+    // 일어나지 않아서 고장난 것처럼 보인다.
+    usesFormat(route) ? el('div', { class: 'shell__controls' }, formatToggle()) : null,
   );
+}
+
+/** 이 화면의 내용이 싱글·더블에 따라 달라지는가. */
+function usesFormat(route: Route): boolean {
+  return route.path === '/' || route.path === '/p' || route.path === '/calc';
 }
 
 function shellFooter(): HTMLElement {

@@ -453,6 +453,35 @@ describe('M2 상세', () => {
   });
 });
 
+describe('싱글·더블 토글', () => {
+  it('사용률이 갈리는 화면에서만 보인다', async () => {
+    await mountApp('#/');
+    expect(document.querySelector('.shell__controls')).not.toBeNull();
+  });
+
+  it('기술·특성 탭에서는 없앤다', async () => {
+    // 이 화면들은 state.format 을 읽지 않는다. 눌러도 아무 일이 없어서
+    // 두면 고장난 것처럼 보인다.
+    await mountApp('#/moves');
+    expect(document.querySelector('.shell__controls')).toBeNull();
+
+    location.hash = '#/abilities';
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
+    await vi.waitFor(() => {
+      expect(document.querySelector('.nav__link--active')?.textContent).toBe('특성');
+    });
+    expect(document.querySelector('.shell__controls')).toBeNull();
+  });
+
+  it('계산기와 상세에서는 남긴다', async () => {
+    await mountApp('#/calc?a=garchomp&b=ninetalesalola');
+    expect(document.querySelector('.shell__controls')).not.toBeNull();
+
+    await mountApp('#/p/garchomp');
+    expect(document.querySelector('.shell__controls')).not.toBeNull();
+  });
+});
+
 describe('M3 카운터', () => {
   it('카운터 표를 낸다', async () => {
     await mountApp('#/p/garchomp');

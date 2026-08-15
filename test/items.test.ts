@@ -36,13 +36,34 @@ describe('목록의 출처 — Champions 에 있는 도구만', () => {
     }
   });
 
-  it('Champions 에 없는 본가 도구는 들어 있지 않다', () => {
+  it('Champions 에 없는 본가 도구는 고를 수 없다', () => {
     // 실제로 넣었다가 뺀 것들이다. 되돌아오면 여기서 잡힌다.
     for (const absent of ['Choice Band', 'Choice Specs', 'Assault Vest', 'Eviolite']) {
-      expect(terms.items.has(absent), `${absent} 이 도감에 생겼습니다 — 목록을 다시 보세요`).toBe(false);
-      expect(findItem(ATTACKER_ITEMS, absent)).toBeNull();
-      expect(findItem(DEFENDER_ITEMS, absent)).toBeNull();
+      expect(findItem(ATTACKER_ITEMS, absent), absent).toBeNull();
+      expect(findItem(DEFENDER_ITEMS, absent), absent).toBeNull();
     }
+  });
+
+  /*
+   * 도감(terms.json)과 선택지(items.ts)는 목적이 다르다.
+   *
+   * 도감은 **이름을 한국어로 옮기기 위한** 표다. 랭커 구축 데이터에는 Champions 배틀
+   * 데이터에 없는 도구가 한 번씩 섞여 나오는데, 그걸 일본어로 둘 수는 없으니 도감에는
+   * 담는다. 선택지는 그것과 별개로 계속 Champions 에 실재하는 것만 담는다.
+   *
+   * 그래서 "도감에 없어야 한다" 가 아니라 "고를 수 없어야 한다" 로 못박는다.
+   * 표시 전용으로 들어온 항목은 여기 적어서, 모르는 사이에 늘어나면 눈에 띄게 한다.
+   */
+  it('도감에 표시 전용으로 들어온 도구를 밝혀 둔다', () => {
+    const DISPLAY_ONLY = ['Assault Vest'];
+    const selectable = new Set(ALL.map((i) => i.name));
+    const extra = [...terms.items.keys()].filter((name) => !selectable.has(name));
+    for (const name of DISPLAY_ONLY) {
+      expect(terms.items.has(name), `${name} 은 표시용으로 도감에 있어야 합니다`).toBe(true);
+      expect(selectable.has(name), `${name} 이 계산기 선택지에 들어갔습니다`).toBe(false);
+    }
+    // 도감이 선택지보다 넓은 것 자체는 정상이다(배틀 데이터에서 모은 141종).
+    expect(extra.length).toBeGreaterThan(0);
   });
 
   it('계산에서 뺀 도구도 실재하는 것들이고 이유가 붙어 있다', () => {

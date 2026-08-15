@@ -1049,3 +1049,51 @@ select optgroup {
 
 /* 타격 수는 한 줄 안에서 폭을 차지하지 않게. */
 .calc__hits .sselect { min-width: 84px; }
+
+/* ---------- 통계 (상위 랭커 구축) ---------- */
+
+.stats__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.stats__head h2 { margin: 0; }
+.stats__season { min-width: 130px; }
+.stats__meta { margin: 4px 0 16px; font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+.stats__source { font-size: 12px; }
+.stats__section { margin-bottom: 22px; }
+.stats__section h3 { margin: 0 0 2px; }
+.stats__note { margin: 0 0 8px; font-size: 12px; color: var(--text-dim); }
+.stats__list { display: grid; gap: 1px; }
+
+/*
+ * 이름은 길이가 제각각이고 도구 줄은 더 길다. 한 줄에 다 밀어 넣으면 잘리므로
+ * 이름·막대를 윗줄에 두고 도구를 아랫줄 전체에 깐다 (사용률 막대와 같은 방식).
+ */
+.stats__row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) minmax(96px, 1.4fr);
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.stats__row:last-child { border-bottom: 0; }
+.stats__rank { color: var(--text-dim); font-variant-numeric: tabular-nums; text-align: right; }
+.stats__name { overflow-wrap: anywhere; }
+.stats__sub {
+  grid-column: 2 / -1;
+  font-size: 12px;
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+}
+.stats__bar { display: grid; grid-template-columns: 1fr 46px; align-items: center; gap: 6px; }
+.stats__fill {
+  display: block;
+  height: 9px;
+  border-radius: 5px;
+  background: var(--accent);
+  min-width: 2px;
+}
+.stats__pct { font-size: 12px; color: var(--text-dim); font-variant-numeric: tabular-nums; text-align: right; }
+
+@media (max-width: 480px) {
+  .stats__row { grid-template-columns: 24px minmax(0, 1fr) minmax(80px, 1fr); }
+}

@@ -32,6 +32,14 @@ const SOURCES: SourceRow[] = [
       'championsbattledata 가 주는 수치는 종족값이 아니라 레벨 50 기준 실수치라, PokéAPI 의 종족값과 단위가 달라 섞지 않습니다. 9세대 신규 기술은 공식 한국어 설명이 없어 영문으로 표시됩니다.',
   },
   {
+    name: 'champs.pokedb.tokyo 공개 데이터',
+    url: 'https://champs.pokedb.tokyo/guide/opendata',
+    grade: 'A',
+    provides: '시즌별 상위 랭커의 팀 구성 (통계 탭)',
+    caveat:
+      '발행처 안내에 따라 앱이 직접 요청하지 않습니다 — 빌드 때 한 번 받아 이 사이트에 구워 넣은 집계만 씁니다. 상위 랭커 표본이라 래더 전체 사용률과 다릅니다.',
+  },
+  {
     name: 'Smogon 사용률 통계',
     url: 'https://www.smogon.com/stats/',
     grade: 'A',

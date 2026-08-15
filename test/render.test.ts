@@ -106,6 +106,29 @@ const FORM_NAMES = {
   'furfrou-heart-trim': '하트컷',
 };
 
+/** 상위 랭커 구축 집계. 빌드 산출물의 모양만 흉내낸다. */
+const RANKED_TEAMS = {
+  source: 'champs.pokedb.tokyo 공개 데이터',
+  sets: [
+    {
+      season: 'M-4', seasonNumber: 4, format: 'Singles', updatedAt: '2026-08-13 16:54:21',
+      teamCount: 2, slotCount: 4,
+      pokemon: [
+        { name: '한카리아스', showdownId: 'garchomp', teams: 2, share: 100, items: [{ name: '기합의띠', count: 2, share: 100 }] },
+        { name: '알로라 나인테일', showdownId: 'ninetalesalola', teams: 1, share: 50, items: [] },
+      ],
+      items: [{ name: '기합의띠', count: 2, share: 50 }],
+      pairs: [{ a: '한카리아스', b: '알로라 나인테일', count: 1, share: 50 }],
+    },
+    {
+      season: 'M-3', seasonNumber: 3, format: 'Singles', updatedAt: '2026-08-10 11:34:36',
+      teamCount: 1, slotCount: 1,
+      pokemon: [{ name: '따라큐', showdownId: null, teams: 1, share: 100, items: [] }],
+      items: [], pairs: [],
+    },
+  ],
+};
+
 /** 서버가 붙어 있고 랭킹만 꺼진 기본 상태. */
 const CONFIG = {
   version: 'v1',
@@ -139,6 +162,7 @@ function installFetch(overrides: Record<string, unknown | Error> = {}) {
     if (match('terms.json')) return new Response(JSON.stringify(TERMS), { status: 200 });
     if (match('locales.json')) return new Response(JSON.stringify(LOCALES), { status: 200 });
     if (match('formNames.json')) return new Response(JSON.stringify(FORM_NAMES), { status: 200 });
+    if (match('rankedTeams.json')) return new Response(JSON.stringify(RANKED_TEAMS), { status: 200 });
     if (match('counters-')) return new Response(JSON.stringify(COUNTERS), { status: 200 });
     if (match('builds.json')) return new Response(JSON.stringify([]), { status: 200 });
     return new Response('not found', { status: 404 });
@@ -479,6 +503,57 @@ describe('싱글·더블 토글', () => {
 
     await mountApp('#/p/garchomp');
     expect(document.querySelector('.shell__controls')).not.toBeNull();
+  });
+});
+
+describe('통계 (상위 랭커 구축)', () => {
+  it('채용률·도구·조합을 낸다', async () => {
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.stats__row')).not.toBeNull();
+    });
+    const text = document.body.textContent ?? '';
+    expect(text).toContain('한카리아스');
+    expect(text).toContain('기합의띠');
+    expect(text).toContain('한카리아스 + 알로라 나인테일');
+    // 우리가 받은 시각이 아니라 원본 집계 시각을 밝힌다.
+    expect(text).toContain('2026-08-13 16:54:21');
+    expect(text).toContain('champs.pokedb.tokyo');
+  });
+
+  it('로스터에 있는 종은 상세로 이어진다', async () => {
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.stats__row')).not.toBeNull();
+    });
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('.stats__name a')];
+    expect(links.some((a) => a.getAttribute('href')?.includes('garchomp'))).toBe(true);
+  });
+
+  it('시즌을 고르면 그 시즌만 보여준다', async () => {
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.stats__season')).not.toBeNull();
+    });
+    expect(document.body.textContent).toContain('한카리아스');
+
+    pickFrom(document.querySelector('.stats__season')!, '시즌 M-3');
+    expect(document.body.textContent).toContain('따라큐');
+    expect(document.body.textContent).not.toContain('한카리아스');
+  });
+
+  it('그 포맷 집계가 없으면 없다고 말한다 — 다른 포맷 숫자를 대신 쓰지 않는다', async () => {
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.stats__row')).not.toBeNull();
+    });
+    // 픽스처에는 더블 집계가 없다.
+    const toggle = [...document.querySelectorAll<HTMLButtonElement>('.toggle__button')];
+    toggle.find((b) => b.textContent === '더블')!.click();
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('이 시즌에는 없습니다');
+    });
+    expect(document.querySelector('.stats__row')).toBeNull();
   });
 });
 

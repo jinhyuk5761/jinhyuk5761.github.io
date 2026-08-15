@@ -12,6 +12,7 @@ import { renderCalculator } from './views/calculator';
 import { renderAbilityDexView, renderMoveDexView } from './views/dex';
 import { renderDetail } from './views/detail';
 import { renderRanking } from './views/ranking';
+import { renderStats } from './views/stats';
 import { renderSearch } from './views/search';
 import { renderSources } from './views/sources';
 import './styles.css';
@@ -79,6 +80,7 @@ function shellHeader(route: Route): HTMLElement {
       navLink('/', '검색', route),
       navLink('/moves', '기술', route),
       navLink('/abilities', '특성', route),
+      navLink('/stats', '통계', route),
       navLink('/calc', '계산기', route),
       // 랭킹 탭은 서버가 "데이터 있음"이라고 알려줄 때만 나타난다.
       // config 를 주기적으로 다시 확인하므로, 랭킹이 붙으면 새로고침 없이 탭이 생긴다.
@@ -93,7 +95,7 @@ function shellHeader(route: Route): HTMLElement {
 
 /** 이 화면의 내용이 싱글·더블에 따라 달라지는가. */
 function usesFormat(route: Route): boolean {
-  return route.path === '/' || route.path === '/p' || route.path === '/calc';
+  return ['/', '/p', '/calc', '/stats'].includes(route.path);
 }
 
 function shellFooter(): HTMLElement {
@@ -139,6 +141,9 @@ function renderRoute(route: Route): void {
     // 팝업 전용 화면. 계산 로직은 같고 화면 껍데기만 벗긴다.
     case '/mini':
       renderCalculator(main, route);
+      break;
+    case '/stats':
+      renderStats(main);
       break;
     case '/ranking':
       renderRanking(main);

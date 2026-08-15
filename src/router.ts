@@ -7,6 +7,7 @@
  *   #/compare     두 포켓몬 비교 (M4)
  *   #/calc        대미지 계산기
  *   #/builds      동결 시즌 구축 (M5)
+ *   #/stats       상위 랭커 구축 집계
  *   #/ranking     트레이너 랭킹 (M6, 옵션)
  *   #/sources     데이터 출처 (설계 문서 6절 — 필수)
  */
@@ -29,7 +30,7 @@ export function parseHash(hash: string): Route {
     return { path: '/p', params: { id: decodeURIComponent(segments[1]) }, query };
   }
 
-  const known = ['moves', 'abilities', 'calc', 'mini', 'ranking', 'sources'];
+  const known = ['moves', 'abilities', 'stats', 'calc', 'mini', 'ranking', 'sources'];
   if (known.includes(segments[0] as string)) {
     return { path: `/${segments[0]}`, params: {}, query };
   }

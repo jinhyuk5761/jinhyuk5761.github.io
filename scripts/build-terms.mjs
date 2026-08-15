@@ -166,8 +166,18 @@ async function main() {
 
   // --- 도구·성격: 배틀 데이터에서 모은다 ---
   log(`배틀 데이터 수집 시작 (${entries.length}종 × 2포맷)`);
-  const { items: itemNames, natures: natureNames } = await collectFromBattleData(entries, log);
-  log(`도구 ${itemNames.length}개, 성격 ${natureNames.length}개`);
+  const { items: collectedItems, natures: natureNames } = await collectFromBattleData(entries, log);
+
+  /*
+   * 랭커 구축 데이터(pokedb)에는 나오는데 Champions 배틀 데이터에는 없는 도구.
+   *
+   * **표시 전용이다.** 계산기의 선택지는 `core/items.ts` 의 목록에서 오므로 여기에
+   * 더해도 고를 수 있게 되지 않는다 — 13절의 "없는 도구를 고르게 두지 않는다" 는 그대로다.
+   * 한국어는 PokéAPI 가 준다. 손으로 적지 않는다.
+   */
+  const DISPLAY_ONLY_ITEMS = ['Assault Vest'];
+  const itemNames = [...new Set([...collectedItems, ...DISPLAY_ONLY_ITEMS])];
+  log(`도구 ${itemNames.length}개(표시 전용 ${DISPLAY_ONLY_ITEMS.length} 포함), 성격 ${natureNames.length}개`);
 
   // --- 타입 (18종) ---
   const typeIndex = await loadSlugIndex('type', 100);
@@ -317,6 +327,8 @@ async function main() {
       items[name] = {
         // PokéAPI 가 한국어를 안 주는 도구가 있다 (요정의깃털 등 최신 도구).
         ko: pickName(it.names, ['ko']) ?? ITEM_KO_OVERRIDE[name] ?? null,
+        // 랭커 구축 데이터가 도구를 일본어로 적어 온다. 되짚을 다리로 쓴다.
+        ja: pickName(it.names, ['ja', 'ja-Hrkt']) ?? null,
         desc: pickFlavor(it.flavor_text_entries, 'ko', 'version_group'),
         descEn: pickFlavor(it.flavor_text_entries, 'en', 'version_group'),
       };

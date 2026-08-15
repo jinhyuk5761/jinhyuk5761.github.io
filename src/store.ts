@@ -10,7 +10,8 @@
 
 import { fetchIndex, type ChampionsIndex } from './adapters/championsBattleData';
 import { OFFLINE_CONFIG, fetchAppConfig, type AppConfig } from './adapters/appConfig';
-import { applyLocales, fetchLocales, type LocaleMap } from './adapters/pokeApi';
+import { applyLocales, fetchFormNames, fetchLocales, type LocaleMap } from './adapters/pokeApi';
+import type { FormNameMap } from './core/formNames';
 import { fetchTermDex, type TermDex } from './adapters/termDex';
 import type { Format } from './types';
 
@@ -20,6 +21,8 @@ export interface AppState {
   theme: Theme;
   index: ChampionsIndex | null;
   locales: LocaleMap;
+  /** 폼 slug → 공식 한국어 폼 표기. 없으면 폼 이름이 영문으로 남는다. */
+  formNames: FormNameMap;
   /** 타입·도구·특성·성격의 한국어 명칭. 없으면 영문으로 열화한다. */
   terms: TermDex | null;
   config: AppConfig;
@@ -92,6 +95,7 @@ export const state: AppState = {
   theme: loadPrefs().theme,
   index: null,
   locales: new Map(),
+  formNames: new Map(),
   terms: null,
   config: OFFLINE_CONFIG,
   indexError: null,
@@ -120,12 +124,14 @@ export function setFormat(format: Format): void {
 
 /** 앱 부팅. 인덱스는 필수, 로케일과 config 는 선택적 보강이다. */
 export async function bootstrap(): Promise<void> {
-  const [indexResult, localeResult, configResult, termResult] = await Promise.allSettled([
+  const [indexResult, localeResult, configResult, termResult, formNameResult] =
+    await Promise.allSettled([
     fetchIndex(),
     fetchLocales(),
     fetchAppConfig(),
     // 타입 배지가 검색 목록부터 한국어로 나와야 해서 부팅 때 함께 받는다 (47KB).
     fetchTermDex(),
+    fetchFormNames(),
   ]);
 
   if (indexResult.status === 'fulfilled') {
@@ -144,6 +150,8 @@ export async function bootstrap(): Promise<void> {
   }
 
   if (configResult.status === 'fulfilled') state.config = configResult.value;
+
+  if (formNameResult.status === 'fulfilled') state.formNames = formNameResult.value;
 
   if (termResult.status === 'fulfilled' && termResult.value.status === 'ok') {
     state.terms = termResult.value.data;

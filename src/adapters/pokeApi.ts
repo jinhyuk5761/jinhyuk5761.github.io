@@ -9,6 +9,7 @@
  * PokéAPI 수치를 섞으면 틀린 값이 화면에 나간다. 수치의 유일한 출처는 championsbattledata 다.
  */
 
+import type { FormNameMap } from '../core/formNames';
 import { TTL, fetchJson } from '../core/http';
 import type { Pokemon } from '../types';
 
@@ -41,6 +42,23 @@ export function normalizeLocales(raw: Record<string, RawLocaleEntry>): LocaleMap
     if (entry?.koSpecies) names.koSpecies = entry.koSpecies;
     if (entry?.jaSpecies) names.jaSpecies = entry.jaSpecies;
     map.set(showdownId, names);
+  }
+  return map;
+}
+
+/**
+ * 폼 이름의 공식 한국어 표기.
+ *
+ * 빌드 산출물이라 실패해도 앱은 산다 — 그때는 폼 이름이 영문으로 남을 뿐이다.
+ */
+export async function fetchFormNames(): Promise<FormNameMap> {
+  const { data } = await fetchJson<Record<string, string>>(
+    `${import.meta.env.BASE_URL}data/formNames.json`,
+    { ttlMs: TTL.buildArtifact, timeoutMs: 15_000, persist: true },
+  );
+  const map: FormNameMap = new Map();
+  for (const [slug, korean] of Object.entries(data ?? {})) {
+    if (slug && korean) map.set(slug, korean);
   }
   return map;
 }

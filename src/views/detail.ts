@@ -23,17 +23,7 @@ import { defensiveProfile } from '../core/typechart';
 import { href } from '../router';
 import { findPokemon, state } from '../store';
 import type { CounterBlock, Pokemon, PokemonForm, TypeName, UsageReport } from '../types';
-import {
-  CATEGORY_LABEL,
-  STAT_LABEL,
-  counterLabel,
-  moveRow,
-  sectionTitle,
-  termBar,
-  sprite,
-  typeBadge,
-  usageBar,
-} from './components';
+import { CATEGORY_LABEL, STAT_LABEL, counterLabel, moveRow, sectionTitle, sprite, spriteFallbacks, termBar, typeBadge, usageBar } from './components';
 
 type Tab = 'usage' | 'counters' | 'moves';
 
@@ -150,7 +140,7 @@ function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTML
       ? (() => {
           const select = el('select', { class: 'form-select', 'aria-label': '폼 선택' });
           for (const candidate of mon.forms) {
-            const option = el('option', { value: candidate.slug }, formDisplayName(mon, candidate, state.index?.pokemon ?? []));
+            const option = el('option', { value: candidate.slug }, formDisplayName(mon, candidate, state.index?.pokemon ?? [], state.formNames));
             if (candidate.slug === form.slug) option.setAttribute('selected', 'selected');
             select.appendChild(option);
           }
@@ -167,7 +157,7 @@ function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTML
   return el(
     'header',
     { class: 'detail__header' },
-    sprite(form, 'lg'),
+    sprite(form, 'lg', spriteFallbacks(mon, form)),
     el(
       'div',
       { class: 'detail__meta' },

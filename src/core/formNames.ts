@@ -11,6 +11,9 @@
 
 import type { Pokemon, PokemonForm } from '../types';
 
+/** 폼 slug → 공식 한국어 폼 표기. `scripts/build-form-names.mjs` 산출물. */
+export type FormNameMap = Map<string, string>;
+
 /** 영문 접두어 → 한국어 접두어. 뒤에 종족명이 붙는다. */
 const PREFIXES: [RegExp, string][] = [
   [/^Mega\s+/i, '메가 '],
@@ -37,15 +40,12 @@ export function formDisplayName(
   mon: Pokemon,
   form: PokemonForm,
   index: Pokemon[] = [],
+  formNames: FormNameMap | null = null,
 ): string {
-  // 1) 이 폼을 대표로 갖는 종이 따로 있으면 그 종의 한국어명이 정답이다.
-  const owner = index.find((candidate) => candidate.primary.slug === form.slug);
-  if (owner && owner.displayName !== owner.name) return owner.displayName;
-
-  // 2) 대표 폼이면 종 이름 그대로.
+  // 1) 대표 폼이면 종 이름 그대로.
   if (form.slug === mon.primary.slug) return mon.displayName;
 
-  // 3) 접두어 규칙. 종 한국어명에서 지역 접두어를 떼어 '순수 종족명' 을 얻는다.
+  // 2) 접두어 규칙. 종 한국어명에서 지역 접두어를 떼어 '순수 종족명' 을 얻는다.
   const speciesKo = stripRegion(mon.displayName);
   for (const [pattern, korean] of PREFIXES) {
     if (pattern.test(form.formName)) {
@@ -53,7 +53,20 @@ export function formDisplayName(
     }
   }
 
-  // 4) 규칙에 없는 폼은 영문 그대로 둔다.
+  // 3) 공식 폼 표기(PokéAPI). 트리밍·무늬·크림처럼 접두어 규칙이 안 통하는 폼들이다.
+  //    '워시로토무' 처럼 종족명을 이미 품고 있으면 그대로, '하트컷' 처럼 수식어만
+  //    있으면 종족명을 앞에 붙인다.
+  const official = formNames?.get(form.slug);
+  if (official) {
+    return official.includes(speciesKo) ? official : `${speciesKo} ${official}`;
+  }
+
+  // 4) 이 폼을 대표로 갖는 종이 따로 있으면 그 종의 한국어명을 쓴다.
+  //    로토무처럼 종 이름이 폼마다 같으면 서로 구분이 안 되므로 3) 다음에 본다.
+  const owner = index.find((candidate) => candidate.primary.slug === form.slug);
+  if (owner && owner.displayName !== owner.name) return owner.displayName;
+
+  // 5) 공식 표기를 못 찾은 폼은 영문 그대로 둔다. 지어낸 번역보다 낫다.
   return form.formName;
 }
 

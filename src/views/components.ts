@@ -50,14 +50,47 @@ export function typeBadge(type: TypeName): HTMLElement {
   );
 }
 
-export function sprite(form: PokemonForm, size: 'sm' | 'lg' = 'sm'): HTMLElement {
-  if (!form.spriteUrl) return el('div', { class: `sprite sprite--${size} sprite--missing` }, '?');
-  return el('img', {
+export function sprite(
+  form: PokemonForm,
+  size: 'sm' | 'lg' = 'sm',
+  fallbacks: string[] = [],
+): HTMLElement {
+  const missing = (): HTMLElement =>
+    el('div', { class: `sprite sprite--${size} sprite--missing` }, '?');
+
+  if (!form.spriteUrl) return missing();
+
+  const img = el('img', {
     class: `sprite sprite--${size}`,
     src: form.spriteUrl,
     alt: form.formName,
     loading: 'lazy',
+  }) as HTMLImageElement;
+
+  /*
+   * 상류에 없는 스프라이트가 있다(트리미앙 트리밍 9종, Fan Rotom).
+   * 404 가 아니라 **200 에 HTML** 이 와서 URL 만 보고는 걸러낼 수 없다.
+   * 그래서 실제로 그려보고 실패하면 같은 종의 다른 폼 그림으로 물러난다.
+   * 전부 실패하면 '?' 를 둔다 — 깨진 이미지 아이콘보다 낫다.
+   */
+  const queue = fallbacks.filter((url) => url && url !== form.spriteUrl);
+  img.addEventListener('error', () => {
+    const next = queue.shift();
+    if (next) img.src = next;
+    else img.replaceWith(missing());
   });
+  return img;
+}
+
+/**
+ * 이 폼의 그림이 없을 때 대신 쓸 그림들. 대표 폼을 먼저 본다.
+ *
+ * 트리미앙 트리밍처럼 겉모습만 다른 폼이라 다른 폼의 그림으로 물러나도
+ * 다른 포켓몬을 보여주게 되지는 않는다.
+ */
+export function spriteFallbacks(mon: Pokemon, form: PokemonForm): string[] {
+  const urls = [mon.primary.spriteUrl, ...mon.forms.map((f) => f.spriteUrl)];
+  return [...new Set(urls)].filter((url) => url && url !== form.spriteUrl);
 }
 
 /**
@@ -81,7 +114,7 @@ export function monCard(mon: Pokemon, rankFormat: Format | null = null): HTMLEle
           rank === null ? '—' : String(rank),
         )
       : null,
-    sprite(mon.primary),
+    sprite(mon.primary, 'sm', spriteFallbacks(mon, mon.primary)),
     el(
       'div',
       { class: 'card__body' },

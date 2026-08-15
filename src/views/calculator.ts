@@ -59,7 +59,7 @@ import {
 import { href, type Route } from '../router';
 import { findPokemon, state } from '../store';
 import type { Pokemon, PokemonForm, UsageReport } from '../types';
-import { sectionTitle, sprite, typeBadge } from './components';
+import { sectionTitle, sprite, spriteFallbacks, typeBadge } from './components';
 import { searchSelect, type SearchOption } from './searchSelect';
 
 const BATTLE_STATS = ['atk', 'def', 'spa', 'spd', 'spe'] as const;
@@ -577,7 +577,7 @@ function sidePanel(
     el(
       'div',
       { class: 'calc__mon' },
-      sprite(form),
+      sprite(form, 'sm', spriteFallbacks(mon, form)),
       el(
         'div',
         {},
@@ -592,7 +592,7 @@ function sidePanel(
       searchSelect({
         options: mon.forms.map((candidate) => ({
           value: candidate.slug,
-          label: formDisplayName(mon, candidate, state.index?.pokemon ?? []),
+          label: formDisplayName(mon, candidate, state.index?.pokemon ?? [], state.formNames),
         })),
         value: form.slug,
         placeholder: '폼 선택',

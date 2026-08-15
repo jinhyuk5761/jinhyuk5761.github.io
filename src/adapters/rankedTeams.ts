@@ -73,7 +73,33 @@ export interface RankedTeams {
 export async function fetchRankedTeams(): Promise<RankedTeams> {
   const { data } = await fetchJson<RankedTeams>(
     `${import.meta.env.BASE_URL}data/rankedTeams.json`,
-    { ttlMs: TTL.buildArtifact, timeoutMs: 20_000, persist: true },
+    /*
+     * localStorage 에 담지 않는다(`persist: false`).
+     *
+     * 800KB 짜리라 다른 캐시를 밀어낼 만큼 크고, 무엇보다 **모양이 바뀌면 발이 묶인다** —
+     * 팀 목록을 넣기 전 응답이 24시간 동안 남아 화면이 통째로 터졌다.
+     * 오프라인 대비는 서비스워커의 DATA_CACHE 가 이미 맡고 있다.
+     */
+    { ttlMs: TTL.buildArtifact, timeoutMs: 20_000 },
   );
-  return { source: data?.source ?? '', sets: data?.sets ?? [] };
+  return normalizeRankedTeams(data);
+}
+
+/**
+ * 빠진 칸을 채워 화면이 터지지 않게 한다.
+ *
+ * 산출물의 모양은 앞으로도 바뀐다. 그때마다 옛 응답을 들고 있는 사람의 화면이
+ * 깨지면 안 되므로, 없는 것은 빈 목록으로 보고 있는 것만 그린다.
+ */
+export function normalizeRankedTeams(data: RankedTeams | null | undefined): RankedTeams {
+  return {
+    source: data?.source ?? '',
+    sets: (data?.sets ?? []).map((set) => ({
+      ...set,
+      teams: set.teams ?? [],
+      pokemon: set.pokemon ?? [],
+      items: set.items ?? [],
+      pairs: set.pairs ?? [],
+    })),
+  };
 }

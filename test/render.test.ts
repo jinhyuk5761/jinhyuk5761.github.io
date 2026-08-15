@@ -622,6 +622,36 @@ describe('통계 실패 안내', () => {
   });
 });
 
+describe('통계 — 예전 모양의 응답', () => {
+  it('teams 가 없던 시절 응답을 들고 있어도 터지지 않는다', async () => {
+    /*
+     * 실제로 겪은 일이다. rankedTeams.json 을 localStorage 에 24시간 캐시했는데,
+     * 팀 목록을 넣기 전 응답이 남아 있어 화면이 통째로 터졌다.
+     * 산출물 모양은 앞으로도 바뀌므로 빠진 칸은 빈 목록으로 본다.
+     */
+    const old = {
+      source: 'champs.pokedb.tokyo 공개 데이터',
+      sets: [
+        {
+          season: 'M-4', seasonNumber: 4, format: 'Singles', updatedAt: '2026-08-13 16:54:21',
+          teamCount: 2, slotCount: 4,
+          pokemon: [{ name: '한카리아스', showdownId: 'garchomp', teams: 2, share: 100, items: [] }],
+          items: [], pairs: [],
+        },
+      ],
+    };
+    installFetch({ 'rankedTeams.json': old });
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.stats__section')).not.toBeNull();
+    });
+    expect(document.querySelector('.notice--error')).toBeNull();
+    // 팀은 없지만 집계는 그대로 보인다.
+    expect(document.querySelectorAll('.team')).toHaveLength(0);
+    expect(document.body.textContent).toContain('한카리아스');
+  });
+});
+
 describe('M3 카운터', () => {
   it('카운터 표를 낸다', async () => {
     await mountApp('#/p/garchomp');

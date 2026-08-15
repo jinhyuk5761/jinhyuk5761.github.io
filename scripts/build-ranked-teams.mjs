@@ -179,6 +179,8 @@ function aggregate(file, dict) {
 
   const monTeams = new Map();
   const monItems = new Map();
+  /** 표시명 → showdownId. 이름으로 다시 찾지 않고 해석 단계의 결과를 그대로 쓴다. */
+  const monIds = new Map();
   const items = new Map();
   const pairs = new Map();
   let slots = 0;
@@ -192,7 +194,10 @@ function aggregate(file, dict) {
     for (const p of members) {
       slots += 1;
       const resolved = dict.member(p);
-      const ko = dict.species(p.pokemon);
+      // 집계도 팀 목록과 같은 이름을 쓴다. 예전에는 종족명만 세서
+      // '히스이 윈디' 가 '윈디' 로 뭉뚱그려졌다.
+      const ko = resolved.name;
+      if (resolved.showdownId && !monIds.has(ko)) monIds.set(ko, resolved.showdownId);
       seen.add(ko);
       row.push({ name: resolved.name, id: resolved.showdownId, item: dict.item(p.item) });
       monTeams.set(ko, (monTeams.get(ko) ?? 0) + 1);
@@ -228,7 +233,7 @@ function aggregate(file, dict) {
     const topItems = perMon ? tally(perMon, row.count).slice(0, 3) : [];
     return {
       name: row.name,
-      showdownId: null,
+      showdownId: monIds.get(row.name) ?? null,
       teams: row.count,
       share: row.share,
       items: topItems,
@@ -274,19 +279,6 @@ async function main() {
     const raw = JSON.parse(await readFile(path.join(SRC_DIR, name), 'utf8'));
     if (!RULE_TO_FORMAT[raw.rule]) throw new Error(`알 수 없는 규칙: ${raw.rule} (${name})`);
     sets.push(aggregate(raw, dict));
-  }
-
-  // 종족의 한국어명을 showdownId 로도 되짚어 둔다 — 화면에서 상세로 넘어갈 때 쓴다.
-  const idByKo = new Map();
-  for (const [ja, id] of Object.entries(locales).map(([id, v]) => [v.ja, id])) {
-    if (ja) idByKo.set(locales[id]?.ko ?? '', id);
-  }
-  for (const [id, v] of Object.entries(locales)) {
-    if (v.ko && !idByKo.has(v.ko)) idByKo.set(v.ko, id);
-    if (v.koSpecies && !idByKo.has(v.koSpecies)) idByKo.set(v.koSpecies, id);
-  }
-  for (const set of sets) {
-    for (const row of set.pokemon) row.showdownId = idByKo.get(row.name) ?? null;
   }
 
   sets.sort((a, b) => b.seasonNumber - a.seasonNumber || a.format.localeCompare(b.format));

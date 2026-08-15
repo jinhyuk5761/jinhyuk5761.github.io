@@ -594,6 +594,34 @@ describe('통계 (상위 랭커 구축)', () => {
   });
 });
 
+describe('통계 — 실데이터', () => {
+  it('실제 rankedTeams.json 으로도 그려진다', async () => {
+    const real = JSON.parse(readFileSync('public/data/rankedTeams.json', 'utf8'));
+    installFetch({ 'rankedTeams.json': real });
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.team, .notice--error')).not.toBeNull();
+    });
+    // 실패하면 무엇이 터졌는지 보이도록 화면 글자를 함께 남긴다.
+    expect(document.querySelector('.notice--error')?.textContent ?? '정상').toBe('정상');
+    expect(document.querySelectorAll('.team').length).toBeGreaterThan(0);
+  });
+});
+
+describe('통계 실패 안내', () => {
+  it('못 받은 것과 못 그린 것을 구분해 말한다', async () => {
+    installFetch({ 'rankedTeams.json': new Error('연결 끊김') });
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.notice--error')).not.toBeNull();
+    });
+    const text = document.querySelector('.notice--error')!.textContent ?? '';
+    // 사유가 없으면 네트워크 문제인지 코드 문제인지 알 수 없다.
+    expect(text).toContain('받지 못했습니다');
+    expect(text).toContain('연결 끊김');
+  });
+});
+
 describe('M3 카운터', () => {
   it('카운터 표를 낸다', async () => {
     await mountApp('#/p/garchomp');

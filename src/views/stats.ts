@@ -18,6 +18,12 @@ import { searchSelect } from './searchSelect';
 /** 한 번에 보여줄 팀 수. 시즌에 따라 500팀이 넘어 전부 그리면 느리다. */
 const PAGE = 20;
 
+/** 안내문에 붙일 실패 사유. 무엇이 잘못됐는지 사람이 읽을 수 있어야 고칠 수 있다. */
+function reason(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}
+
 /** 마지막으로 본 시즌. 포맷을 바꿔도 보던 시즌은 유지한다. */
 let activeSeason: number | null = null;
 
@@ -27,19 +33,32 @@ export function renderStats(container: HTMLElement): void {
   container.appendChild(page);
   page.appendChild(notice('loading', '구축 데이터를 불러오는 중…'));
 
-  fetchRankedTeams()
-    .then((data) => {
+  /*
+   * 받는 것과 그리는 것을 갈라 잡는다.
+   *
+   * 예전에는 하나의 catch 로 묶어서 "불러오지 못했습니다" 만 띄웠는데,
+   * `.catch` 는 `.then` 안에서 난 예외도 잡는다 — 화면을 그리다 터진 것과
+   * 네트워크가 끊긴 것이 같은 문구로 보여서 어느 쪽인지 알 수 없었다.
+   */
+  fetchRankedTeams().then(
+    (data) => {
       clear(page);
       if (data.sets.length === 0) {
         page.appendChild(notice('empty', '집계된 구축 데이터가 없습니다.'));
         return;
       }
-      draw(page, data.sets, data.source);
-    })
-    .catch(() => {
+      try {
+        draw(page, data.sets, data.source);
+      } catch (error) {
+        clear(page);
+        page.appendChild(notice('error', `구축 화면을 그리지 못했습니다: ${reason(error)}`));
+      }
+    },
+    (error) => {
       clear(page);
-      page.appendChild(notice('error', '구축 데이터를 불러오지 못했습니다.'));
-    });
+      page.appendChild(notice('error', `구축 데이터를 받지 못했습니다: ${reason(error)}`));
+    },
+  );
 }
 
 function draw(page: HTMLElement, sets: RankedSet[], source: string): void {

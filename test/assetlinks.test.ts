@@ -33,17 +33,16 @@ describe('assetlinks.json', () => {
     }
   });
 
-  it('업로드 키와 Play 앱 서명 키를 모두 담는다', () => {
+  it('설치 경로별 인증서를 모두 담는다', () => {
     const prints: string[] = links[0].target.sha256_cert_fingerprints;
-    // 업로드 키 — android/app-release-signed.apk 의 인증서와 같아야 한다.
-    expect(prints).toContain(
+    expect(prints).toEqual([
+      // 업로드 키 — android/app-release-signed.apk 의 인증서. 직접 꽂아 설치할 때.
       'C7:96:56:FC:0E:9B:7F:92:6D:7B:30:C9:27:B7:6D:CB:A0:DD:EA:84:57:21:AB:C0:7B:A1:82:E2:DC:67:31:00',
-    );
-    // Play 앱 서명 키 — 스토어가 재서명해 사용자 폰에 내려주는 앱의 인증서.
-    // 이게 빠지면 스토어로 받은 사람만 주소줄 달린 웹 화면을 보게 된다.
-    expect(prints).toContain(
+      // Play Console 의 앱 서명 인증서들. 스토어가 재서명해 사용자 폰에 내려주는 쪽이다.
+      // 하나라도 빠지면 그 경로로 받은 사람만 주소줄 달린 웹 화면을 보게 된다.
       'AF:50:D1:EA:E7:C8:F9:BD:C2:05:0B:78:0F:5F:16:CD:12:B2:52:68:EC:79:33:15:02:81:9D:8E:CD:B2:B7:7E',
-    );
+      '61:5C:79:93:5E:9D:83:16:B6:19:98:87:DC:FD:75:A5:9C:BD:8B:22:10:44:21:04:90:9E:28:7E:0B:F3:26:0D',
+    ]);
     expect(new Set(prints).size).toBe(prints.length);
   });
 });

@@ -315,7 +315,9 @@ function usageSections(
           .map((key) => `${STAT_LABEL[key]} ${entry.points?.[key] ?? 0}`)
           .filter((text) => !text.endsWith(' 0'))
           .join(' / ');
-        section.appendChild(usageBar(spread || '분배 없음', entry.percentage, entry.percentageValue));
+        section.appendChild(
+          usageBar(spread || '분배 없음', entry.percentage, entry.percentageValue, { wrap: true }),
+        );
         continue;
       }
       if (block.category === 'held_item' && entry.name) {
@@ -335,7 +337,9 @@ function usageSections(
       if (block.category === 'stat_alignment' && entry.statUp) {
         // 성격명과 보정 스탯을 모두 한국어로. "Jolly (+Speed / −Sp. Atk)" → "명랑 (+스피드 / −특수공격)"
         const label = `${natureName(terms, entry.name)} (+${statText(entry.statUp)} / −${statText(entry.statDown)})`;
-        section.appendChild(usageBar(label, entry.percentage, entry.percentageValue));
+        section.appendChild(
+          usageBar(label, entry.percentage, entry.percentageValue, { wrap: true }),
+        );
         continue;
       }
       section.appendChild(usageBar(entry.name, entry.percentage, entry.percentageValue));

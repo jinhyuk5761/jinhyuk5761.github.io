@@ -355,6 +355,20 @@ h4 { font-size: 15px; margin: 0; }
 .bar__value { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-dim); }
 .bar__novalue { grid-column: 2 / span 2; font-size: 12px; color: var(--text-dim); }
 
+/*
+ * 성격 보정("명랑 (+스피드 / −특수공격)")과 노력치 분배는 좁은 라벨 칸에 들어가지 않아
+ * 앞부분만 남고 잘렸다. 이런 줄은 라벨을 한 줄 통째로 쓰고 막대를 그 아래에 깐다.
+ */
+.bar--wrap { grid-template-columns: 1fr 56px; row-gap: 4px; padding: 5px 0; }
+.bar--wrap .bar__label {
+  grid-column: 1 / -1;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.bar--wrap .bar__novalue { grid-column: 1 / -1; }
+
 /* ---------- 기술 ---------- */
 
 .move { border-bottom: 1px solid var(--border); }
@@ -658,6 +672,12 @@ h4 { font-size: 15px; margin: 0; }
   .compare__vs { justify-self: center; }
   .shell__controls { margin-left: 0; width: 100%; }
   .bar { grid-template-columns: minmax(90px, 1fr) 2fr 48px; }
+  /*
+   * 위의 `.bar` 는 특정도가 `.bar--wrap` 과 같고 뒤에 오므로 그냥 두면
+   * 좁은 화면에서 라벨 한 줄짜리 배치가 다시 3열로 되돌아간다.
+   * 막대가 첫 칸으로 쪼그라들고 비율이 가운데 붕 뜬다. 여기서 다시 못박는다.
+   */
+  .bar--wrap { grid-template-columns: 1fr 48px; }
   /* 좁은 화면에서는 제원을 이름 아래 줄로 내린다 */
   .move__head { grid-template-columns: auto 1fr 2fr 46px; row-gap: 2px; }
   .move__meta { grid-column: 2 / -1; grid-row: 2; white-space: normal; }
@@ -952,10 +972,10 @@ select optgroup {
 .sselect__caret { color: var(--text-dim); font-size: 10px; }
 
 /*
- * 패널은 화면 최상단에 고정한다.
+ * 패널은 버튼 바로 위에 붙인다.
  *
  * 버튼 아래에 붙이면 검색창 포커스로 올라온 키보드가 덮는다. 자리·크기는
- * 스크립트가 visualViewport 로 재서 top/left/width/max-height 를 직접 넣는다.
+ * 스크립트가 visualViewport 로 재서 top/bottom/left/width/max-height 를 직접 넣는다.
  */
 .sselect__panel {
   position: fixed;

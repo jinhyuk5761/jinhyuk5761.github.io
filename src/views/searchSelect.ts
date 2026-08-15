@@ -116,14 +116,16 @@ export function searchSelect(config: SearchSelectOptions): HTMLElement {
   const GAP = 8;
   /** 좁은 칸(랭크)에 붙어도 목록이 읽히도록 하는 최소 너비. */
   const MIN_WIDTH = 220;
+  /** 이만큼도 안 나오는 쪽으로는 펴지 않는다. 목록이 두어 줄만 보이면 못 쓴다. */
+  const MIN_HEIGHT = 180;
 
   /**
-   * 패널을 화면 맨 위에 붙인다.
+   * 패널을 버튼 바로 위에 붙인다.
    *
-   * 버튼 아래에 펴면 검색창 포커스로 올라온 키보드가 그대로 덮는다. 위로 펴는 것도
-   * 버튼이 화면 위쪽에 있으면 자리가 안 나온다. 아예 화면 최상단에 고정하면
-   * 버튼이 어디 있든 키보드와 겹치지 않는다.
+   * 버튼 아래로 펴면 검색창 포커스로 올라온 키보드가 그대로 덮는다. 위로 펴면
+   * 키보드는 늘 패널보다 아래에 있고, 고른 값이 들어갈 버튼도 눈에 같이 들어온다.
    *
+   * 자리가 안 나오는 경우(화면 꼭대기의 버튼)에만 아래로 내린다. 어느 쪽이든
    * 높이는 `visualViewport` 로 잰다 — 키보드가 뜨면 이 값이 줄어들므로
    * 목록이 키보드 밑으로 흘러 들어가지 않는다.
    */
@@ -143,11 +145,31 @@ export function searchSelect(config: SearchSelectOptions): HTMLElement {
       Math.max(viewLeft + GAP, viewLeft + viewWidth - width - GAP),
     );
 
-    panel.style.top = `${viewTop + GAP}px`;
+    /*
+     * 패널이 걸릴 자리. 버튼에 맞추되 보이는 영역 밖으로는 나가지 않는다 —
+     * 키보드가 이미 버튼을 덮고 있으면 버튼이 아니라 키보드 윗선에 건다.
+     */
+    const viewBottom = viewTop + viewHeight;
+    const upEdge = Math.min(rect.top - GAP, viewBottom - GAP);
+    const downEdge = Math.max(rect.bottom + GAP, viewTop + GAP);
+    const above = upEdge - viewTop - GAP;
+    const below = viewBottom - GAP - downEdge;
+    // 위가 좁으면(화면 꼭대기의 버튼) 아래로 내린다.
+    const up = above >= MIN_HEIGHT || above >= below;
+
+    if (up) {
+      // 아래 끝을 버튼에 걸어두면 항목이 몇 개든 버튼 바로 위에서 자란다.
+      // fixed 의 bottom 은 레이아웃 뷰포트 기준이라 innerHeight 에서 뺀다.
+      panel.style.top = 'auto';
+      panel.style.bottom = `${window.innerHeight - upEdge}px`;
+    } else {
+      panel.style.bottom = 'auto';
+      panel.style.top = `${downEdge}px`;
+    }
     panel.style.left = `${left}px`;
     panel.style.right = 'auto';
     panel.style.width = `${width}px`;
-    panel.style.maxHeight = `${Math.max(160, viewHeight - GAP * 2)}px`;
+    panel.style.maxHeight = `${Math.max(120, up ? above : below)}px`;
   }
 
   function close(): void {

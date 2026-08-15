@@ -3,8 +3,8 @@
  *
  * 드롭다운 패널이 뜨는 자리.
  *
- * 버튼 아래에 펴면 검색창 포커스로 올라온 키보드가 목록을 덮는다. 그래서 버튼이
- * 어디 있든 패널은 화면 맨 위에 붙인다.
+ * 버튼 아래에 펴면 검색창 포커스로 올라온 키보드가 목록을 덮는다. 그래서 패널은
+ * 버튼 바로 위에 붙이고, 위가 좁을 때만 아래로 내린다.
  *
  * jsdom 은 레이아웃을 계산하지 않으므로 버튼 위치와 화면 크기를 직접 심어서 잰다.
  */
@@ -28,8 +28,12 @@ function put(root: HTMLElement, box: { top: number; left: number; width: number 
     }) as DOMRect;
 }
 
-/** 키보드가 올라온 상태를 흉내낸다 — 보이는 높이가 줄어든다. */
-function setViewport(width: number, height: number): void {
+/**
+ * 키보드가 올라온 상태를 흉내낸다 — 보이는 높이(visualViewport)만 줄고
+ * 레이아웃 높이(innerHeight)는 그대로다. 실제 브라우저와 같은 모양이다.
+ */
+function setViewport(width: number, height: number, layoutHeight = height): void {
+  Object.defineProperty(window, 'innerHeight', { value: layoutHeight, configurable: true });
   Object.defineProperty(window, 'visualViewport', {
     value: { width, height, offsetTop: 0, offsetLeft: 0, addEventListener() {}, removeEventListener() {} },
     configurable: true,
@@ -59,25 +63,49 @@ afterEach(() => {
 });
 
 describe('드롭다운 자리', () => {
-  it('버튼이 화면 아래에 있어도 패널은 맨 위에 뜬다', () => {
+  it('패널은 버튼 바로 위에 뜬다', () => {
     setViewport(400, 800);
     const root = build();
     put(root, { top: 700, left: 20, width: 300 });
     open(root);
-    expect(panelOf(root).style.top).toBe('8px');
+    const panel = panelOf(root);
+    // 아래 끝이 버튼 위 8px. bottom 은 화면 아래에서 잰 값이라 800 - (700 - 8).
+    expect(panel.style.bottom).toBe('108px');
+    expect(panel.style.top).toBe('auto');
   });
 
-  it('키보드가 올라오면 그만큼 높이를 줄인다', () => {
+  it('화면 꼭대기의 버튼이면 아래로 내린다', () => {
+    setViewport(400, 800);
+    const root = build();
+    put(root, { top: 4, left: 20, width: 300 });
+    open(root);
+    const panel = panelOf(root);
+    expect(panel.style.top).toBe('44px'); // 버튼 아래끝(36) + 8
+    expect(panel.style.bottom).toBe('auto');
+  });
+
+  it('버튼 위에 남는 높이까지만 편다', () => {
+    setViewport(400, 800);
+    const root = build();
+    put(root, { top: 400, left: 20, width: 300 });
+    open(root);
+    expect(panelOf(root).style.maxHeight).toBe('384px'); // 400 - 8(위 여백) - 8(버튼 간격)
+  });
+
+  it('키보드가 올라오면 그 위로만 편다', () => {
     setViewport(400, 800);
     const root = build();
     put(root, { top: 700, left: 20, width: 300 });
     open(root);
-    expect(panelOf(root).style.maxHeight).toBe('784px');
+    expect(panelOf(root).style.maxHeight).toBe('684px');
 
-    // 키보드가 올라와 보이는 높이가 400px 로 줄었다.
-    setViewport(400, 400);
+    // 키보드가 올라와 보이는 높이가 400px 로 줄었다. 버튼은 키보드 밑이라
+    // 패널을 버튼이 아니라 키보드 윗선에 건다.
+    setViewport(400, 400, 800);
     window.dispatchEvent(new Event('scroll'));
-    expect(panelOf(root).style.maxHeight).toBe('384px');
+    const panel = panelOf(root);
+    expect(panel.style.bottom).toBe('408px'); // 800 - (400 - 8)
+    expect(panel.style.maxHeight).toBe('384px');
   });
 
   it('좁은 버튼(랭크)에도 목록이 읽히게 넓힌다', () => {

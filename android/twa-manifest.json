@@ -38,7 +38,7 @@
   },
   "appVersionName": "1.0.4",
   "webManifestUrl": "https://jinhyuk5761.github.io/manifest.webmanifest",
-  "fallbackType": "customtabs",
+  "fallbackType": "webview",
   "features": {},
   "alphaDependencies": {
     "enabled": false

@@ -135,8 +135,14 @@ export function monCard(mon: Pokemon, rankFormat: Format | null = null): HTMLEle
 /**
  * 사용률 막대. percentageValue 가 null 인 카테고리(teammate)는 막대 없이 순위만 보여준다.
  */
-export function usageBar(name: string, percentage: string, value: number | null): HTMLElement {
-  const row = el('div', { class: 'bar' });
+export function usageBar(
+  name: string,
+  percentage: string,
+  value: number | null,
+  options: { wrap?: boolean } = {},
+): HTMLElement {
+  // wrap: 한 줄에 담기지 않는 긴 라벨(성격 보정·노력치 분배)은 잘라내지 않고 막대 위에 통째로 놓는다.
+  const row = el('div', { class: options.wrap ? 'bar bar--wrap' : 'bar' });
   row.appendChild(el('span', { class: 'bar__label' }, name || '—'));
   if (value === null) {
     row.appendChild(el('span', { class: 'bar__novalue' }, '비율 미제공'));

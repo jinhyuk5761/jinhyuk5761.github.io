@@ -372,6 +372,27 @@ describe('M2 상세', () => {
     expect(document.querySelector('.tabs__tab--active')!.textContent).toBe('카운터');
   });
 
+  it('노력치·성격 라벨은 잘리지 않고 한 줄을 통째로 쓴다', async () => {
+    await mountApp('#/p/garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.bar')).not.toBeNull();
+    });
+
+    const wrapped = [...document.querySelectorAll('.bar--wrap')];
+    expect(wrapped.length).toBeGreaterThan(0);
+
+    // 성격 보정("명랑 (+스피드 / −특수공격)")과 노력치 분배가 그 대상이다.
+    const labels = wrapped.map((row) => row.querySelector('.bar__label')!.textContent ?? '');
+    expect(labels.some((t) => t.includes('(+') && t.includes('/ −'))).toBe(true);
+
+    // 라벨이 막대와 같은 칸을 두고 다투면 잘린다. 한 줄을 통째로 쓰게 둔다.
+    for (const row of wrapped) {
+      const label = row.querySelector<HTMLElement>('.bar__label')!;
+      expect(label.className).toBe('bar__label');
+      expect(row.querySelector('.bar__track')).not.toBeNull();
+    }
+  });
+
   it('"크게 올린다" 를 랭크 수치로 못박는다', async () => {
     await mountApp('#/p/garchomp');
     await vi.waitFor(() => {

@@ -8,7 +8,12 @@
  * 시즌은 화면 안에서 고르고, 싱글·더블은 위쪽 공용 토글을 따른다.
  */
 
-import { fetchRankedTeams, type RankedSet, type RankedTeam } from '../adapters/rankedTeams';
+import {
+  fetchRankedTeams,
+  pokedbFormUrl,
+  type RankedSet,
+  type RankedTeam,
+} from '../adapters/rankedTeams';
 import { clear, el, notice } from '../core/dom';
 import { href } from '../router';
 import { findPokemon, state } from '../store';
@@ -135,6 +140,28 @@ function teamCard(team: RankedTeam): HTMLElement {
       ),
     );
     cell.appendChild(el('span', { class: 'team__item' }, m.item ?? '—'));
+    /*
+     * 이 폼을 쓴 구축글이 모여 있는 곳으로 보낸다.
+     *
+     * 노력치·기술·닉네임은 우리가 가진 데이터에 없다. 그건 사람이 쓴 구축글에 있고,
+     * 그 글들은 호스트마다 약관이 달라 자동으로 가져올 수 없다. 대신 한 번에 갈 수
+     * 있게 길만 놓는다 — 가져오는 게 아니라 읽으러 가는 링크다.
+     */
+    if (m.dex) {
+      cell.appendChild(
+        el(
+          'a',
+          {
+            class: 'team__more-link',
+            href: pokedbFormUrl(m.dex),
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            title: `${m.name} 을 쓴 구축글 보기 (pokedb)`,
+          },
+          '구축글',
+        ),
+      );
+    }
     members.appendChild(cell);
   }
 

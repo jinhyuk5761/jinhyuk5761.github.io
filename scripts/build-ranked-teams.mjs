@@ -199,7 +199,14 @@ function aggregate(file, dict) {
       const ko = resolved.name;
       if (resolved.showdownId && !monIds.has(ko)) monIds.set(ko, resolved.showdownId);
       seen.add(ko);
-      row.push({ name: resolved.name, id: resolved.showdownId, item: dict.item(p.item) });
+      row.push({
+        name: resolved.name,
+        id: resolved.showdownId,
+        item: dict.item(p.item),
+        // 원본의 '도감번호-폼번호'. pokedb 의 그 폼 페이지로 넘어가는 열쇠다.
+        // 거기에 이 폼을 쓴 구축글 링크가 모여 있다.
+        dex: p.id || null,
+      });
       monTeams.set(ko, (monTeams.get(ko) ?? 0) + 1);
 
       const item = dict.item(p.item);

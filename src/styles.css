@@ -1152,3 +1152,14 @@ select optgroup {
   .team__members { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .team__mon .sprite { width: 44px; height: 44px; }
 }
+
+/* 구축글로 나가는 링크. 보조 정보라 작게 두되 누를 수 있을 만큼은 크게. */
+.team__more-link {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--surface-alt);
+  color: var(--accent);
+  text-decoration: none;
+}
+.team__more-link:hover { background: var(--accent-soft); }

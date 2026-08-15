@@ -40,6 +40,19 @@ export interface TeamMember {
   id: string | null;
   /** 지닌 도구. 없으면 null. */
   item: string | null;
+  /** 원본의 '도감번호-폼번호'(예: 0670-05). pokedb 폼 페이지로 넘어갈 때 쓴다. */
+  dex: string | null;
+}
+
+/**
+ * 이 폼을 쓴 구축글이 모여 있는 pokedb 페이지.
+ *
+ * 우리가 그쪽 내용을 가져오지는 않는다 — 사람이 눌러서 읽으러 가는 링크다.
+ * 규칙(`?rule=`) 은 붙이지 않는다. 어느 숫자가 싱글인지 확인하지 않았고,
+ * 틀린 링크를 보내느니 사이트 기본값에 맡기는 편이 낫다.
+ */
+export function pokedbFormUrl(dex: string): string {
+  return `https://champs.pokedb.tokyo/pokemon/show/${encodeURIComponent(dex)}`;
 }
 
 export interface RankedTeam {

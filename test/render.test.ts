@@ -115,10 +115,10 @@ const RANKED_TEAMS = {
       teamCount: 2, slotCount: 4,
       teams: [
         { rank: 1, rating: 2100, members: [
-          { name: '한카리아스', id: 'garchomp', item: '기합의띠' },
-          { name: '알로라 나인테일', id: 'ninetalesalola', item: null },
+          { name: '한카리아스', id: 'garchomp', item: '기합의띠', dex: '0445-00' },
+          { name: '알로라 나인테일', id: 'ninetalesalola', item: null, dex: '0038-01' },
         ] },
-        { rank: 2, rating: 2050, members: [{ name: '한카리아스', id: 'garchomp', item: '기합의띠' }] },
+        { rank: 2, rating: 2050, members: [{ name: '한카리아스', id: 'garchomp', item: '기합의띠', dex: '0445-00' }] },
       ],
       pokemon: [
         { name: '한카리아스', showdownId: 'garchomp', teams: 2, share: 100, items: [{ name: '기합의띠', count: 2, share: 100 }] },
@@ -130,7 +130,7 @@ const RANKED_TEAMS = {
     {
       season: 'M-3', seasonNumber: 3, format: 'Singles', updatedAt: '2026-08-10 11:34:36',
       teamCount: 1, slotCount: 1,
-      teams: [{ rank: 1, rating: null, members: [{ name: '따라큐', id: null, item: null }] }],
+      teams: [{ rank: 1, rating: null, members: [{ name: '따라큐', id: null, item: null, dex: null }] }],
       pokemon: [{ name: '따라큐', showdownId: null, teams: 1, share: 100, items: [] }],
       items: [], pairs: [],
     },
@@ -547,6 +547,20 @@ describe('통계 (상위 랭커 구축)', () => {
       '알로라 나인테일',
     ]);
     expect(mons.map((m) => m.querySelector('.team__item')!.textContent)).toEqual(['기합의띠', '—']);
+  });
+
+  it('폼별 구축글로 나가는 길을 놓는다', async () => {
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.team')).not.toBeNull();
+    });
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('.team__more-link')];
+    // 노력치·기술은 우리 데이터에 없다. 그게 있는 곳으로 보낸다.
+    expect(links[0]!.getAttribute('href')).toBe('https://champs.pokedb.tokyo/pokemon/show/0445-00');
+    expect(links[0]!.getAttribute('rel')).toBe('noopener noreferrer');
+    // 도감번호가 없으면 링크를 만들지 않는다 — 없는 주소를 지어내지 않는다.
+    pickFrom(document.querySelector('.stats__season')!, '시즌 M-3');
+    expect(document.querySelectorAll('.team__more-link')).toHaveLength(0);
   });
 
   it('레이팅이 없으면 숫자를 지어내지 않는다', async () => {

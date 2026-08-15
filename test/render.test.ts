@@ -100,6 +100,12 @@ const TERMS = {
   },
 };
 
+/** 폼 slug → 공식 한국어 폼 표기. 빌드 산출물의 일부만 흉내낸다. */
+const FORM_NAMES = {
+  'rotom-wash': '워시로토무',
+  'furfrou-heart-trim': '하트컷',
+};
+
 /** 서버가 붙어 있고 랭킹만 꺼진 기본 상태. */
 const CONFIG = {
   version: 'v1',
@@ -132,6 +138,7 @@ function installFetch(overrides: Record<string, unknown | Error> = {}) {
     if (match('moves.json')) return new Response(JSON.stringify(MOVES), { status: 200 });
     if (match('terms.json')) return new Response(JSON.stringify(TERMS), { status: 200 });
     if (match('locales.json')) return new Response(JSON.stringify(LOCALES), { status: 200 });
+    if (match('formNames.json')) return new Response(JSON.stringify(FORM_NAMES), { status: 200 });
     if (match('counters-')) return new Response(JSON.stringify(COUNTERS), { status: 200 });
     if (match('builds.json')) return new Response(JSON.stringify([]), { status: 200 });
     return new Response('not found', { status: 404 });

@@ -32,6 +32,50 @@ describe('championsBattleData / normalizeIndex', () => {
     expect(index.pokemon.filter((p) => p.showdownId === 'rotomfan').length).toBe(1);
   });
 
+  it('중복 두 건이 반쪽씩 가진 것을 합친다', () => {
+    /*
+     * 상류의 rotomfan 두 건은 서로 다른 쪽이 반쪽씩 갖고 있다.
+     *   Fan Rotom — 사용률 순위는 있는데 폼 1개에 그림 파일이 상류에 없다
+     *   Rotom Fan — 폼 6개와 멀쩡한 그림이 있는데 순위가 없다
+     * 한쪽만 고르면 순위를 잃거나 그림을 잃는다.
+     */
+    const merged = normalizeIndex({
+      pokemon: [
+        {
+          slug: 'fan-rotom',
+          showdownId: 'rotomfan',
+          name: 'Fan Rotom',
+          summary: {
+            primary: { slug: 'fan-rotom', form_name: 'Fan Rotom', image_path: 'x/Fan Rotom.png' },
+            forms: [{ slug: 'fan-rotom', form_name: 'Fan Rotom', image_path: 'x/Fan Rotom.png' }],
+            battleSummary: { Current: { Singles: { position: 217 }, Doubles: { position: 216 } } },
+          },
+        },
+        {
+          slug: 'rotom-fan',
+          showdownId: 'rotomfan',
+          name: 'Rotom Fan',
+          summary: {
+            primary: { slug: 'rotom-fan', form_name: 'Rotom Fan', image_path: 'x/Rotom Fan.png' },
+            forms: [
+              { slug: 'rotom', form_name: 'Rotom', image_path: 'x/Rotom.png' },
+              { slug: 'rotom-fan', form_name: 'Rotom Fan', image_path: 'x/Rotom Fan.png' },
+              { slug: 'rotom-wash', form_name: 'Rotom Wash', image_path: 'x/Rotom Wash.png' },
+            ],
+          },
+        },
+      ],
+    } as never);
+
+    const rotomfan = merged.byShowdownId.get('rotomfan')!;
+    expect(merged.pokemon.filter((p) => p.showdownId === 'rotomfan').length).toBe(1);
+    // 순위는 앞 건에서, 폼과 그림은 뒤 건에서 온다.
+    expect(rotomfan.usageRank).toEqual({ Singles: 217, Doubles: 216 });
+    expect(rotomfan.forms.map((f) => f.slug)).toEqual(['rotom', 'rotom-fan', 'rotom-wash']);
+    expect(rotomfan.primary.spriteUrl).toContain('Rotom%20Fan.png');
+    expect(rotomfan.primary.spriteUrl).not.toContain('Fan%20Rotom.png');
+  });
+
   it('종족값을 Champions 자체 스케일 그대로 읽는다 (본가 수치로 바꾸지 않는다)', () => {
     const garchomp = index.byShowdownId.get('garchomp');
     expect(garchomp).toBeDefined();

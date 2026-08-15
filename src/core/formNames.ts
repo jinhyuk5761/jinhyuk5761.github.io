@@ -42,10 +42,7 @@ export function formDisplayName(
   index: Pokemon[] = [],
   formNames: FormNameMap | null = null,
 ): string {
-  // 1) 대표 폼이면 종 이름 그대로.
-  if (form.slug === mon.primary.slug) return mon.displayName;
-
-  // 2) 접두어 규칙. 종 한국어명에서 지역 접두어를 떼어 '순수 종족명' 을 얻는다.
+  // 1) 접두어 규칙. 종 한국어명에서 지역 접두어를 떼어 '순수 종족명' 을 얻는다.
   const speciesKo = stripRegion(mon.displayName);
   for (const [pattern, korean] of PREFIXES) {
     if (pattern.test(form.formName)) {
@@ -53,16 +50,25 @@ export function formDisplayName(
     }
   }
 
-  // 3) 공식 폼 표기(PokéAPI). 트리밍·무늬·크림처럼 접두어 규칙이 안 통하는 폼들이다.
-  //    '워시로토무' 처럼 종족명을 이미 품고 있으면 그대로, '하트컷' 처럼 수식어만
-  //    있으면 종족명을 앞에 붙인다.
+  /*
+   * 2) 공식 폼 표기(PokéAPI). 트리밍·무늬·크림처럼 접두어 규칙이 안 통하는 폼들이다.
+   *    '워시로토무' 처럼 종족명을 이미 품고 있으면 그대로, '하트컷' 처럼 수식어만
+   *    있으면 종족명을 앞에 붙인다.
+   *
+   *    대표 폼이어도 이쪽을 먼저 본다. 로토무·트리미앙처럼 종 이름이 폼마다 같은
+   *    경우 대표 폼만 '로토무' 로 적으면 목록에서 어느 것이 무엇인지 알 수 없다.
+   *    대표 폼 자체가 변형인 종이 14개 있어서(스핀로토무·실드폼·황혼의 모습 …)
+   *    공식 표기를 쓰는 편이 더 정확하다.
+   */
   const official = formNames?.get(form.slug);
   if (official) {
     return official.includes(speciesKo) ? official : `${speciesKo} ${official}`;
   }
 
+  // 3) 공식 표기가 없는 대표 폼은 종 이름 그대로.
+  if (form.slug === mon.primary.slug) return mon.displayName;
+
   // 4) 이 폼을 대표로 갖는 종이 따로 있으면 그 종의 한국어명을 쓴다.
-  //    로토무처럼 종 이름이 폼마다 같으면 서로 구분이 안 되므로 3) 다음에 본다.
   const owner = index.find((candidate) => candidate.primary.slug === form.slug);
   if (owner && owner.displayName !== owner.name) return owner.displayName;
 

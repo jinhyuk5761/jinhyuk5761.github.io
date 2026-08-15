@@ -164,16 +164,6 @@ export function normalizeIndex(raw: RawIndex): ChampionsIndex {
     if (!showdownId) continue;
 
     const rank = usageRankOf(entry, raw?.defaultSeason);
-    // 상류 데이터에 showdownId 중복이 있다(rotomfan: "Fan Rotom" / "Rotom Fan").
-    // 배틀 API 는 어차피 같은 응답을 주므로 어느 쪽이든 되지만, **순위가 붙은 쪽**을 고른다.
-    // 실제로 한쪽에만 position 이 있어서, 순서에 기대면 순위를 통째로 잃는다.
-    const existing = byShowdownId.get(showdownId);
-    if (existing) {
-      const existingHasRank = Object.values(existing.usageRank).some((n) => n !== null);
-      const incomingHasRank = Object.values(rank).some((n) => n !== null);
-      if (incomingHasRank && !existingHasRank) existing.usageRank = rank;
-      continue;
-    }
 
     const primary = normalizeForm(entry.summary?.primary);
     if (!primary) continue;
@@ -181,6 +171,36 @@ export function normalizeIndex(raw: RawIndex): ChampionsIndex {
     const forms = (entry.summary?.forms ?? [])
       .map(normalizeForm)
       .filter((f): f is PokemonForm => f !== null);
+
+    /*
+     * 상류 데이터에 showdownId 중복이 있다(rotomfan: "Fan Rotom" / "Rotom Fan").
+     * 두 건은 같지 않고, **서로 다른 쪽이 반쪽씩** 갖고 있다:
+     *   Fan Rotom  — 사용률 순위는 있는데 폼이 1개고 그림 파일이 상류에 없다
+     *   Rotom Fan  — 폼 6개와 멀쩡한 그림이 있는데 순위가 없다
+     * 어느 한쪽만 고르면 순위를 잃거나 그림을 잃는다. 둘을 합친다.
+     */
+    const existing = byShowdownId.get(showdownId);
+    if (existing) {
+      const existingHasRank = Object.values(existing.usageRank).some((n) => n !== null);
+      const incomingHasRank = Object.values(rank).some((n) => n !== null);
+      if (incomingHasRank && !existingHasRank) existing.usageRank = rank;
+
+      // 폼을 더 많이 든 쪽이 그림도 성한 쪽이다. 배열은 제자리에서 갈아 끼운다
+      // — pokemon[] 이 같은 객체를 들고 있어서 새로 만들면 놓친다.
+      if (forms.length > existing.forms.length) {
+        existing.slug = entry.slug ?? existing.slug;
+        existing.name = entry.name ?? primary.formName;
+        existing.displayName = existing.name;
+        existing.localeNames = { en: existing.name };
+        existing.primary = primary;
+        existing.forms = forms;
+        const moves = (entry.learnableMoveNames ?? []).filter(Boolean);
+        if (moves.length > existing.learnableMoveNames.length) {
+          existing.learnableMoveNames = moves;
+        }
+      }
+      continue;
+    }
 
     const model: Pokemon = {
       showdownId,

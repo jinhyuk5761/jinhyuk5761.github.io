@@ -81,9 +81,20 @@ describe('formDisplayName', () => {
     expect(formDisplayName(furfrou, furfrou.forms[2]!, [], FORM_NAMES)).toBe('트리미앙 킹덤컷');
   });
 
-  it('대표 폼은 종 이름 그대로', () => {
-    expect(formDisplayName(rotom, rotom.forms[0]!, [], FORM_NAMES)).toBe('로토무');
-    expect(formDisplayName(furfrou, furfrou.forms[0]!, [], FORM_NAMES)).toBe('트리미앙');
+  it('대표 폼이어도 공식 표기가 있으면 그것을 쓴다', () => {
+    // 종 이름이 폼마다 같은 로토무·트리미앙은 대표 폼만 '로토무' 로 적으면
+    // 목록에서 어느 것이 무엇인지 알 수 없다.
+    expect(formDisplayName(rotom, rotom.forms[0]!, [], FORM_NAMES)).toBe('로토무의 모습');
+    expect(formDisplayName(furfrou, furfrou.forms[0]!, [], FORM_NAMES)).toBe('트리미앙 야생의 모습');
+  });
+
+  it('공식 표기가 없는 대표 폼은 종 이름 그대로', () => {
+    const garchomp = species('한카리아스', 'Garchomp', [
+      form('garchomp', 'Garchomp'),
+      form('mega-garchomp', 'Mega Garchomp'),
+    ]);
+    expect(FORM_NAMES.has('garchomp')).toBe(false);
+    expect(formDisplayName(garchomp, garchomp.forms[0]!, [], FORM_NAMES)).toBe('한카리아스');
   });
 
   it('접두어 규칙이 공식 표기보다 앞선다', () => {

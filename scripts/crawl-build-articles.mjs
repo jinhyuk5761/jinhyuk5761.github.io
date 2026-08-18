@@ -190,57 +190,91 @@ function parseStatLine(line) {
   return stats;
 }
 
-function parseArticle(lines, dict) {
-  const members = [];
-  for (let i = 0; i < lines.length; i += 1) {
-    // 개체 시작은 '<종족> @ <도구>' 한 줄이다.
-    const head = /^(.+?)\s*[@＠]\s*(.+)$/.exec(lines[i]);
-    if (!head) continue;
-    const speciesJa = head[1].trim();
-    if (!dict.isSpecies(speciesJa)) continue;
+/** 개체 머리인가 — '<종족> @ <도구>' 한 줄. */
+function memberHead(line, dict) {
+  const m = /^(.+?)\s*[@＠]\s*(.+)$/.exec(line);
+  if (!m) return null;
+  const species = m[1].trim();
+  return dict.isSpecies(species) ? { species, item: m[2].trim() } : null;
+}
 
-    const speciesKo = dict.species(speciesJa);
-    const member = {
-      species: speciesKo,
-      item: dict.itemFor(head[2].trim(), speciesKo),
-      ability: null,
-      nature: null,
-      stats: null,
-      moves: [],
-    };
+/** '調整' 을 알리는 줄. 표기가 제각각이라 넉넉히 잡는다. */
+const TUNING_MARKER = /^[【\[]?\s*(調整|調整先|努力値調整)\s*[】\]]?\s*[:：]?$/;
+/** 이 길이를 넘으면 계산식이 아니라 산문으로 본다. */
+const TUNING_MAX_LEN = 60;
 
-    // 개체 하나가 차지하는 범위는 다음 개체 머리 전까지다. 넉넉히 12줄만 본다.
-    for (let j = i + 1; j < Math.min(i + 12, lines.length); j += 1) {
-      const line = lines[j];
-      if (/^(.+?)\s*[@＠]\s*(.+)$/.test(line) && dict.isSpecies(RegExp.$1.trim())) break;
+/**
+ * 개체 한 마리를 읽는다.
+ *
+ * 노력치 **수치**만으로는 반쪽이다. 왜 그렇게 줬는지(`調整` 아래의 내구 계산)가
+ * 실제로 참고할 값이라, 그 줄들과 뒤따르는 설명을 함께 담는다.
+ * 일본어 원문을 그대로 둔다 — 기계번역으로 옮기면 계산 조건이 조용히 틀어진다.
+ */
+function parseMember(block, dict) {
+  const head = memberHead(block[0], dict);
+  const speciesKo = dict.species(head.species);
+  const member = {
+    species: speciesKo,
+    item: dict.itemFor(head.item, speciesKo),
+    ability: null,
+    nature: null,
+    stats: null,
+    moves: [],
+    tuning: [],
+    notes: [],
+  };
 
-      const ability = /^特性\s*[:：]\s*(.+)$/.exec(line);
-      if (ability) {
-        member.ability = dict.ability(ability[1].trim());
+  let inTuning = false;
+  for (let i = 1; i < block.length; i += 1) {
+    const line = block[i];
+
+    const ability = /^特性\s*[:：]\s*(.+)$/.exec(line);
+    if (ability) {
+      member.ability = dict.ability(ability[1].trim());
+      continue;
+    }
+    const nature = /^性格\s*[:：]\s*(.+)$/.exec(line);
+    if (nature) {
+      member.nature = dict.nature(nature[1].trim());
+      continue;
+    }
+    if (!member.stats) {
+      const stats = parseStatLine(line);
+      if (stats) {
+        member.stats = stats;
         continue;
-      }
-      const nature = /^性格\s*[:：]\s*(.+)$/.exec(line);
-      if (nature) {
-        member.nature = dict.nature(nature[1].trim());
-        continue;
-      }
-      if (!member.stats) {
-        const stats = parseStatLine(line);
-        if (stats) {
-          member.stats = stats;
-          continue;
-        }
-      }
-      if (member.moves.length === 0 && line.includes('/')) {
-        const names = line.split('/').map((s) => s.trim()).filter(Boolean);
-        if (names.length >= 2 && names.length <= 4 && names.every((n) => dict.isMove(n))) {
-          member.moves = names.map((n) => dict.move(n));
-        }
       }
     }
-    members.push(member);
+    if (member.moves.length === 0 && line.includes('/')) {
+      const names = line.split('/').map((s) => s.trim()).filter(Boolean);
+      if (names.length >= 2 && names.length <= 4 && names.every((n) => dict.isMove(n))) {
+        member.moves = names.map((n) => dict.move(n));
+        continue;
+      }
+    }
+    if (TUNING_MARKER.test(line)) {
+      inTuning = true;
+      continue;
+    }
+    // 조정 줄은 짧은 계산식이다. 긴 줄이 나오면 설명으로 넘어간 것이다.
+    if (inTuning && line.length <= TUNING_MAX_LEN) {
+      member.tuning.push(dict.localize(line));
+      continue;
+    }
+    inTuning = false;
+    member.notes.push(dict.localize(line));
   }
-  return members;
+  return member;
+}
+
+function parseArticle(lines, dict) {
+  // 개체 머리 위치를 먼저 다 찾는다. 그래야 한 마리가 차지하는 범위를 알 수 있다 —
+  // 예전에는 12줄만 보고 끊어서 調整 이 통째로 잘려 나갔다.
+  const heads = [];
+  for (let i = 0; i < lines.length; i += 1) {
+    if (memberHead(lines[i], dict)) heads.push(i);
+  }
+  return heads.map((from, n) => parseMember(lines.slice(from, heads[n + 1] ?? lines.length), dict));
 }
 
 /* -------------------------------------------------------------------- 사전 */
@@ -343,7 +377,49 @@ async function buildDictionary() {
     '기술',
   );
 
+  /*
+   * 조정 설명에 섞인 고유명사만 한국어로 바꾼다.
+   *
+   * 문장은 원문 그대로 둔다. 기계번역으로 옮기면 '확정 내구'/'난수 2발' 같은
+   * 계산 조건이 조용히 틀어진다 — 그건 이 글에서 가장 중요한 부분이다.
+   * 아는 이름만 갈아 끼우고 나머지는 손대지 않는다.
+   */
+  const glossary = new Map();
+  for (const [ja, ko] of [
+    ...speciesPairs,
+    ...Object.values(moves.moves ?? {}).map((v) => [v.ja, v.ko]),
+    ...Object.values(terms.items ?? {}).map((v) => [v.ja, v.ko]),
+    ...Object.values(terms.abilities ?? {}).map((v) => [v.ja, v.ko]),
+  ]) {
+    // 짧은 이름은 다른 낱말 속에 우연히 박혀 오작동한다.
+    if (ja && ko && ja.length >= 3 && !glossary.has(ja)) glossary.set(ja, ko);
+  }
+  /*
+   * 정규식을 쓰지 않는다. 사전의 열쇠는 남이 쓴 글에서 온 문자열이라
+   * 정규식 메타문자가 섞이면 패턴이 통째로 깨진다. 그냥 훑어 바꾼다.
+   * 긴 이름을 먼저 봐야 'ロトム' 이 'ウォッシュロトム' 을 잘라먹지 않는다.
+   */
+  const glossaryKeys = [...glossary.keys()].sort((a, b) => b.length - a.length);
+
+  const localize = (text) => {
+    let out = '';
+    let i = 0;
+    outer: while (i < text.length) {
+      for (const key of glossaryKeys) {
+        if (text.startsWith(key, i)) {
+          out += glossary.get(key);
+          i += key.length;
+          continue outer;
+        }
+      }
+      out += text[i];
+      i += 1;
+    }
+    return out;
+  };
+
   return {
+    localize,
     isSpecies: (ja) => resolveSpecies(ja) !== null,
     isMove: move.has,
     species: (ja) => resolveSpecies(ja)?.ko ?? species.get(ja),

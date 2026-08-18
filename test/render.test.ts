@@ -667,9 +667,8 @@ describe('통계 — 예전 모양의 응답', () => {
 });
 
 describe('구축글 (로컬 전용)', () => {
-  it('로컬 파일이 있으면 노력치·기술까지 보여준다', async () => {
-    installFetch({
-      'localTeams.json': {
+  /** 크롤러 산출물의 모양. 한 마리에 노력치·조정·설명이 모두 붙는다. */
+  const LOCAL_TEAMS = {
         articles: [
           {
             url: 'https://example.test/entry/1',
@@ -683,12 +682,16 @@ describe('구축글 (로컬 전용)', () => {
                   spd: { value: 200, ev: 20, nature: '+' },
                 },
                 moves: ['아쿠아브레이크', '맹독'],
+                tuning: ['HD-特化브리두라스の10万ボルト+流星群を残飯込で確定耐'],
+                notes: ['최강의 불가사리.', '두 번째 줄.'],
               },
             ],
           },
         ],
-      },
-    });
+  };
+
+  it('로컬 파일이 있으면 노력치·기술까지 보여준다', async () => {
+    installFetch({ 'localTeams.json': LOCAL_TEAMS });
     await mountApp('#/stats');
     await vi.waitFor(() => {
       expect(document.querySelector('.article__mon')).not.toBeNull();
@@ -700,6 +703,28 @@ describe('구축글 (로컬 전용)', () => {
     // 남의 글에서 온 것이라 원문 링크가 반드시 있어야 한다.
     const link = document.querySelector<HTMLAnchorElement>('.team__head a')!;
     expect(link.getAttribute('href')).toBe('https://example.test/entry/1');
+  });
+
+  it('노력치 조정 의도를 그대로 보여준다', async () => {
+    installFetch({ 'localTeams.json': LOCAL_TEAMS });
+    await mountApp('#/stats');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.article__tuning')).not.toBeNull();
+    });
+    // 수치보다 이쪽이 실제로 참고할 값이다. 접거나 줄이지 않고 그대로 둔다.
+    const tuning = document.querySelector('.article__tuning')!.textContent ?? '';
+    expect(tuning).toContain('조정');
+    expect(tuning).toContain('브리두라스');
+    expect(tuning).toContain('確定耐');
+
+    // 설명은 길어서 접어 둔다.
+    const body = document.querySelector<HTMLElement>('.article__notes')!;
+    expect(body.hidden).toBe(true);
+    const toggle = document.querySelector<HTMLButtonElement>('.article__toggle')!;
+    expect(toggle.textContent).toBe('설명 2줄 보기');
+    toggle.click();
+    expect(body.hidden).toBe(false);
+    expect(body.textContent).toContain('최강의 불가사리');
   });
 
   it('로컬 파일이 없으면(배포된 사이트) 그 자리만 비고 나머지는 그대로다', async () => {

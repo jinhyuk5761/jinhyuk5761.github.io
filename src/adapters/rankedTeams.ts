@@ -134,6 +134,16 @@ export interface ArticleMember {
   nature: string | null;
   stats: Record<string, ArticleStat> | null;
   moves: string[];
+  /**
+   * `調整` 아래의 내구 계산. "무엇을 확정으로 버티려고 이 노력치를 줬는가".
+   * 노력치 수치보다 이쪽이 실제로 참고할 값이다.
+   *
+   * 문장은 원문(일본어)이다. 아는 고유명사만 한국어로 바꿔 두었고
+   * 나머지는 손대지 않았다 — 기계번역하면 계산 조건이 조용히 틀어진다.
+   */
+  tuning: string[];
+  /** 채용 이유 등 나머지 설명. */
+  notes: string[];
 }
 
 export interface BuildArticle {

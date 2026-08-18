@@ -257,6 +257,39 @@ function articleSection(articles: BuildArticle[]): HTMLElement {
           // 노력치를 안 적은 개체도 있다. 없으면 없다고 두고 0 으로 채우지 않는다.
           el('span', { class: 'article__ev' }, ev || '노력치 표기 없음'),
           el('span', { class: 'article__moves' }, m.moves.join(' / ') || '—'),
+          // 왜 그렇게 줬는지가 수치보다 중요하다. 있으면 그대로 펼쳐 둔다.
+          m.tuning.length > 0
+            ? el(
+                'div',
+                { class: 'article__tuning' },
+                el('span', { class: 'article__tuning-label' }, '조정'),
+                ...m.tuning.map((line) => el('span', { class: 'article__tuning-line' }, line)),
+              )
+            : null,
+          m.notes.length > 0
+            ? (() => {
+                // 설명은 길다. 접어 두고 눌러서 편다.
+                const body = el(
+                  'div',
+                  { class: 'article__notes' },
+                  ...m.notes.map((line) => el('p', {}, line)),
+                );
+                body.hidden = true;
+                const toggle = el(
+                  'button',
+                  { class: 'article__toggle', type: 'button', 'aria-expanded': 'false' },
+                  `설명 ${m.notes.length}줄 보기`,
+                );
+                toggle.addEventListener('click', () => {
+                  body.hidden = !body.hidden;
+                  toggle.setAttribute('aria-expanded', String(!body.hidden));
+                  toggle.textContent = body.hidden
+                    ? `설명 ${m.notes.length}줄 보기`
+                    : '설명 접기';
+                });
+                return el('div', { class: 'article__notes-wrap' }, toggle, body);
+              })()
+            : null,
         ),
       );
     }

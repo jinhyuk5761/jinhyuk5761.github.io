@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:lan": "vite --host",
+    "phone:serve": "node scripts/phone-serve.mjs",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "serve": "node server/index.mjs",

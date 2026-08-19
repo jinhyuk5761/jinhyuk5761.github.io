@@ -14,6 +14,7 @@
  */
 
 import { TTL, fetchJson } from '../core/http';
+import { isPlayableMove } from '../core/removedMoves';
 import type {
   StatLine,
   EffortPoints,
@@ -194,7 +195,7 @@ export function normalizeIndex(raw: RawIndex): ChampionsIndex {
         existing.localeNames = { en: existing.name };
         existing.primary = primary;
         existing.forms = forms;
-        const moves = (entry.learnableMoveNames ?? []).filter(Boolean);
+        const moves = (entry.learnableMoveNames ?? []).filter(Boolean).filter(isPlayableMove);
         if (moves.length > existing.learnableMoveNames.length) {
           existing.learnableMoveNames = moves;
         }
@@ -210,7 +211,8 @@ export function normalizeIndex(raw: RawIndex): ChampionsIndex {
       localeNames: { en: entry.name ?? primary.formName },
       primary,
       forms: forms.length > 0 ? forms : [primary],
-      learnableMoveNames: (entry.learnableMoveNames ?? []).filter(Boolean),
+      // 삭제된 기술은 여기서 걸러 낸다. 계산기·기술 탭이 모두 이 목록을 본다.
+      learnableMoveNames: (entry.learnableMoveNames ?? []).filter(Boolean).filter(isPlayableMove),
       usageRank: rank,
     };
     pokemon.push(model);
@@ -273,6 +275,8 @@ export function normalizeBattle(raw: RawBattle, requested: Format, showdownId: s
   (raw?.rows ?? []).forEach((row, i) => {
     const category = row?.category as UsageCategory | undefined;
     if (!category) return;
+    // 삭제된 기술이 사용률에 남아 있으면 없는 기술을 채용률과 함께 보여주게 된다.
+    if (category === 'move' && row?.name && !isPlayableMove(row.name)) return;
     const list = grouped.get(category) ?? [];
     list.push(normalizeRow(row, i));
     grouped.set(category, list);

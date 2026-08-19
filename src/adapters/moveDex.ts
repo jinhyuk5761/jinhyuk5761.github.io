@@ -10,6 +10,7 @@
  * 199KB 라 부팅 때 받지 않고, 기술이 실제로 필요한 화면에서 지연 로드한다.
  */
 
+import { isPlayableMove } from '../core/removedMoves';
 import { TTL, fetchJson } from '../core/http';
 import type { Loaded, TypeName } from '../types';
 
@@ -135,6 +136,8 @@ export function normalizeMoves(raw: RawMoveFile): MoveDex {
   for (const [key, move] of Object.entries(raw?.moves ?? {})) {
     if (!key) continue;
     const englishName = move?.n ?? key;
+    // 게임에서 삭제된 기술은 도감에도 두지 않는다 — 기술 탭에서 뒤져도 못 쓴다.
+    if (!isPlayableMove(englishName) || !isPlayableMove(key)) continue;
     const koreanName = move?.ko ?? null;
     const description = move?.desc ?? move?.descEn ?? null;
 

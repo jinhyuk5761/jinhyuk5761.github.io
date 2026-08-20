@@ -19,6 +19,12 @@ export interface AbilityContext {
   moveType: TypeName;
   movePower: number;
   category: 'physical' | 'special';
+  /**
+   * 상대의 어느 **방어 실수치**를 보는가. 보통 분류와 같지만 사이코쇼크는
+   * 특수기이면서 '방어'를 본다. 실수치를 올리는 특성(두꺼운털가죽·이상한비늘)은
+   * 분류가 아니라 이 값을 따라야 한다. 생략하면 분류와 같다고 본다.
+   */
+  defenseCategory?: 'physical' | 'special';
   /** 반동기인가 (drain < 0) */
   isRecoil: boolean;
   /** 확률성 부가효과가 있는가 */
@@ -114,6 +120,11 @@ function base(): AbilityOutcome {
 }
 
 type Effect = (ctx: AbilityContext, out: AbilityOutcome) => void;
+
+/** 실수치를 올리는 특성이 볼 값. 기술이 따로 정하지 않았으면 분류를 그대로 쓴다. */
+function defenseSide(ctx: AbilityContext): 'physical' | 'special' {
+  return ctx.defenseCategory ?? ctx.category;
+}
 
 /** 저위력 강화. 테크니션은 위력 60 이하가 대상이다. */
 const technician: Effect = (ctx, out) => {
@@ -382,7 +393,9 @@ const DEFENDER_LIST: AbilityDef[] = [
   {
     name: 'Marvel Scale',
     note: '상태이상일 때 방어 ×1.5',
-    effect: (c, o) => { if (c.defenderStatused && c.category === 'physical') o.defenseMultiplier *= 1.5; },
+    effect: (c, o) => {
+      if (c.defenderStatused && defenseSide(c) === 'physical') o.defenseMultiplier *= 1.5;
+    },
   },
   {
     name: 'Sturdy',
@@ -422,7 +435,8 @@ const DEFENDER_LIST: AbilityDef[] = [
   {
     name: 'Fur Coat',
     note: '물리 기술로 받는 대미지 ×0.5',
-    effect: (c, o) => { if (c.category === 'physical') o.defenseMultiplier *= 2; },
+    // 방어 실수치를 2배로 만드는 특성이다. 그래서 방어를 보는 특수기(사이코쇼크)도 막는다.
+    effect: (c, o) => { if (defenseSide(c) === 'physical') o.defenseMultiplier *= 2; },
   },
   {
     name: 'Unaware',

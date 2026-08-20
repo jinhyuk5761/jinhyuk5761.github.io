@@ -11,7 +11,12 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { normalizeMoves, type MoveInfo } from '../src/adapters/moveDex';
-import { isSpreadMove, spreadScopeOf, traitsOf } from '../src/core/moveTraits';
+import {
+  defensiveCategory,
+  isSpreadMove,
+  spreadScopeOf,
+  traitsOf,
+} from '../src/core/moveTraits';
 
 const dex = normalizeMoves(
   JSON.parse(
@@ -90,5 +95,20 @@ describe('데이터 정합성', () => {
     const scopes = new Set(spread.map(spreadScopeOf));
     expect(scopes.has('foes')).toBe(true);
     expect(scopes.has('allAdjacent')).toBe(true);
+  });
+});
+
+describe('보는 방어', () => {
+  it('사이코쇼크는 특수기지만 상대 방어를 본다', () => {
+    // 특수기로 계산하면 특방만 두꺼운 상대에게 대미지가 크게 어긋난다.
+    expect(move('Psyshock').damageClass).toBe('special');
+    expect(defensiveCategory(move('Psyshock'))).toBe('physical');
+    expect(labels('Psyshock')).toContain('상대 방어로 계산');
+  });
+
+  it('보통 기술은 분류대로 본다', () => {
+    expect(defensiveCategory(move('Psychic'))).toBe('special');
+    expect(defensiveCategory(move('Close Combat'))).toBe('physical');
+    expect(labels('Psychic').some((l) => l.includes('계산'))).toBe(false);
   });
 });

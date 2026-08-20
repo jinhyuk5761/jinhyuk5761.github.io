@@ -60,7 +60,7 @@ export interface MoveTrait {
   /** 화면에 찍을 말 */
   label: string;
   /** 스타일 구분용 종류 */
-  kind: 'spread' | 'contact' | 'flag';
+  kind: 'spread' | 'contact' | 'flag' | 'defense';
 }
 
 /**
@@ -74,6 +74,14 @@ export function traitsOf(move: MoveInfo): MoveTrait[] {
 
   const scope = spreadScopeOf(move);
   if (scope) traits.push({ label: SPREAD_LABEL[scope], kind: 'spread' });
+
+  // 분류와 다른 방어를 보는 기술(사이코쇼크)은 그 사실이 안 보이면 숫자가 틀린 줄 안다.
+  if (readsOppositeDefense(move)) {
+    traits.push({
+      label: defensiveCategory(move) === 'physical' ? '상대 방어로 계산' : '상대 특방으로 계산',
+      kind: 'defense',
+    });
+  }
 
   // 변화기술에는 접촉 개념을 붙이지 않는다 (대미지를 주지 않으므로 의미가 없다).
   if (move.damageClass === 'physical' || move.damageClass === 'special') {
@@ -89,4 +97,36 @@ export function traitsOf(move: MoveInfo): MoveTrait[] {
   }
 
   return traits;
+}
+
+/**
+ * 특수기인데 상대의 **방어**를 보고 계산하는 기술.
+ *
+ * 사이코쇼크는 특수 기술이라 공격은 특공으로 하지만, 나누는 값이 특방이 아니라 방어다.
+ * 그냥 특수기로 계산하면 특방만 두꺼운 상대에게 실제보다 훨씬 적은 대미지가 나온다.
+ *
+ * 목록에 두는 셋 중 지금 로스터에 있는 건 사이코쇼크뿐이지만, 나머지 둘도 같은 규칙이라
+ * 나중에 들어와도 그대로 맞는다.
+ */
+const DEFENSE_READ_AS_PHYSICAL = new Set(['Psyshock', 'Psystrike', 'Secret Sword']);
+
+/**
+ * 이 기술이 상대의 어느 방어 실수치를 보는가.
+ *
+ * 기술 분류(물리/특수)와 **다를 수 있다**. 공격 실수치·화상·장막 판정은 분류를 따르고,
+ * 방어 실수치와 그 실수치를 건드리는 보정(두꺼운털가죽·모래바람 바위 특방 등)만 이 값을 따른다.
+ */
+export function defensiveCategory(move: MoveInfo): 'physical' | 'special' {
+  if (move.damageClass === 'special' && DEFENSE_READ_AS_PHYSICAL.has(move.englishName)) {
+    return 'physical';
+  }
+  return move.damageClass === 'physical' ? 'physical' : 'special';
+}
+
+/** 분류와 보는 방어가 어긋나는가. 화면에 그 사실을 적어 주기 위한 판정이다. */
+export function readsOppositeDefense(move: MoveInfo): boolean {
+  return (
+    (move.damageClass === 'physical' || move.damageClass === 'special') &&
+    defensiveCategory(move) !== move.damageClass
+  );
 }

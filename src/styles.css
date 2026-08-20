@@ -602,6 +602,8 @@ h4 { font-size: 15px; margin: 0; }
 /* 광역 범위는 실전에서 가장 크게 갈리는 성질이라 눈에 먼저 들어오게 한다. */
 .calc__trait--spread { border-color: var(--accent); color: var(--accent); }
 .calc__trait--contact { border-style: dashed; }
+/* 분류와 다른 방어를 본다는 표시. 놓치면 숫자를 의심하게 되므로 눈에 띄게 둔다. */
+.calc__trait--defense { border-color: var(--accent); color: var(--accent); font-weight: 600; }
 /* 비접촉은 "없음"을 뜻하므로 강조하지 않는다. */
 .calc__trait--off { opacity: 0.7; }
 

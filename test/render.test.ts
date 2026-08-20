@@ -68,6 +68,13 @@ const MOVES = {
       tgt: 'selected-pokemon', flags: ['contact'],
       desc: '강철 같은 머리로 상대에게 부딪쳐서 공격한다.',
     },
+    // 특수기인데 상대 '방어'를 보는 기술. 계산기가 그걸 지키는지 보려고 둔다.
+    Psyshock: {
+      n: 'Psyshock', ko: '사이코쇼크', ja: 'サイコショック', type: 'psychic', cls: 'special',
+      pow: 80, acc: 100, pp: 10, pri: 0,
+      tgt: 'selected-pokemon', flags: [],
+      desc: '이상한 염력파를 실체화하여 상대를 공격한다.',
+    },
     'Stealth Rock': {
       n: 'Stealth Rock', ko: '스텔스록', type: 'rock', cls: 'status',
       pow: null, acc: null, pp: 20, pri: 0,
@@ -1454,6 +1461,65 @@ describe('테마', () => {
     // 저장된 값을 읽어 다시 부팅한다.
     await mountApp('#/');
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
+});
+
+describe('사이코쇼크 — 특수기지만 상대 방어를 본다', () => {
+  /** 사이코쇼크 결과 덩어리의 대미지 글자. */
+  const psyshockDamage = (): string => {
+    const row = [...document.querySelectorAll('.calc__move-result')].find((r) =>
+      r.textContent?.includes('사이코쇼크'),
+    );
+    if (!row) throw new Error('사이코쇼크 결과가 없습니다');
+    return row.querySelector('.calc__damage')?.textContent ?? '';
+  };
+
+  /** 방어측 능력치 줄의 랭크 선택. */
+  const defenderStage = (stat: string): Element =>
+    document.querySelectorAll('.calc__side')[1]!.querySelector(`[data-stat="${stat}"] .calc__stage`)!;
+
+  async function openWithPsyshock(): Promise<void> {
+    await mountApp('#/calc?a=ninetalesalola&b=garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    pickFrom(document.querySelectorAll('.calc__move')[0]!, '사이코쇼크');
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain('사이코쇼크');
+    });
+  }
+
+  it('상대 방어 랭크에 반응한다', async () => {
+    await openWithPsyshock();
+    const before = psyshockDamage();
+    expect(before).toMatch(/\d+ ~ \d+/);
+
+    pickFrom(defenderStage('def'), '+2');
+    await vi.waitFor(() => {
+      expect(psyshockDamage()).not.toBe(before);
+    });
+  });
+
+  it('상대 특방 랭크에는 반응하지 않는다', async () => {
+    await openWithPsyshock();
+    const before = psyshockDamage();
+
+    pickFrom(defenderStage('spd'), '+2');
+    // 특방을 아무리 올려도 이 기술에는 아무 일도 없어야 한다.
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__stage--up')).not.toBeNull();
+    });
+    expect(psyshockDamage()).toBe(before);
+  });
+
+  it('무엇으로 계산하는지 화면에 적는다', async () => {
+    await openWithPsyshock();
+    const row = [...document.querySelectorAll('.calc__move-result')].find((r) =>
+      r.textContent?.includes('사이코쇼크'),
+    )!;
+    expect(row.textContent).toContain('상대 방어로 계산');
+    // 공격은 여전히 특공으로 한다 — 분류 표기는 '특수'다.
+    expect(row.querySelector('.calc__move-spec')?.textContent).toContain('특수');
   });
 });
 

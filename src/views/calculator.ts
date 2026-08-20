@@ -44,7 +44,7 @@ import {
 import { formDisplayName } from '../core/formNames';
 import { isMegaStoneName, megaStoneFor } from '../core/megaStones';
 import { matchesQuery } from '../core/names';
-import { isSpreadMove, traitsOf } from '../core/moveTraits';
+import { defensiveCategory, isSpreadMove, traitsOf } from '../core/moveTraits';
 import { effectiveness } from '../core/typechart';
 import {
   applyEffectivenessQuirk,
@@ -1235,6 +1235,8 @@ function moveResult(
     moveType: move.type,
     movePower: move.power ?? 0,
     category,
+    // 방어 실수치를 건드리는 특성(두꺼운털가죽·이상한비늘)은 분류가 아니라 이쪽을 봐야 한다.
+    defenseCategory: defensiveCategory(move),
     isRecoil: move.drain < 0,
     hasSecondaryEffect:
       move.ailmentChance > 0 ||
@@ -1465,7 +1467,12 @@ function moveResult(
     attackStat = Math.floor(attackStat * attackerItem.attackMultiplier);
   }
 
-  const defenseKey: BattleStat = category === 'physical' ? 'def' : 'spd';
+  /*
+   * 어느 방어로 나눌지는 분류가 아니라 기술이 정한다.
+   * 사이코쇼크는 특수기지만 상대 '방어'를 본다 — 특방만 두꺼운 상대에게 결과가 완전히 달라진다.
+   */
+  const defenseCategory = defensiveCategory(move);
+  const defenseKey: BattleStat = defenseCategory === 'physical' ? 'def' : 'spd';
   /** 방어 실수치 전 과정. 랭크만 바꿔가며 다시 부를 수 있어야 한다(지구력). */
   const defenseAtStage = (stage: number): number => {
     let value = effectiveStat(
@@ -1475,10 +1482,19 @@ function moveResult(
       defenderStageIgnored ? 0 : stage,
     );
     value = Math.floor(value * resolved.defender.defenseMultiplier);
-    if (defenderItem?.defenseMultiplier && (!defenderItem.specialDefenseOnly || category === 'special')) {
+    // 돌격조끼처럼 특방만 올리는 도구는 실제로 특방을 볼 때만 붙는다.
+    if (
+      defenderItem?.defenseMultiplier &&
+      (!defenderItem.specialDefenseOnly || defenseCategory === 'special')
+    ) {
       value = Math.floor(value * defenderItem.defenseMultiplier);
     }
-    const weatherDef = weatherDefenseMultiplier(effectiveWeather, defenderForm.types, category);
+    // 모래바람의 바위 특방·눈의 얼음 방어도 '실수치'를 올리는 것이라 보는 쪽을 따라간다.
+    const weatherDef = weatherDefenseMultiplier(
+      effectiveWeather,
+      defenderForm.types,
+      defenseCategory,
+    );
     if (weatherDef !== 1) value = Math.floor(value * weatherDef);
     return value;
   };
@@ -1488,9 +1504,10 @@ function moveResult(
   /**
    * 지구력 — 맞을 때마다 방어가 1랭크 오른다.
    * 연속기에서는 2타·3타가 더 단단한 방어를 상대하므로 타격마다 다시 계산해야 한다.
-   * 방어가 오르는 것이라 특수기에는 영향이 없다.
+   * 오르는 건 '방어'라 특방을 보는 기술에는 영향이 없다 (사이코쇼크는 방어를 보므로 영향받는다).
    */
-  const stamina = defender.ability === 'Stamina' && category === 'physical' && !defenderStageIgnored;
+  const stamina =
+    defender.ability === 'Stamina' && defenseCategory === 'physical' && !defenderStageIgnored;
   const perHitDefenses = stamina
     ? Array.from({ length: hits }, (_, i) => defenseAtStage(baseDefenseStage + i))
     : undefined;

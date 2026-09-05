@@ -7,7 +7,7 @@
 
 import { matchesQuery } from '../core/names';
 import { clear, el, focusIfKeyboardLikely, notice } from '../core/dom';
-import { formDisplayName, formTagText } from '../core/formNames';
+import { formDisplayName, formTagText, nameCarriesForm } from '../core/formNames';
 import { isMegaForm } from '../core/megaStones';
 import { searchHaystack } from '../adapters/pokeApi';
 import { navigate } from '../router';
@@ -66,7 +66,10 @@ export function renderSearch(container: HTMLElement): void {
   }
 
   const draw = (): void => {
-    const matches = sortPokemon(filterPokemon(query), sortMode, state.format);
+    const all = filterPokemon(query);
+    const matches = sortPokemon(visibleIn(all, sortMode), sortMode, state.format);
+    // 사용률 순위에서 빠진 메가가 몇인지. 검색해서 아무것도 안 나오는 이유가 되기도 한다.
+    const hiddenMegas = all.length - matches.length;
     clear(results);
 
     const unranked = matches.filter((e) => e.mon.usageRank[state.format] === null).length;
@@ -77,10 +80,18 @@ export function renderSearch(container: HTMLElement): void {
     summary.textContent =
       `${scope} ${matches.length - megas}종` +
       (megas > 0 ? ` · 메가 ${megas}폼` : '') +
+      (hiddenMegas > 0 ? ` · 메가 ${hiddenMegas}폼은 사용률 순위에서 제외` : '') +
       (sortMode === 'usage' && unranked > 0 ? ` · 순위 없음 ${unranked}종은 맨 뒤` : '');
 
     if (matches.length === 0) {
-      results.appendChild(notice('empty', '일치하는 포켓몬이 없습니다.'));
+      results.appendChild(
+        notice(
+          'empty',
+          hiddenMegas > 0
+            ? '메가는 사용률 순위에 없습니다 — 정렬을 바꾸면 나옵니다.'
+            : '일치하는 포켓몬이 없습니다.',
+        ),
+      );
       return;
     }
     matches.forEach((entry, i) => {
@@ -111,7 +122,7 @@ export function renderSearch(container: HTMLElement): void {
 
   // 키보드 내비게이션 — 설계 문서 M1 요구사항.
   input.addEventListener('keydown', (event: KeyboardEvent) => {
-    const matches = sortPokemon(filterPokemon(query), sortMode, state.format);
+    const matches = sortPokemon(visibleIn(filterPokemon(query), sortMode), sortMode, state.format);
     if (matches.length === 0) return;
 
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -194,24 +205,55 @@ export interface SearchEntry {
 export function searchEntries(): SearchEntry[] {
   const list = state.index?.pokemon ?? [];
   const entries: SearchEntry[] = [];
+  /*
+   * 같은 메가 폼을 여러 종이 물고 있다.
+   *
+   * 상류는 라이츄와 알로라 라이츄를 **각각의 종**으로 주면서 폼 목록은 똑같이
+   * (라이츄 · 알로라 라이츄 · 메가 라이츄 X · Y) 담아 준다. 그대로 펴면 메가 라이츄가
+   * 두 번씩 나온다. 폼 slug 로 한 번만 세우고, 원종(Base) 쪽에 붙인다.
+   */
+  const megaOwner = new Map<string, Pokemon>();
+  for (const mon of list) {
+    for (const form of mon.forms) {
+      if (!isMegaForm(form)) continue;
+      const owner = megaOwner.get(form.slug);
+      if (!owner || (owner.primary.formKind !== 'Base' && mon.primary.formKind === 'Base')) {
+        megaOwner.set(form.slug, mon);
+      }
+    }
+  }
 
   /** 폼이 여러 개인 종에서만, 그리고 이름과 겹치지 않을 때만 폼을 덧붙인다. */
   const tagFor = (mon: Pokemon, form: PokemonForm, label: string): string | null => {
     if (mon.forms.length <= 1) return null;
+    // '알로라 나인테일' 처럼 이름이 이미 폼을 말하고 있으면 두 번 적지 않는다.
+    if (nameCarriesForm(label)) return null;
     const tag = formTagText(mon, form, state.formNames);
     return tag && tag !== label ? tag : null;
   };
 
   for (const mon of list) {
-    entries.push({
-      mon,
-      form: mon.primary,
-      label: mon.displayName,
-      formTag: tagFor(mon, mon.primary, mon.displayName),
-      isMega: false,
-    });
+    /*
+     * 대표 폼이 메가인 종 엔트리가 하나 있다 (Mega Gallade). 원종(엘레이드)이 같은 폼을
+     * 이미 갖고 있어서 그대로 두면 같은 메가가 두 줄이 된다. 게다가 이쪽은 사용률 순위도
+     * 없고 한국어 이름도 없다. 폼 줄에 맡기고 종 줄은 세우지 않는다.
+     */
+    const duplicateMegaSpecies = isMegaForm(mon.primary) && megaOwner.get(mon.primary.slug) !== mon;
+    if (!duplicateMegaSpecies) {
+      entries.push({
+        mon,
+        form: mon.primary,
+        label: mon.displayName,
+        formTag: tagFor(mon, mon.primary, mon.displayName),
+        // 대표 폼이 메가면 그 줄도 메가다 — 사용률 순위에서 함께 빠진다.
+        isMega: isMegaForm(mon.primary),
+      });
+    }
     for (const form of mon.forms) {
       if (!isMegaForm(form)) continue;
+      if (megaOwner.get(form.slug) !== mon) continue;
+      // 방금 종 줄로 세운 폼을 또 세우지 않는다.
+      if (form.slug === mon.primary.slug) continue;
       // 메가는 이름 자체가 '메가 …' 라 폼을 또 적지 않는다.
       const label = formDisplayName(mon, form, list, state.formNames);
       entries.push({ mon, form, label, formTag: null, isMega: true });
@@ -230,6 +272,17 @@ function entryHaystack(entry: SearchEntry): string[] {
   const base = searchHaystack(entry.mon, state.locales);
   if (!entry.isMega) return base;
   return [...base, entry.label, entry.form.formName, entry.form.slug];
+}
+
+/**
+ * 이 정렬에서 목록에 세울 것들.
+ *
+ * 사용률은 **종 단위** 집계라 메가에 따로 매길 순위가 없다. 원종의 순위를 빌려 적으면
+ * 같은 순위가 두 줄로 늘어서 순위표가 아니게 된다. 그래서 사용률 순위에서는 뺀다.
+ * (다른 정렬에서는 그 폼의 수치로 줄을 세우므로 그대로 둔다.)
+ */
+export function visibleIn(entries: SearchEntry[], mode: SortMode): SearchEntry[] {
+  return mode === 'usage' ? entries.filter((entry) => !entry.isMega) : entries;
 }
 
 export function filterPokemon(rawQuery: string): SearchEntry[] {
@@ -269,9 +322,7 @@ export function sortPokemon(list: SearchEntry[], mode: SortMode, format: Format)
     if (ra === null && rb === null) return byName(a, b);
     if (ra === null) return 1;
     if (rb === null) return -1;
-    // 사용률은 종 단위라 원종과 메가가 같은 순위다. 그때는 원종을 앞에 둔다.
-    if (ra === rb) return Number(a.isMega) - Number(b.isMega) || byName(a, b);
-    return ra - rb;
+    return ra - rb || byName(a, b);
   });
   return sorted;
 }

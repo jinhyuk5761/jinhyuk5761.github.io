@@ -279,15 +279,46 @@ describe('M1 검색', () => {
     // 예전에는 60종에서 끊었는데 안내가 없어서 "종이 안 뜬다"로 읽혔다.
     await mountApp('#/');
     const list = (await import('../src/store')).state.index!.pokemon;
-    const megas = list.reduce(
-      (sum, mon) => sum + mon.forms.filter((f) => f.formKind.startsWith('Mega')).length,
-      0,
+    const megaSlugs = new Set(
+      list.flatMap((mon) => mon.forms.filter((f) => f.formKind.startsWith('Mega'))).map((f) => f.slug),
     );
-    // 종 한 줄 + 메가 폼 한 줄씩.
-    expect(document.querySelectorAll('.card').length).toBe(list.length + megas);
+
+    // 기본 정렬(사용률 순위)에는 종만 선다.
+    expect(document.querySelectorAll('.card').length).toBe(list.length);
+    expect(document.querySelector('.results__summary')?.textContent).toContain(
+      `전체 ${list.length}종`,
+    );
+
+    // 정렬을 바꾸면 메가가 각각 한 줄씩 더해진다.
+    const select = document.querySelector<HTMLSelectElement>('.search__sort')!;
+    select.value = 'name';
+    select.dispatchEvent(new Event('change'));
+    expect(document.querySelectorAll('.card').length).toBe(list.length + megaSlugs.size);
     const summary = document.querySelector('.results__summary')?.textContent ?? '';
     expect(summary).toContain(`전체 ${list.length}종`);
-    expect(summary).toContain(`메가 ${megas}폼`);
+    expect(summary).toContain(`메가 ${megaSlugs.size}폼`);
+  });
+
+  it('사용률 순위에는 메가를 세우지 않는다', async () => {
+    await mountApp('#/');
+    const input = document.querySelector<HTMLInputElement>('.search__input')!;
+    input.value = '한카리아스';
+    input.dispatchEvent(new Event('input'));
+
+    // 사용률은 종 단위 집계라 메가에 매길 순위가 없다.
+    expect([...document.querySelectorAll('.card__name')].map((n) => n.textContent)).toEqual([
+      '한카리아스',
+    ]);
+    expect(document.querySelector('.results__summary')?.textContent).toContain(
+      '사용률 순위에서 제외',
+    );
+
+    // 메가만 걸리는 검색어면 결과가 비는데, 그 이유를 적어 준다.
+    input.value = '메가';
+    input.dispatchEvent(new Event('input'));
+    expect(document.querySelector('.notice')?.textContent).toContain(
+      '메가는 사용률 순위에 없습니다',
+    );
   });
 
   it('기본 정렬이 사용률 순위이고 순위를 함께 보여준다', async () => {
@@ -381,17 +412,20 @@ describe('M1 검색', () => {
 
   it('메가는 원종과 별개의 카드로 뜬다', async () => {
     await mountApp('#/');
+    // 사용률 순위에서는 메가를 빼므로 다른 정렬로 본다.
+    const select = document.querySelector<HTMLSelectElement>('.search__sort')!;
+    select.value = 'name';
+    select.dispatchEvent(new Event('change'));
     const input = document.querySelector<HTMLInputElement>('.search__input')!;
     input.value = '한카리아스';
     input.dispatchEvent(new Event('input'));
 
     const cards = [...document.querySelectorAll('.card')];
-    expect(cards.map((c) => c.querySelector('.card__name')?.textContent)).toEqual([
-      '한카리아스',
-      '메가 한카리아스',
-    ]);
+    const names = cards.map((c) => c.querySelector('.card__name')?.textContent);
+    // 이름순이라 배열 순서는 정렬이 정한다 — 둘 다 있는지만 본다.
+    expect([...names].sort()).toEqual(['메가 한카리아스', '한카리아스']);
 
-    const mega = cards[1]!;
+    const mega = cards.find((c) => c.querySelector('.card__name')?.textContent === '메가 한카리아스')!;
     // 상세로 갈 때 그 폼이 펴지도록 주소에 폼을 싣는다.
     expect(mega.getAttribute('href')).toBe('#/p/garchomp?form=mega-garchomp');
     // 수치도 원종이 아니라 메가의 것이어야 한다.
@@ -442,10 +476,10 @@ describe('M1 검색', () => {
       return [...document.querySelectorAll('.card__name')].map((n) => n.textContent);
     };
 
-    // 어느 언어로 쳐도 같은 결과 — 원종과 그 메가가 함께 나온다.
-    expect(search('한카리아스')).toEqual(['한카리아스', '메가 한카리아스']);
-    expect(search('garchomp')).toEqual(['한카리아스', '메가 한카리아스']);
-    expect(search('ガブリアス')).toEqual(['한카리아스', '메가 한카리아스']);
+    // 어느 언어로 쳐도 같은 결과. (기본 정렬은 사용률 순위라 메가는 빠져 있다.)
+    expect(search('한카리아스')).toEqual(['한카리아스']);
+    expect(search('garchomp')).toEqual(['한카리아스']);
+    expect(search('ガブリアス')).toEqual(['한카리아스']);
   });
 
   it('종 명칭으로도 폼을 찾는다 ("나인테일" → 알로라 나인테일)', async () => {

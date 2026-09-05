@@ -84,8 +84,12 @@ export function formDisplayName(
  * 검색해서 찾던 이름이 사라진다. 그래서 이름은 두고 폼만 덧붙인다.
  *
  * 공식 한국어 폼 표기가 있으면 그것을, 없으면 영문 폼 이름에서 종족명을 뺀 부분을 쓴다
- * ('Gourgeist Jumbo Variety' → 'Jumbo Variety'). 뺐더니 아무것도 안 남으면 —
- * 폼 이름이 곧 종 이름이라는 뜻이라 — 붙이지 않는다.
+ * ('Gourgeist Jumbo Variety' → 'Jumbo Variety').
+ *
+ * 뺐더니 아무것도 안 남는 종이 있다. 켄타로스가 그렇다 — 상류가 팔데아 3종을 각각의
+ * 종으로 주는데 폼 이름이 종 이름과 같고(Paldean Tauros Aqua Breed), 한국어 종족명은
+ * 셋 다 그냥 '켄타로스' 다. 그대로 두면 구별할 수 없는 카드가 넷 늘어선다.
+ * 그때는 폼 갈래(form_kind)를 쓴다. 그것도 'Base' 면 원종이라는 뜻이라 붙이지 않는다.
  */
 export function formTagText(
   mon: Pokemon,
@@ -96,7 +100,17 @@ export function formTagText(
   if (official) return official;
 
   const stripped = form.formName.replace(mon.name, ' ').replace(/\s+/g, ' ').trim();
-  return stripped.length > 0 ? stripped : null;
+  if (stripped.length > 0) return stripped;
+
+  return form.formKind && form.formKind !== 'Base' ? form.formKind : null;
+}
+
+/**
+ * 이름 자체가 이미 폼을 말하고 있는가 ('알로라 나인테일' · '메가 한카리아스').
+ * 그런 이름 옆에 폼을 또 적으면 같은 말을 두 번 하는 꼴이다.
+ */
+export function nameCarriesForm(korean: string): boolean {
+  return stripRegion(korean) !== korean;
 }
 
 /** '알로라 나인테일' → '나인테일'. 접두어가 없으면 그대로. */

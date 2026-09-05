@@ -17,12 +17,13 @@ import { monCard } from './components';
  * 정렬 기준. 사용률 순위는 인덱스가 이미 들고 있어서 추가 요청이 없다.
  * 순위가 없는 종은 어느 기준에서든 맨 뒤로 보내고 "순위 없음" 이라고 적는다.
  */
-type SortMode = 'usage' | 'name' | 'stats';
+type SortMode = 'usage' | 'name' | 'stats' | 'speed';
 
 const SORT_OPTIONS: [SortMode, string][] = [
   ['usage', '사용률 순위'],
   ['name', '이름순'],
   ['stats', '실수치 합계'],
+  ['speed', '스피드 순위'],
 ];
 
 let query = '';
@@ -78,7 +79,11 @@ export function renderSearch(container: HTMLElement): void {
       return;
     }
     matches.forEach((mon, i) => {
-      const card = monCard(mon, sortMode === 'usage' ? state.format : null);
+      const card = monCard(
+        mon,
+        sortMode === 'usage' ? state.format : null,
+        sortMode === 'speed' ? 'speed' : 'bst',
+      );
       if (i === activeIndex) card.classList.add('card--active');
       results.appendChild(card);
     });
@@ -173,6 +178,16 @@ export function sortPokemon(list: Pokemon[], mode: SortMode, format: Format): Po
   }
   if (mode === 'stats') {
     sorted.sort((a, b) => b.primary.stats.total - a.primary.stats.total);
+    return sorted;
+  }
+  if (mode === 'speed') {
+    // 스피드가 같은 종이 흔하다(100 만 수십 종). 그때는 이름으로 줄을 세워
+    // 목록을 다시 그려도 순서가 흔들리지 않게 한다.
+    sorted.sort(
+      (a, b) =>
+        b.primary.stats.spe - a.primary.stats.spe ||
+        a.displayName.localeCompare(b.displayName, 'ko'),
+    );
     return sorted;
   }
   sorted.sort((a, b) => {

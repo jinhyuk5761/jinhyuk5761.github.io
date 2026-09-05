@@ -75,6 +75,22 @@ const MOVES = {
       tgt: 'selected-pokemon', flags: [],
       desc: '이상한 염력파를 실체화하여 상대를 공격한다.',
     },
+    // 스택으로 위력이 오르는 두 기술. 상한이 서로 다른 게 요점이다.
+    'Last Respects': {
+      n: 'Last Respects', ko: '성묘', ja: 'おはかまいり', type: 'ghost', cls: 'physical',
+      pow: 50, acc: 100, pp: 10, pri: 0,
+      tgt: 'selected-pokemon', flags: [],
+      varPow: 'fallenAllies', varNote: '쓰러진 아군 1명마다 +50',
+      desc: '쓰러진 아군의 원한을 담아 공격한다.',
+    },
+    'Rage Fist': {
+      n: 'Rage Fist', ko: '분노의주먹', ja: 'ふんどのこぶし', type: 'ghost', cls: 'physical',
+      pow: 50, acc: 100, pp: 10, pri: 0,
+      tgt: 'selected-pokemon', flags: ['contact', 'punch'],
+      // 데이터의 상한(350)은 본가 기준 — 계산기가 이걸 그대로 쓰지 않는지도 함께 본다.
+      varPow: 'manual', varNote: '맞은 횟수 1회당 +50 (최대 350)',
+      desc: '분노를 힘으로 바꿔 공격한다.',
+    },
     'Stealth Rock': {
       n: 'Stealth Rock', ko: '스텔스록', type: 'rock', cls: 'status',
       pow: null, acc: null, pp: 20, pri: 0,
@@ -308,6 +324,42 @@ describe('M1 검색', () => {
     select.dispatchEvent(new Event('change'));
     const names = [...document.querySelectorAll('.card__name')].map((n) => n.textContent ?? '');
     expect([...names].sort((a, b) => a.localeCompare(b, 'ko'))).toEqual(names);
+  });
+
+  it('스피드 순위로 줄을 세우고 그 값을 카드에 적는다', async () => {
+    await mountApp('#/');
+    const select = document.querySelector<HTMLSelectElement>('.search__sort')!;
+
+    select.value = 'speed';
+    select.dispatchEvent(new Event('change'));
+
+    const speeds = [...document.querySelectorAll('.card__bst--speed')].map((n) =>
+      Number((n.textContent ?? '').replace(/[^0-9]/g, '')),
+    );
+    expect(speeds.length).toBe(document.querySelectorAll('.card').length);
+    // 빠른 순이어야 한다.
+    expect([...speeds].sort((a, b) => b - a)).toEqual(speeds);
+    // 합계가 아니라 스피드 실수치를 적는다.
+    const store = await import('../src/store');
+    const fastest = Math.max(...store.state.index!.pokemon.map((m) => m.primary.stats.spe));
+    expect(speeds[0]).toBe(fastest);
+    // 사용률 정렬이 아니므로 순위 배지는 붙지 않는다.
+    expect(document.querySelector('.card__rank')).toBeNull();
+  });
+
+  it('스피드가 같으면 이름순으로 갈라 순서가 흔들리지 않는다', async () => {
+    await mountApp('#/');
+    const select = document.querySelector<HTMLSelectElement>('.search__sort')!;
+    select.value = 'speed';
+    select.dispatchEvent(new Event('change'));
+    const first = [...document.querySelectorAll('.card__name')].map((n) => n.textContent);
+
+    // 다른 기준을 들렀다 돌아와도 같은 순서여야 한다.
+    select.value = 'name';
+    select.dispatchEvent(new Event('change'));
+    select.value = 'speed';
+    select.dispatchEvent(new Event('change'));
+    expect([...document.querySelectorAll('.card__name')].map((n) => n.textContent)).toEqual(first);
   });
 
   it('한국어·영어·일본어가 같은 결과를 낸다', async () => {
@@ -1461,6 +1513,67 @@ describe('테마', () => {
     // 저장된 값을 읽어 다시 부팅한다.
     await mountApp('#/');
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  });
+});
+
+describe('스택으로 강해지는 기술', () => {
+  /** 이름으로 기술 결과 덩어리를 찾는다. */
+  const resultOf = (name: string): Element => {
+    const row = [...document.querySelectorAll('.calc__move-result')].find((r) =>
+      r.textContent?.includes(name),
+    );
+    if (!row) throw new Error(`${name} 결과가 없습니다`);
+    return row;
+  };
+
+  async function openWith(moveLabel: string): Promise<Element> {
+    await mountApp('#/calc?a=aegislash&b=ninetalesalola');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.calc__damage')).not.toBeNull();
+    });
+    pickFrom(document.querySelectorAll('.calc__move')[0]!, moveLabel);
+    await vi.waitFor(() => {
+      expect(document.body.textContent).toContain(moveLabel);
+    });
+    return resultOf(moveLabel);
+  }
+
+  it('성묘는 3스택까지 고를 수 있다', async () => {
+    const row = await openWith('성묘');
+    row.querySelector<HTMLButtonElement>('.calc__varpow-stacks .sselect__button')!.click();
+    expect(
+      [...row.querySelectorAll('.calc__varpow-stacks .sselect__option')].map((o) => o.textContent),
+    ).toEqual(['0마리', '1마리', '2마리', '3마리']);
+    // 본가 상한(5마리·위력 300)을 적으면 안 된다.
+    expect(row.querySelector('.calc__varpow-note')?.textContent).toBe(
+      '쓰러진 아군 1마리당 +50 (최대 3마리)',
+    );
+  });
+
+  it('분노의주먹은 5스택까지 고를 수 있다', async () => {
+    const row = await openWith('분노의주먹');
+    row.querySelector<HTMLButtonElement>('.calc__varpow-stacks .sselect__button')!.click();
+    expect(
+      [...row.querySelectorAll('.calc__varpow-stacks .sselect__option')].map((o) => o.textContent),
+    ).toEqual(['0회', '1회', '2회', '3회', '4회', '5회']);
+    expect(row.querySelector('.calc__varpow-note')?.textContent).toBe(
+      '맞은 횟수 1회당 +50 (최대 5회)',
+    );
+    // 직접 입력 칸은 더 이상 필요 없다.
+    expect(row.querySelector('.calc__varpow-input')).toBeNull();
+  });
+
+  it('스택을 올리면 위력과 대미지가 함께 오른다', async () => {
+    await openWith('분노의주먹');
+    const before = resultOf('분노의주먹').querySelector('.calc__damage')!.textContent!;
+    expect(resultOf('분노의주먹').textContent).toContain('현재 위력 50');
+
+    pickFrom(resultOf('분노의주먹').querySelector('.calc__varpow-stacks')!, '5회');
+
+    await vi.waitFor(() => {
+      expect(resultOf('분노의주먹').textContent).toContain('현재 위력 300');
+    });
+    expect(resultOf('분노의주먹').querySelector('.calc__damage')!.textContent).not.toBe(before);
   });
 });
 

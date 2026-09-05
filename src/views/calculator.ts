@@ -48,11 +48,14 @@ import { defensiveCategory, isSpreadMove, traitsOf } from '../core/moveTraits';
 import { effectiveness } from '../core/typechart';
 import {
   applyEffectivenessQuirk,
+  clampStacks,
   needsManualPower,
   resolveMoveType,
   escalatingPowers,
   isEscalating,
   resolvePower,
+  stackNote,
+  stackSpecOf,
   sumPositiveBoosts,
   type PowerContext,
 } from '../core/variablePower';
@@ -164,6 +167,14 @@ let genderRelation: 'same' | 'different' | 'unknown' = 'unknown';
 const hitChoices = new Map<string, number>();
 const manualPower = new Map<string, number>();
 /**
+ * 스택 기술(성묘·분노의주먹)에 사람이 고른 스택 수.
+ *
+ * 성묘는 총대장과 같은 '쓰러진 아군' 수지만 상한이 다르고(3 vs 5), 필드의 총대장 칸과
+ * 기술 줄을 한 값으로 묶으면 한쪽 표시가 낡은 채 남는다. 그래서 고르기 전까지만
+ * 총대장 값을 기본으로 따라가고, 한 번 고르면 그 선택을 지킨다.
+ */
+const stackChoices = new Map<string, number>();
+/**
  * 변환자재·리베로의 자속을 적용할 기술.
  *
  * 이 특성은 등장 후 **한 번만** 타입을 바꾼다. 그 턴에 쓴 기술에만 자속이 붙으므로
@@ -184,6 +195,20 @@ function hitsFor(move: MoveInfo, skillLink: boolean): number {
   const [min, max] = move.hits;
   if (skillLink) return max;
   return hitChoices.get(move.englishName) ?? defaultHits([min, max]);
+}
+
+/**
+ * 이 기술에 쌓인 스택 수.
+ *
+ * 성묘는 아직 고르지 않았으면 총대장 칸에 넣어 둔 '쓰러진 아군' 수를 따라간다 —
+ * 같은 상황을 두 번 입력하게 만들지 않기 위해서다. 상한은 기술마다 다르므로 잘라 준다.
+ */
+function stacksFor(move: MoveInfo): number {
+  const spec = stackSpecOf(move);
+  if (!spec) return 0;
+  const chosen = stackChoices.get(move.englishName);
+  if (chosen !== undefined) return clampStacks(spec, chosen);
+  return clampStacks(spec, spec.followsFallenAllies ? fallenAllies : 0);
 }
 
 function natureFor(side: Side, stat: BattleStat): Nature {
@@ -1271,6 +1296,7 @@ function moveResult(
 
   const powerContext: PowerContext = {
     fallenAllies,
+    stacks: stacksFor(move),
     positiveBoosts: sumPositiveBoosts(attacker.stages),
     // 구애스카프는 대미지 배율이 없지만 스피드를 바꿔 자이로볼·일렉트릭볼의 위력을 흔든다.
     attackerSpeed: Math.floor(
@@ -1387,12 +1413,40 @@ function moveResult(
 
 
 
-  if (move.variablePower) {
+  const stackSpec = stackSpecOf(move);
+
+  if (move.variablePower || stackSpec) {
     const line = el('div', { class: 'calc__varpow' });
     line.appendChild(el('span', { class: 'calc__varpow-label' }, '가변 위력'));
-    line.appendChild(el('span', { class: 'calc__varpow-note' }, move.variablePowerNote ?? ''));
+    line.appendChild(
+      el(
+        'span',
+        { class: 'calc__varpow-note' },
+        // 스택 기술의 설명문은 본가 상한이 적혀 있어 이 게임과 어긋난다. 우리 값을 쓴다.
+        stackSpec ? stackNote(stackSpec) : (move.variablePowerNote ?? ''),
+      ),
+    );
 
-    if (needsManualPower(move)) {
+    if (stackSpec) {
+      // 몇 스택인지는 계산기가 알 수 없다 — 고르게 하고, 고른 값으로 위력을 확정한다.
+      line.appendChild(
+        searchSelect({
+          options: Array.from({ length: stackSpec.max + 1 }, (_, n) => ({
+            value: String(n),
+            label: `${n}${stackSpec.unit}`,
+          })),
+          value: String(stacksFor(move)),
+          placeholder: `0${stackSpec.unit}`,
+          ariaLabel: `${move.displayName} ${stackSpec.label}`,
+          className: 'calc__select calc__varpow-stacks',
+          onPick: (raw) => {
+            stackChoices.set(move.englishName, Number(raw));
+            hp.onChange();
+          },
+        }),
+      );
+      line.appendChild(el('span', { class: 'calc__varpow-value' }, `현재 위력 ${effectivePower}`));
+    } else if (needsManualPower(move)) {
       const input = el('input', {
         class: 'calc__varpow-input',
         type: 'number',

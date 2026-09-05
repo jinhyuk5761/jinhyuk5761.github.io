@@ -15,8 +15,13 @@ import type { Terrain, Weather } from './damage';
 import type { TypeName } from '../types';
 
 export interface PowerContext {
-  /** 쓰러진 아군 수 (성묘) */
+  /** 쓰러진 아군 수 (총대장) */
   fallenAllies: number;
+  /**
+   * 이 기술에 쌓인 스택 수 (성묘·분노의주먹).
+   * 기술마다 세는 것이 달라서 호출부가 기술별로 넣어 준다. 상한은 STACK_MOVES 가 정한다.
+   */
+  stacks: number;
   /** 공격측의 올라간 랭크 합 (어시스트파워·기어오르기) */
   positiveBoosts: number;
   /** 실제 스피드 실수치 (자이로볼·일렉트릭볼) */
@@ -92,7 +97,66 @@ function weightRatioPower(attackerKg: number, defenderKg: number): number {
 
 /** 이 기술은 사용자가 위력을 직접 넣어야 하는가. */
 export function needsManualPower(move: MoveInfo): boolean {
-  return move.variablePower === 'manual';
+  // 스택으로 확정되는 기술은 직접 입력받지 않는다 — 고를 수 있는 값이 정해져 있다.
+  return move.variablePower === 'manual' && stackSpecOf(move) === null;
+}
+
+/**
+ * 스택이 쌓일수록 강해지는 기술.
+ *
+ * 성묘는 쓰러진 아군 수, 분노의주먹은 그때까지 맞은 횟수만큼 위력이 오른다.
+ * 둘 다 계산기가 스스로 알 수 없는 값이라 사람이 고른다.
+ */
+export interface StackSpec {
+  /** 무엇이 쌓이는지 — 화면에 그대로 적는다. */
+  label: string;
+  /** 스택을 세는 단위 */
+  unit: string;
+  /** 이 게임에서의 스택 상한 */
+  max: number;
+  /** 스택 1당 오르는 위력 */
+  per: number;
+  /**
+   * 필드의 '쓰러진 아군 (총대장)' 칸과 같은 수인가.
+   * 그렇다면 아직 안 고른 동안 그 값을 기본으로 쓴다 — 같은 상황을 두 번 넣지 않게.
+   */
+  followsFallenAllies?: boolean;
+}
+
+/**
+ * **상한은 Champions 기준이다.**
+ *
+ * 본가는 성묘가 쓰러진 아군 5마리(위력 300), 분노의주먹이 맞은 횟수 6회(위력 350)까지
+ * 오르지만 이 게임은 각각 3·5 에서 멈춘다. 본가 값을 그대로 두면 나올 수 없는 위력으로
+ * 확정/난수 판정이 뒤집힌다. PokéAPI 설명문(최대 350)도 본가 기준이라 믿을 수 없다.
+ */
+const STACK_MOVES: Record<string, StackSpec> = {
+  'Last Respects': {
+    label: '쓰러진 아군',
+    unit: '마리',
+    max: 3,
+    per: 50,
+    followsFallenAllies: true,
+  },
+  'Rage Fist': { label: '맞은 횟수', unit: '회', max: 5, per: 50 },
+};
+
+export function stackSpecOf(move: MoveInfo): StackSpec | null {
+  return STACK_MOVES[move.englishName] ?? null;
+}
+
+/** 고를 수 있는 범위로 자른다. 밖에서 들어온 값(총대장 수)이 상한을 넘을 수 있다. */
+export function clampStacks(spec: StackSpec, stacks: number): number {
+  if (!Number.isFinite(stacks)) return 0;
+  return Math.max(0, Math.min(spec.max, Math.floor(stacks)));
+}
+
+/**
+ * 화면에 적을 한 줄.
+ * 데이터의 설명문 대신 이걸 쓴다 — 그쪽은 본가 상한이라 이 게임과 어긋난다.
+ */
+export function stackNote(spec: StackSpec): string {
+  return `${spec.label} 1${spec.unit}당 +${spec.per} (최대 ${spec.max}${spec.unit})`;
 }
 
 /**
@@ -101,6 +165,10 @@ export function needsManualPower(move: MoveInfo): boolean {
  */
 export function resolvePower(move: MoveInfo, ctx: PowerContext): number | null {
   const base = move.power ?? 0;
+
+  // 스택 기술은 데이터의 공식보다 이 게임의 상한이 우선이다.
+  const stackSpec = stackSpecOf(move);
+  if (stackSpec) return base + stackSpec.per * clampStacks(stackSpec, ctx.stacks);
 
   switch (move.variablePower) {
     case null:

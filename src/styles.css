@@ -300,6 +300,8 @@ h4 { font-size: 15px; margin: 0; }
 .card__sub { font-size: 11px; color: var(--text-dim); }
 .card__types { display: flex; gap: 4px; flex-wrap: wrap; }
 .card__bst { font-size: 12px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+/* 스피드로 줄 세운 목록에서는 그 값이 이 카드의 근거다 — 합계와 헷갈리지 않게 눈에 띄게 둔다. */
+.card__bst--speed { color: var(--accent); font-weight: 700; }
 
 /* ---------- 상세 ---------- */
 
@@ -633,6 +635,8 @@ h4 { font-size: 15px; margin: 0; }
 .calc__varpow-note { color: var(--text-dim); }
 .calc__varpow-value { font-weight: 600; }
 .calc__varpow-input { width: 72px; padding: 3px 6px; border: 1px solid var(--warn); border-radius: 6px; background: var(--bg); color: var(--text); font: inherit; font-size: 12px; }
+/* 스택 선택은 '가변 위력' 줄 안에 들어간다 — 100% 로 늘어나면 줄이 깨진다. */
+.calc__varpow-stacks { width: auto; min-width: 84px; border-color: var(--warn); }
 .calc__hits { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-size: 12px; }
 .calc__hits-label { color: var(--text-dim); }
 .calc__hits .calc__select { width: auto; }

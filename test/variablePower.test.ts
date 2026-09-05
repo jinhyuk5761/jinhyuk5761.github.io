@@ -17,6 +17,8 @@ import {
   escalatingPowers,
   isEscalating,
   resolvePower,
+  stackNote,
+  stackSpecOf,
   sumPositiveBoosts,
 } from '../src/core/variablePower';
 import { effectiveness } from '../src/core/typechart';
@@ -35,6 +37,7 @@ function move(name: string): MoveInfo {
 function ctx(overrides: Partial<PowerContext> = {}): PowerContext {
   return {
     fallenAllies: 0,
+    stacks: 0,
     positiveBoosts: 0,
     attackerSpeed: 100,
     defenderSpeed: 100,
@@ -64,14 +67,51 @@ describe('성묘 — 이 기능이 생긴 계기', () => {
 
   it('쓰러진 아군 1마리당 50 씩 오른다', () => {
     const m = move('Last Respects');
-    expect(resolvePower(m, ctx({ fallenAllies: 0 }))).toBe(50);
-    expect(resolvePower(m, ctx({ fallenAllies: 1 }))).toBe(100);
-    expect(resolvePower(m, ctx({ fallenAllies: 3 }))).toBe(200);
-    expect(resolvePower(m, ctx({ fallenAllies: 5 }))).toBe(300);
+    expect(resolvePower(m, ctx({ stacks: 0 }))).toBe(50);
+    expect(resolvePower(m, ctx({ stacks: 1 }))).toBe(100);
+    expect(resolvePower(m, ctx({ stacks: 3 }))).toBe(200);
   });
 
-  it('5마리를 넘겨도 상한이 걸린다', () => {
-    expect(resolvePower(move('Last Respects'), ctx({ fallenAllies: 9 }))).toBe(300);
+  it('이 게임의 상한은 3마리다', () => {
+    // 본가는 5마리(위력 300)까지 오르지만 Champions 는 3에서 멈춘다.
+    const m = move('Last Respects');
+    expect(resolvePower(m, ctx({ stacks: 5 }))).toBe(200);
+    expect(resolvePower(m, ctx({ stacks: 9 }))).toBe(200);
+  });
+});
+
+describe('분노의주먹 — 맞은 횟수로 강해진다', () => {
+  it('직접 입력받지 않고 스택으로 확정한다', () => {
+    // 데이터에는 '직접 입력'으로 돼 있지만, 고를 수 있는 값이 정해져 있으면 고르게 한다.
+    const m = move('Rage Fist');
+    expect(m.variablePower).toBe('manual');
+    expect(needsManualPower(m)).toBe(false);
+  });
+
+  it('맞은 횟수 1회당 50 씩, 5회에서 멈춘다', () => {
+    const m = move('Rage Fist');
+    expect(resolvePower(m, ctx({ stacks: 0 }))).toBe(50);
+    expect(resolvePower(m, ctx({ stacks: 1 }))).toBe(100);
+    expect(resolvePower(m, ctx({ stacks: 5 }))).toBe(300);
+    // 본가는 6회(위력 350)까지지만 이 게임은 5에서 멈춘다.
+    expect(resolvePower(m, ctx({ stacks: 6 }))).toBe(300);
+  });
+
+  it('쓰러진 아군 수와는 상관이 없다', () => {
+    // 성묘와 달리 총대장 값을 따라가면 안 된다 — 세는 것이 다르다.
+    expect(resolvePower(move('Rage Fist'), ctx({ fallenAllies: 5, stacks: 0 }))).toBe(50);
+  });
+
+  it('화면에 적는 상한은 이 게임 기준이다', () => {
+    // 데이터 설명문은 본가 기준(최대 350)이라 그대로 쓰면 틀린 말이 된다.
+    expect(move('Rage Fist').variablePowerNote).toContain('350');
+    expect(stackNote(stackSpecOf(move('Rage Fist'))!)).toBe('맞은 횟수 1회당 +50 (최대 5회)');
+    expect(stackNote(stackSpecOf(move('Last Respects'))!)).toBe('쓰러진 아군 1마리당 +50 (최대 3마리)');
+  });
+
+  it('스택과 무관한 기술에는 스택 표기가 없다', () => {
+    expect(stackSpecOf(move('Earthquake'))).toBeNull();
+    expect(stackSpecOf(move('Stored Power'))).toBeNull();
   });
 });
 
@@ -294,8 +334,9 @@ describe('타입표만으로 안 맞는 기술', () => {
 
 describe('확정할 수 없는 것은 지어내지 않는다', () => {
   it('직접 입력이 필요한 기술은 null 을 준다', () => {
-    // 분화·기사회생은 남은 HP 슬라이더가 생기면서 자동 계산으로 옮겨갔다.
-    for (const name of ['Rage Fist', 'Payback', 'Round']) {
+    // 분화·기사회생은 남은 HP 슬라이더가, 분노의주먹은 스택 선택이 생기면서
+    // 자동 계산으로 옮겨갔다. 남은 것은 계산기가 알 길이 없는 것들뿐이다.
+    for (const name of ['Payback', 'Round']) {
       const m = move(name);
       expect(needsManualPower(m), `${name}`).toBe(true);
       expect(resolvePower(m, ctx()), `${name}`).toBeNull();

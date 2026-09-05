@@ -93,12 +93,20 @@ export function spriteFallbacks(mon: Pokemon, form: PokemonForm): string[] {
   return [...new Set(urls)].filter((url) => url && url !== form.spriteUrl);
 }
 
+/** 카드 오른쪽 끝에 적을 수치. 무엇으로 줄을 세웠는지에 맞춘다. */
+export type CardMetric = 'bst' | 'speed';
+
 /**
  * 검색 결과·비교 선택 등에서 쓰는 포켓몬 카드.
  *
  * @param rankFormat 사용률 순위를 함께 보여줄 포맷. null 이면 순위를 표시하지 않는다.
+ * @param metric 오른쪽 끝 수치. 스피드로 정렬했을 때는 합계 대신 스피드를 적는다.
  */
-export function monCard(mon: Pokemon, rankFormat: Format | null = null): HTMLElement {
+export function monCard(
+  mon: Pokemon,
+  rankFormat: Format | null = null,
+  metric: CardMetric = 'bst',
+): HTMLElement {
   const rank = rankFormat ? mon.usageRank[rankFormat] : null;
   const card = el(
     'a',
@@ -123,11 +131,21 @@ export function monCard(mon: Pokemon, rankFormat: Format | null = null): HTMLEle
       mon.displayName !== mon.name ? el('span', { class: 'card__sub' }, mon.name) : null,
       el('div', { class: 'card__types' }, ...mon.primary.types.map(typeBadge)),
     ),
-    el(
-      'span',
-      { class: 'card__bst', title: '실수치 합계 (레벨 50 · 개체값 31 · 노력치 0)' },
-      String(mon.primary.stats.total),
-    ),
+    // 스피드로 줄을 세웠는데 합계만 보이면 왜 이 순서인지 알 수 없다.
+    metric === 'speed'
+      ? el(
+          'span',
+          {
+            class: 'card__bst card__bst--speed',
+            title: '스피드 실수치 (레벨 50 · 개체값 31 · 노력치 0)',
+          },
+          `S ${mon.primary.stats.spe}`,
+        )
+      : el(
+          'span',
+          { class: 'card__bst', title: '실수치 합계 (레벨 50 · 개체값 31 · 노력치 0)' },
+          String(mon.primary.stats.total),
+        ),
   );
   return card;
 }

@@ -8,6 +8,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
+import { MAX_FALLEN_ALLIES } from '../src/core/damage';
 import {
   NO_DAMAGE_EFFECT,
   UNSUPPORTED_ABILITIES,
@@ -353,10 +354,16 @@ describe('배틀 상황이 필요한 특성', () => {
       resolve('Supreme Overlord', null, ctx({ fallenAllies })).attacker.powerMultiplier;
     expect(of(0)).toBe(1);
     expect(of(1)).toBeCloseTo(1.1, 5);
-    expect(of(3)).toBeCloseTo(1.3, 5);
-    expect(of(5)).toBeCloseTo(1.5, 5);
-    // 5마리를 넘겨도 상한이 걸린다
-    expect(of(9)).toBeCloseTo(1.5, 5);
+    expect(of(MAX_FALLEN_ALLIES)).toBeCloseTo(1 + MAX_FALLEN_ALLIES * 0.1, 5);
+  });
+
+  it('쓰러진 아군 상한은 성묘와 같다', () => {
+    // 둘 다 같은 수를 센다. 한쪽만 본가 값(5마리)으로 남으면 조용히 어긋난다.
+    const of = (fallenAllies: number) =>
+      resolve('Supreme Overlord', null, ctx({ fallenAllies })).attacker.powerMultiplier;
+    expect(MAX_FALLEN_ALLIES).toBe(3);
+    expect(of(MAX_FALLEN_ALLIES + 2)).toBeCloseTo(of(MAX_FALLEN_ALLIES), 5);
+    expect(of(9)).toBeCloseTo(1.3, 5);
   });
 
   it('투쟁심은 성별 관계에 따라 오르내린다', () => {

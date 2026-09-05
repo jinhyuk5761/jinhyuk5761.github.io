@@ -11,7 +11,7 @@
  */
 
 import type { MoveInfo } from '../adapters/moveDex';
-import type { Terrain, Weather } from './damage';
+import { MAX_FALLEN_ALLIES, type Terrain, type Weather } from './damage';
 import type { TypeName } from '../types';
 
 export interface PowerContext {
@@ -129,12 +129,14 @@ export interface StackSpec {
  * 본가는 성묘가 쓰러진 아군 5마리(위력 300), 분노의주먹이 맞은 횟수 6회(위력 350)까지
  * 오르지만 이 게임은 각각 3·5 에서 멈춘다. 본가 값을 그대로 두면 나올 수 없는 위력으로
  * 확정/난수 판정이 뒤집힌다. PokéAPI 설명문(최대 350)도 본가 기준이라 믿을 수 없다.
+ *
+ * 성묘의 상한은 총대장과 같은 수(MAX_FALLEN_ALLIES)다 — 둘 다 쓰러진 아군을 센다.
  */
 const STACK_MOVES: Record<string, StackSpec> = {
   'Last Respects': {
     label: '쓰러진 아군',
     unit: '마리',
-    max: 3,
+    max: MAX_FALLEN_ALLIES,
     per: 50,
     followsFallenAllies: true,
   },

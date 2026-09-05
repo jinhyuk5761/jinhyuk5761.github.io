@@ -13,7 +13,7 @@
  */
 
 import type { TypeName } from '../types';
-import type { Weather } from './damage';
+import { MAX_FALLEN_ALLIES, type Weather } from './damage';
 
 export interface AbilityContext {
   moveType: TypeName;
@@ -51,7 +51,7 @@ export interface AbilityContext {
    * 이 특성은 **맞은 뒤에** 발동하므로 계산기가 스스로 알 수 없다 — 사람이 켠다.
    */
   attackerCharged: boolean;
-  /** 쓰러진 아군 수 0~5 (총대장) */
+  /** 쓰러진 아군 수 (총대장). 상한은 MAX_FALLEN_ALLIES. */
   fallenAllies: number;
   /** 공격측과 방어측의 성별 관계 (투쟁심) */
   genderRelation: 'same' | 'different' | 'unknown';
@@ -313,9 +313,10 @@ const ATTACKER_LIST: AbilityDef[] = [
   },
   {
     name: 'Supreme Overlord',
-    note: '쓰러진 아군 1마리당 ×1.1 (최대 ×1.5)',
+    // 상한은 이 게임 기준이다 — 본가는 5마리(×1.5)까지 오른다.
+    note: `쓰러진 아군 1마리당 ×1.1 (최대 ×${(1 + MAX_FALLEN_ALLIES * 0.1).toFixed(1)})`,
     effect: (c, o) => {
-      const fallen = Math.max(0, Math.min(5, c.fallenAllies));
+      const fallen = Math.max(0, Math.min(MAX_FALLEN_ALLIES, c.fallenAllies));
       if (fallen > 0) o.powerMultiplier *= 1 + fallen * 0.1;
     },
   },

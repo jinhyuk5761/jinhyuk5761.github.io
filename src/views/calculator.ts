@@ -29,6 +29,7 @@ import {
   type ItemEffect,
 } from '../core/items';
 import {
+  MAX_FALLEN_ALLIES,
   MAX_STAT_POINTS,
   calculateDamage,
   effectiveHp,
@@ -169,7 +170,7 @@ const manualPower = new Map<string, number>();
 /**
  * 스택 기술(성묘·분노의주먹)에 사람이 고른 스택 수.
  *
- * 성묘는 총대장과 같은 '쓰러진 아군' 수지만 상한이 다르고(3 vs 5), 필드의 총대장 칸과
+ * 성묘는 총대장과 같은 '쓰러진 아군' 수를 센다(상한도 같다). 그런데 필드의 총대장 칸과
  * 기술 줄을 한 값으로 묶으면 한쪽 표시가 낡은 채 남는다. 그래서 고르기 전까지만
  * 총대장 값을 기본으로 따라가고, 한 번 고르면 그 선택을 지킨다.
  */
@@ -1126,7 +1127,10 @@ function fieldSection(dex: MoveDex | null, onInput: () => void): HTMLElement {
         { class: 'calc__field' },
         el('span', {}, '쓰러진 아군 (총대장)'),
         searchSelect({
-          options: Array.from({ length: 6 }, (_, n) => ({ value: String(n), label: `${n}마리` })),
+          options: Array.from({ length: MAX_FALLEN_ALLIES + 1 }, (_, n) => ({
+            value: String(n),
+            label: `${n}마리`,
+          })),
           value: String(fallenAllies),
           placeholder: '0마리',
           ariaLabel: '쓰러진 아군 수',

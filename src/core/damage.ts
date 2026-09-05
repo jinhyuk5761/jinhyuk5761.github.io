@@ -451,3 +451,12 @@ export function stabMultiplier(
  * "총 몇 포인트까지"가 딱 떨어지지 않기 때문이다. 검증할 수 없는 제약을 걸지 않는다.
  */
 export const MAX_STAT_POINTS = 32;
+
+/**
+ * 쓰러질 수 있는 아군의 최대 수.
+ *
+ * 성묘(쓰러진 아군 1마리당 +50)와 총대장(1마리당 ×1.1)이 같은 수를 센다.
+ * 본가는 파티가 6마리라 5까지 가지만 Champions 는 3에서 멈춘다.
+ * 두 곳이 따로 상한을 들고 있으면 언젠가 어긋나므로 여기 한 번만 적는다.
+ */
+export const MAX_FALLEN_ALLIES = 3;

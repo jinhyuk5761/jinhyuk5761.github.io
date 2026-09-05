@@ -36,7 +36,14 @@ const TAB_LABEL: Record<Tab, string> = {
 let activeTab: Tab = 'usage';
 let activeFormSlug: string | null = null;
 
-export function renderDetail(container: HTMLElement, showdownId: string): void {
+/**
+ * @param formSlug 펴 놓을 폼 (검색에서 메가 카드로 들어온 경우). 없으면 이전 선택을 잇는다.
+ */
+export function renderDetail(
+  container: HTMLElement,
+  showdownId: string,
+  formSlug: string | null = null,
+): void {
   clear(container);
 
   if (!state.ready) {
@@ -55,8 +62,11 @@ export function renderDetail(container: HTMLElement, showdownId: string): void {
     return;
   }
 
-  // 다른 포켓몬으로 이동하면 폼 선택을 초기화한다.
-  if (!mon.forms.some((f) => f.slug === activeFormSlug)) {
+  // 주소가 폼을 지정했으면 그것을 편다 — 검색의 메가 카드가 이 경로로 들어온다.
+  if (formSlug && mon.forms.some((f) => f.slug === formSlug)) {
+    activeFormSlug = formSlug;
+  } else if (!mon.forms.some((f) => f.slug === activeFormSlug)) {
+    // 다른 포켓몬으로 이동하면 폼 선택을 초기화한다.
     activeFormSlug = mon.primary.slug || (mon.forms[0]?.slug ?? null);
   }
 
@@ -154,6 +164,12 @@ function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTML
 
   const profile = defensiveProfile(form.types);
 
+  const isPrimary = form.slug === mon.primary.slug;
+  const title = isPrimary
+    ? mon.displayName
+    : formDisplayName(mon, form, state.index?.pokemon ?? [], state.formNames);
+  const alias = isPrimary ? mon.name : form.formName;
+
   return el(
     'header',
     { class: 'detail__header' },
@@ -161,8 +177,9 @@ function header(mon: Pokemon, form: PokemonForm, onFormChange: () => void): HTML
     el(
       'div',
       { class: 'detail__meta' },
-      el('h2', { class: 'detail__name' }, mon.displayName),
-      mon.displayName !== mon.name ? el('p', { class: 'detail__alias' }, mon.name) : null,
+      // 메가로 들어왔는데 제목이 원종이면 어느 화면인지 헷갈린다. 편 폼을 제목으로 쓴다.
+      el('h2', { class: 'detail__name' }, title),
+      title !== alias ? el('p', { class: 'detail__alias' }, alias) : null,
       el('div', { class: 'detail__types' }, ...form.types.map(typeBadge)),
       formSelector,
       // 사용률을 보다가 바로 계산기로 넘어가는 흐름을 만든다.

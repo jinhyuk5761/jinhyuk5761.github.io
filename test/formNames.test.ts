@@ -8,7 +8,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { formDisplayName, type FormNameMap } from '../src/core/formNames';
+import { formDisplayName, formTagText, type FormNameMap } from '../src/core/formNames';
 import type { Pokemon, PokemonForm, StatLine } from '../src/types';
 
 const file = JSON.parse(readFileSync('public/data/formNames.json', 'utf8')) as {
@@ -119,5 +119,26 @@ describe('formDisplayName', () => {
     // 예전에는 로토무 폼 다섯 개가 전부 '로토무' 로 나와 구분이 안 됐다.
     const labels = rotom.forms.map((f) => formDisplayName(rotom, f, [], FORM_NAMES));
     expect(new Set(labels).size).toBe(labels.length);
+  });
+});
+
+describe('이름 옆에 붙일 폼 표기', () => {
+  it('공식 한국어 표기가 있으면 그것을 쓴다', () => {
+    const shield = form('aegislash-shield-forme', 'Aegislash Shield Forme');
+    const mon = species('에이스버그', 'Aegislash', [shield]);
+    expect(formTagText(mon, shield, FORM_NAMES)).toBe('실드폼');
+  });
+
+  it('공식 표기가 없으면 영문 폼 이름에서 종족명을 뺀다', () => {
+    const jumbo = form('gourgeist-jumbo-variety', 'Gourgeist Jumbo Variety');
+    const mon = species('펌킨인', 'Gourgeist', [jumbo]);
+    expect(formTagText(mon, jumbo, FORM_NAMES)).toBe('Jumbo Variety');
+  });
+
+  it('폼 이름이 곧 종 이름이면 붙이지 않는다', () => {
+    // 덧붙여 봐야 같은 말을 두 번 적는 꼴이다.
+    const base = form('garchomp', 'Garchomp');
+    const mon = species('한카리아스', 'Garchomp', [base]);
+    expect(formTagText(mon, base, FORM_NAMES)).toBeNull();
   });
 });

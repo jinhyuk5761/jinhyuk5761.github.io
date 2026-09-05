@@ -76,6 +76,29 @@ export function formDisplayName(
   return form.formName;
 }
 
+/**
+ * 이름 옆에 붙일 짧은 폼 표기. 없으면 null.
+ *
+ * 폼이 여러 개인 종은 목록에 종 이름만 적히면 지금 보고 있는 그림·수치가 어느 폼의
+ * 것인지 알 수 없다(로토무·기로치·펌킨인 …). 그렇다고 이름을 통째로 폼 이름으로 바꾸면
+ * 검색해서 찾던 이름이 사라진다. 그래서 이름은 두고 폼만 덧붙인다.
+ *
+ * 공식 한국어 폼 표기가 있으면 그것을, 없으면 영문 폼 이름에서 종족명을 뺀 부분을 쓴다
+ * ('Gourgeist Jumbo Variety' → 'Jumbo Variety'). 뺐더니 아무것도 안 남으면 —
+ * 폼 이름이 곧 종 이름이라는 뜻이라 — 붙이지 않는다.
+ */
+export function formTagText(
+  mon: Pokemon,
+  form: PokemonForm,
+  formNames: FormNameMap | null = null,
+): string | null {
+  const official = formNames?.get(form.slug);
+  if (official) return official;
+
+  const stripped = form.formName.replace(mon.name, ' ').replace(/\s+/g, ' ').trim();
+  return stripped.length > 0 ? stripped : null;
+}
+
 /** '알로라 나인테일' → '나인테일'. 접두어가 없으면 그대로. */
 function stripRegion(korean: string): string {
   return korean.replace(/^(메가|알로라|가라르|히스이|팔데아)\s+/, '');

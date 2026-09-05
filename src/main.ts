@@ -80,7 +80,8 @@ function shellHeader(route: Route): HTMLElement {
       navLink('/', '검색', route),
       navLink('/moves', '기술', route),
       navLink('/abilities', '특성', route),
-      navLink('/stats', '통계', route),
+      // 통계 탭은 당분간 감춰 둔다. 주소(#/stats)로는 그대로 열려서
+      // 화면·집계 코드는 살아 있고, 다시 보이게 하려면 이 줄만 되살리면 된다.
       navLink('/calc', '계산기', route),
       // 랭킹 탭은 서버가 "데이터 있음"이라고 알려줄 때만 나타난다.
       // config 를 주기적으로 다시 확인하므로, 랭킹이 붙으면 새로고침 없이 탭이 생긴다.
@@ -129,7 +130,7 @@ function renderRoute(route: Route): void {
       renderSearch(main);
       break;
     case '/p':
-      renderDetail(main, route.params.id ?? '');
+      renderDetail(main, route.params.id ?? '', route.query.get('form'));
       break;
     case '/moves':
       renderMoveDexView(main, route);

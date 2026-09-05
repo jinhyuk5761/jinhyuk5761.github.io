@@ -96,40 +96,71 @@ export function spriteFallbacks(mon: Pokemon, form: PokemonForm): string[] {
 /** 카드 오른쪽 끝에 적을 수치. 무엇으로 줄을 세웠는지에 맞춘다. */
 export type CardMetric = 'bst' | 'speed';
 
+export interface MonCardOptions {
+  /** 사용률 순위를 함께 보여줄 포맷. 없으면 순위를 표시하지 않는다. */
+  rankFormat?: Format | null;
+  /** 오른쪽 끝 수치. 스피드로 정렬했을 때는 합계 대신 스피드를 적는다. */
+  metric?: CardMetric;
+  /**
+   * 대표 폼 대신 이 폼으로 그린다 (메가 등).
+   * 그림·타입·수치가 폼마다 다르므로 카드도 그 폼의 것을 보여줘야 한다.
+   */
+  form?: PokemonForm;
+  /** 카드에 적을 이름. 폼을 함께 줄 때 그 폼의 한국어 표기를 넘긴다. */
+  label?: string;
+  /**
+   * 이름 옆에 붙일 폼 표기.
+   *
+   * 폼이 여러 개인 종은 카드에 종 이름만 적히면 지금 보고 있는 그림·수치가
+   * 어느 폼의 것인지 알 수 없다(로토무·큐아링 …). 그때만 넘긴다.
+   */
+  formTag?: string | null;
+}
+
 /**
  * 검색 결과·비교 선택 등에서 쓰는 포켓몬 카드.
- *
- * @param rankFormat 사용률 순위를 함께 보여줄 포맷. null 이면 순위를 표시하지 않는다.
- * @param metric 오른쪽 끝 수치. 스피드로 정렬했을 때는 합계 대신 스피드를 적는다.
  */
-export function monCard(
-  mon: Pokemon,
-  rankFormat: Format | null = null,
-  metric: CardMetric = 'bst',
-): HTMLElement {
+export function monCard(mon: Pokemon, options: MonCardOptions = {}): HTMLElement {
+  const { rankFormat = null, metric = 'bst', form = mon.primary, label, formTag = null } = options;
   const rank = rankFormat ? mon.usageRank[rankFormat] : null;
+  const name = label ?? mon.displayName;
+  // 메가는 종 아래의 폼이라 상세 화면에서 그 폼을 펴 놓아야 한다.
+  const target =
+    form.slug && form.slug !== mon.primary.slug
+      ? `/p/${encodeURIComponent(mon.showdownId)}?form=${encodeURIComponent(form.slug)}`
+      : `/p/${encodeURIComponent(mon.showdownId)}`;
+
   const card = el(
     'a',
-    { class: 'card', href: href(`/p/${encodeURIComponent(mon.showdownId)}`) },
+    { class: 'card', href: href(target) },
     rankFormat
       ? el(
           'span',
           {
             class: `card__rank${rank === null ? ' card__rank--none' : ''}`,
-            title: `${rankFormat === 'Singles' ? '싱글' : '더블'} 사용률 순위`,
+            title:
+              `${rankFormat === 'Singles' ? '싱글' : '더블'} 사용률 순위` +
+              // 사용률은 종 단위라 메가에도 종의 순위가 붙는다. 그 사실을 숨기지 않는다.
+              (form.slug !== mon.primary.slug ? ' (폼 구분 없이 종 단위 집계)' : ''),
           },
           // 순위가 없으면 비슷한 숫자를 지어내지 않고 없다고 적는다.
           rank === null ? '—' : String(rank),
         )
       : null,
-    sprite(mon.primary, 'sm', spriteFallbacks(mon, mon.primary)),
+    sprite(form, 'sm', spriteFallbacks(mon, form)),
     el(
       'div',
       { class: 'card__body' },
-      el('span', { class: 'card__name' }, mon.displayName),
+      // 이름과 폼 표기는 한 줄에 두되, 이름 자체는 이름만 담는다.
+      el(
+        'span',
+        { class: 'card__title' },
+        el('span', { class: 'card__name' }, name),
+        formTag ? el('span', { class: 'card__form' }, formTag) : null,
+      ),
       // 로케일 표시명이 영문과 다를 때만 영문을 덧붙인다(중복 표기 방지).
-      mon.displayName !== mon.name ? el('span', { class: 'card__sub' }, mon.name) : null,
-      el('div', { class: 'card__types' }, ...mon.primary.types.map(typeBadge)),
+      name !== form.formName ? el('span', { class: 'card__sub' }, form.formName) : null,
+      el('div', { class: 'card__types' }, ...form.types.map(typeBadge)),
     ),
     // 스피드로 줄을 세웠는데 합계만 보이면 왜 이 순서인지 알 수 없다.
     metric === 'speed'
@@ -139,12 +170,12 @@ export function monCard(
             class: 'card__bst card__bst--speed',
             title: '스피드 실수치 (레벨 50 · 개체값 31 · 노력치 0)',
           },
-          `S ${mon.primary.stats.spe}`,
+          `S ${form.stats.spe}`,
         )
       : el(
           'span',
           { class: 'card__bst', title: '실수치 합계 (레벨 50 · 개체값 31 · 노력치 0)' },
-          String(mon.primary.stats.total),
+          String(form.stats.total),
         ),
   );
   return card;

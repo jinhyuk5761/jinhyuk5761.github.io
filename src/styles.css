@@ -298,6 +298,16 @@ h4 { font-size: 15px; margin: 0; }
 .card__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .card__name { font-weight: 600; }
 .card__sub { font-size: 11px; color: var(--text-dim); }
+.card__title { display: flex; align-items: baseline; gap: 6px; min-width: 0; flex-wrap: wrap; }
+/* 폼이 여러 개인 종에서 지금 카드가 어느 폼인지. 이름을 밀어내지 않게 작게 붙인다. */
+.card__form {
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--surface-alt);
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 400;
+}
 .card__types { display: flex; gap: 4px; flex-wrap: wrap; }
 .card__bst { font-size: 12px; color: var(--text-dim); font-variant-numeric: tabular-nums; }
 /* 스피드로 줄 세운 목록에서는 그 값이 이 카드의 근거다 — 합계와 헷갈리지 않게 눈에 띄게 둔다. */

@@ -125,7 +125,13 @@ const TERMS = {
 
 /** 폼 slug → 공식 한국어 폼 표기. 빌드 산출물의 일부만 흉내낸다. */
 const FORM_NAMES = {
-  forms: { 'rotom-wash': '워시로토무', 'furfrou-heart-trim': '하트컷' },
+  forms: {
+    'rotom-wash': '워시로토무',
+    'furfrou-heart-trim': '하트컷',
+    // 실데이터에도 있는 표기. 폼이 여러 개인 종의 이름 옆 표기에 쓰인다.
+    'aegislash-shield-forme': '실드폼',
+    'aegislash-blade-forme': '블레이드폼',
+  },
   jaLabels: { 'ウォッシュロトム': '워시로토무' },
 };
 
@@ -258,6 +264,8 @@ describe('셸', () => {
     // 출처는 탭에서 빼고 푸터 링크로만 남겼다 — 귀속 문구 자체는 계속 노출된다.
     expect(labels).not.toContain('출처');
     expect(labels).not.toContain('랭킹');
+    // 통계 탭은 당분간 감춰 뒀다 — 화면 자체는 #/stats 로 그대로 열린다.
+    expect(labels).not.toContain('통계');
   });
 });
 
@@ -270,9 +278,16 @@ describe('M1 검색', () => {
   it('전체 목록을 잘라내지 않고 다 보여준다', async () => {
     // 예전에는 60종에서 끊었는데 안내가 없어서 "종이 안 뜬다"로 읽혔다.
     await mountApp('#/');
-    const total = (await import('../src/store')).state.index!.pokemon.length;
-    expect(document.querySelectorAll('.card').length).toBe(total);
-    expect(document.querySelector('.results__summary')?.textContent).toContain(`전체 ${total}종`);
+    const list = (await import('../src/store')).state.index!.pokemon;
+    const megas = list.reduce(
+      (sum, mon) => sum + mon.forms.filter((f) => f.formKind.startsWith('Mega')).length,
+      0,
+    );
+    // 종 한 줄 + 메가 폼 한 줄씩.
+    expect(document.querySelectorAll('.card').length).toBe(list.length + megas);
+    const summary = document.querySelector('.results__summary')?.textContent ?? '';
+    expect(summary).toContain(`전체 ${list.length}종`);
+    expect(summary).toContain(`메가 ${megas}폼`);
   });
 
   it('기본 정렬이 사용률 순위이고 순위를 함께 보여준다', async () => {
@@ -339,9 +354,11 @@ describe('M1 검색', () => {
     expect(speeds.length).toBe(document.querySelectorAll('.card').length);
     // 빠른 순이어야 한다.
     expect([...speeds].sort((a, b) => b - a)).toEqual(speeds);
-    // 합계가 아니라 스피드 실수치를 적는다.
+    // 합계가 아니라 스피드 실수치를 적는다. 메가는 원종보다 빠른 경우가 있어 함께 센다.
     const store = await import('../src/store');
-    const fastest = Math.max(...store.state.index!.pokemon.map((m) => m.primary.stats.spe));
+    const fastest = Math.max(
+      ...store.state.index!.pokemon.flatMap((m) => m.forms.map((f) => f.stats.spe)),
+    );
     expect(speeds[0]).toBe(fastest);
     // 사용률 정렬이 아니므로 순위 배지는 붙지 않는다.
     expect(document.querySelector('.card__rank')).toBeNull();
@@ -362,6 +379,59 @@ describe('M1 검색', () => {
     expect([...document.querySelectorAll('.card__name')].map((n) => n.textContent)).toEqual(first);
   });
 
+  it('메가는 원종과 별개의 카드로 뜬다', async () => {
+    await mountApp('#/');
+    const input = document.querySelector<HTMLInputElement>('.search__input')!;
+    input.value = '한카리아스';
+    input.dispatchEvent(new Event('input'));
+
+    const cards = [...document.querySelectorAll('.card')];
+    expect(cards.map((c) => c.querySelector('.card__name')?.textContent)).toEqual([
+      '한카리아스',
+      '메가 한카리아스',
+    ]);
+
+    const mega = cards[1]!;
+    // 상세로 갈 때 그 폼이 펴지도록 주소에 폼을 싣는다.
+    expect(mega.getAttribute('href')).toBe('#/p/garchomp?form=mega-garchomp');
+    // 수치도 원종이 아니라 메가의 것이어야 한다.
+    const store = await import('../src/store');
+    const mon = store.state.index!.byShowdownId.get('garchomp')!;
+    const megaForm = mon.forms.find((f) => f.slug === 'mega-garchomp')!;
+    expect(mega.querySelector('.card__bst')?.textContent).toBe(String(megaForm.stats.total));
+    expect(megaForm.stats.total).not.toBe(mon.primary.stats.total);
+  });
+
+  it('메가 카드로 들어가면 상세도 그 폼을 편다', async () => {
+    await mountApp('#/p/garchomp?form=mega-garchomp');
+    await vi.waitFor(() => {
+      expect(document.querySelector('.detail__name')).not.toBeNull();
+    });
+    expect(document.querySelector('.detail__name')?.textContent).toBe('메가 한카리아스');
+    const select = document.querySelector<HTMLSelectElement>('.form-select')!;
+    expect(select.value).toBe('mega-garchomp');
+  });
+
+  it('폼이 여러 개인 종은 어느 폼인지 이름 옆에 적는다', async () => {
+    await mountApp('#/');
+    const input = document.querySelector<HTMLInputElement>('.search__input')!;
+    // 픽스처에 한국어 종족명이 있는 종은 둘뿐이라 영문으로 찾는다.
+    input.value = 'aegislash';
+    input.dispatchEvent(new Event('input'));
+
+    const card = document.querySelector('.card')!;
+    // 실드폼과 블레이드폼은 수치가 정반대라, 어느 폼인지 적히지 않으면 카드를 믿을 수 없다.
+    expect(card.querySelector('.card__form')?.textContent).toBe('실드폼');
+    // 이름 자체는 그대로 남는다 — 검색해서 찾던 이름이 사라지면 안 된다.
+    expect(card.querySelector('.card__name')?.textContent).not.toContain('실드폼');
+
+    // 폼이 하나뿐인 종에는 붙이지 않는다.
+    input.value = '한카리아스';
+    input.dispatchEvent(new Event('input'));
+    const chomp = document.querySelector('.card')!;
+    expect(chomp.querySelector('.card__form')).toBeNull();
+  });
+
   it('한국어·영어·일본어가 같은 결과를 낸다', async () => {
     await mountApp('#/');
     const input = document.querySelector<HTMLInputElement>('.search__input')!;
@@ -372,9 +442,10 @@ describe('M1 검색', () => {
       return [...document.querySelectorAll('.card__name')].map((n) => n.textContent);
     };
 
-    expect(search('한카리아스')).toEqual(['한카리아스']);
-    expect(search('garchomp')).toEqual(['한카리아스']);
-    expect(search('ガブリアス')).toEqual(['한카리아스']);
+    // 어느 언어로 쳐도 같은 결과 — 원종과 그 메가가 함께 나온다.
+    expect(search('한카리아스')).toEqual(['한카리아스', '메가 한카리아스']);
+    expect(search('garchomp')).toEqual(['한카리아스', '메가 한카리아스']);
+    expect(search('ガブリアス')).toEqual(['한카리아스', '메가 한카리아스']);
   });
 
   it('종 명칭으로도 폼을 찾는다 ("나인테일" → 알로라 나인테일)', async () => {
